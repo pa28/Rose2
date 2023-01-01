@@ -7,6 +7,8 @@
 #include <array>
 #include <tuple>
 #include <Rose.h>
+#include <Gadget.h>
+#include <ranges>
 
 using namespace rose;
 
@@ -53,7 +55,7 @@ std::tuple<int,int> screen_obj_compare_test(const std::vector<binomial_compare_t
     return std::make_tuple(total, pass);
 }
 
-int main(int argc, char **argv) {
+int main() {
     int pass{0}, total{0};
 
     auto [testTotal,testPass] = screen_obj_compare_test(binomial_compare_test_1);
@@ -61,6 +63,24 @@ int main(int argc, char **argv) {
     total += testTotal;
 
     std::cout << "Pass: " << pass << ", Total: " << total << '\n';
+
+    auto gadget = std::make_shared<Gadget>();
+    auto gadgetType = gadget->gadgetType();
+
+    auto widget = std::make_shared<Widget>();
+    auto widgetType = widget->gadgetType();
+
+    widget->manage(std::move(gadget));
+
+    for (const auto& g : *widget) {
+        auto t = g->gadgetType();
+        std::cout << '\n';
+    }
+
+    for (const auto& g : std::ranges::reverse_view{*widget}) {
+        auto t = g->gadgetType();
+        std::cout << '\n';
+    }
 
     return 0;
 }

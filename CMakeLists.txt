@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 
 include_directories(include src/util)
 
-add_library(Rose2 SHARED src/Rose.cpp src/Gadget.cpp)
+add_library(Rose2 SHARED src/Rose.cpp src/Gadget.cpp src/Manager.cpp)
 
 add_executable(Test test/test.cpp)
+target_link_libraries(Test Rose2)
