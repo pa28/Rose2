@@ -8,6 +8,7 @@
 #include <tuple>
 #include <Rose.h>
 #include <Gadget.h>
+#include <GraphicsModel.h>
 
 using namespace rose;
 
@@ -55,24 +56,27 @@ std::tuple<int,int> screen_obj_compare_test(const std::vector<binomial_compare_t
 }
 
 int main() {
-    int pass{0}, total{0};
+//    int pass{0}, total{0};
+//
+//    auto [testTotal,testPass] = screen_obj_compare_test(binomial_compare_test_1);
+//    pass += testPass;
+//    total += testTotal;
+//
+//    std::cout << "Pass: " << pass << ", Total: " << total << '\n';
+//
+//    auto gadget = std::make_shared<Gadget>();
+//    [[maybe_unused]] auto gadgetType = gadget->gadgetType();
+//
+//    auto widget = std::make_shared<Widget>();
+//    [[maybe_unused]] auto widgetType = widget->gadgetType();
+//
+//    widget->manage(std::move(gadget));
+//
+//    auto widget1 = std::make_shared<Widget>();
+//    widget1->manage(widget->front());
 
-    auto [testTotal,testPass] = screen_obj_compare_test(binomial_compare_test_1);
-    pass += testPass;
-    total += testTotal;
-
-    std::cout << "Pass: " << pass << ", Total: " << total << '\n';
-
-    auto gadget = std::make_shared<Gadget>();
-    [[maybe_unused]] auto gadgetType = gadget->gadgetType();
-
-    auto widget = std::make_shared<Widget>();
-    [[maybe_unused]] auto widgetType = widget->gadgetType();
-
-    widget->manage(std::move(gadget));
-
-    auto widget1 = std::make_shared<Widget>();
-    widget1->manage(widget->front());
+    gm::GraphicsModel graphicsModel{};
+    graphicsModel.initialize("Test", Size{100,100}, Point{0, 0}, 0);
 
     return 0;
 }

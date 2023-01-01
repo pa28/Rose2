@@ -16,7 +16,7 @@ namespace rose {
         Widget,
     };
 
-    using ScreenCoordType = long;   ///< The type used to represent a screen coordinate.
+    using ScreenCoordType = int;   ///< The type used to represent a screen coordinate.
 
     struct Size {
         ScreenCoordType w{0}, h{0};
@@ -88,6 +88,24 @@ namespace rose {
         }
     };
 
+    struct Padding {
+        ScreenCoordType t{}, b{}, l{}, r{};
+
+        bool set{false};
+
+        Padding() = default;
+        Padding(const Padding&) = default;
+        Padding(Padding &&) = default;
+        Padding& operator=(const Padding &) = default;
+        Padding& operator=(Padding&&) = default;
+
+        auto operator <=> (const Padding &) const = default;
+
+        explicit operator bool () const { return set; }
+
+        ~Padding() = default;
+    };
+
     struct Rectangle {
         Point point{};
         Size size{};
@@ -130,6 +148,27 @@ namespace rose {
         [[maybe_unused]] bool contains(const Point &p) {
             return p >= point && p < (point + size);
         }
+
+        [[nodiscard]] Rectangle intersection(const Rectangle &o) const {
+            // gives bottom-left point
+            // of intersection rectangle
+
+            auto x5 = std::max(point.x, o.point.x);
+            auto y5 = std::max(point.y, o.point.y);
+
+            // gives top-right point
+            // of intersection rectangle
+            auto x6 = std::min(point.x+size.w, o.point.x+o.size.w);
+            auto y6 = std::min(point.y+size.h, o.point.y+o.size.h);
+
+            // no intersection
+            if (x5 > x6 || y5 > y6) {
+                return Rectangle{0,0,0,0};
+            }
+
+            return Rectangle{x5, y5, x6 - x5, y6 - y5};
+        }
+
     };
 } // rose
 
@@ -151,6 +190,10 @@ inline std::ostream &operator<<(std::ostream& ostream, const rose::Point &p) {
 
 inline std::ostream &operator<<(std::ostream& ostream, const rose::Size &s) {
     return ostream << '[' << s.w << ',' << s.h << ']';
+}
+
+inline std::ostream &operator<<(std::ostream& ostream, const rose::Rectangle &r) {
+    return ostream << '[' << r.point.x << ',' << r.point.y << ',' << r.size.w << ',' << r.size.h << ']';
 }
 
 #endif //ROSE2_ROSE_H
