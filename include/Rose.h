@@ -99,7 +99,7 @@ namespace rose {
         Rectangle& operator=(Rectangle &&) = default;
 
         template<typename Tx, typename Ty, typename Tw, typename Th>
-        Rectangle(Tx X, Ty Y, Tw W, Th H) : point(X,Y), size(W,H) {
+        [[maybe_unused]] Rectangle(Tx X, Ty Y, Tw W, Th H) : point(X,Y), size(W,H) {
             static_assert(std::is_convertible_v<Tx, ScreenCoordType> && std::is_convertible_v<Ty, ScreenCoordType> &&
                     std::is_convertible_v<Tw, ScreenCoordType> && std::is_convertible_v<Th, ScreenCoordType>,
                     "Arguments to Size() must be convertable to ScreenCoordType");
@@ -127,7 +127,7 @@ namespace rose {
 
         explicit operator bool () const { return point.set && size.set; }
 
-        bool contains(const Point &p) {
+        [[maybe_unused]] bool contains(const Point &p) {
             return p >= point && p < (point + size);
         }
     };

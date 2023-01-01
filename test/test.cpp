@@ -8,7 +8,6 @@
 #include <tuple>
 #include <Rose.h>
 #include <Gadget.h>
-#include <ranges>
 
 using namespace rose;
 
@@ -18,13 +17,13 @@ struct binomial_compare_test {
 };
 
 std::vector<binomial_compare_test> binomial_compare_test_1 = {{
-    {0, 0, 0, 0, false, true, true, false, true, false },
-    {0, 0, 1, 0, true, true, false, true, false, false },
-    {0, 0, 0, 1, true, true, false, true, false, false },
-    {0, 0, 1, 1, true, true, false, true, false, false },
-    {0, 1, 0, 0, false, false, false, true, true, true },
-    {1, 0, 0, 0, false, false, false, true, true, true },
-    {1, 1, 0, 0, false, false, false, true, true, true },
+    {0, 0, 0, 0, {false, true, true, false, true, false} },
+    {0, 0, 1, 0, {true, true, false, true, false, false} },
+    {0, 0, 0, 1, {true, true, false, true, false, false} },
+    {0, 0, 1, 1, {true, true, false, true, false, false} },
+    {0, 1, 0, 0, {false, false, false, true, true, true} },
+    {1, 0, 0, 0, {false, false, false, true, true, true} },
+    {1, 1, 0, 0, {false, false, false, true, true, true} },
 }};
 
 std::tuple<int,int> screen_obj_compare_test(const std::vector<binomial_compare_test>& tests) {
@@ -65,22 +64,15 @@ int main() {
     std::cout << "Pass: " << pass << ", Total: " << total << '\n';
 
     auto gadget = std::make_shared<Gadget>();
-    auto gadgetType = gadget->gadgetType();
+    [[maybe_unused]] auto gadgetType = gadget->gadgetType();
 
     auto widget = std::make_shared<Widget>();
-    auto widgetType = widget->gadgetType();
+    [[maybe_unused]] auto widgetType = widget->gadgetType();
 
     widget->manage(std::move(gadget));
 
-    for (const auto& g : *widget) {
-        auto t = g->gadgetType();
-        std::cout << '\n';
-    }
-
-    for (const auto& g : std::ranges::reverse_view{*widget}) {
-        auto t = g->gadgetType();
-        std::cout << '\n';
-    }
+    auto widget1 = std::make_shared<Widget>();
+    widget1->manage(widget->front());
 
     return 0;
 }

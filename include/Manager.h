@@ -18,7 +18,7 @@ namespace rose {
 /**
  * @class Manager
  */
-    class Manager {
+    class [[maybe_unused]] Manager {
     protected:
         std::vector<std::unique_ptr<Gadget>> gadgetList{};
 
