@@ -15,6 +15,7 @@
 #include <vector>
 #include <utility>
 #include <algorithm>
+#include <concepts>
 #include "Rose.h"
 
 namespace rose {
@@ -107,6 +108,9 @@ namespace rose {
             return std::dynamic_pointer_cast<Widget>(gadget);
         }
     };
+
+    template<class B>
+    concept IsBuilder = std::derived_from<B,Builder>;
 
     class GadgetBuilder : public Builder {
     public:
@@ -239,5 +243,16 @@ namespace rose {
     };
 
 } // rose
+
+/**
+ * @brief Manage the built Gadget by the specified Widget
+ * @param widget The managing Widget
+ * @param builder The builder of the Gadget
+ */
+template<typename B>
+requires rose::IsBuilder<B>
+inline void operator << (std::shared_ptr<rose::Widget> &widget, B builder) {
+    builder >> widget;
+}
 
 #endif //ROSE2_GADGET_H
