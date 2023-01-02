@@ -27,7 +27,9 @@ namespace rose {
 
     class Gadget {
     protected:
+        friend class GadgetBuilder;
         constexpr static GadgetType ThisType = GadgetType::Gadget;
+        std::string_view mName{};
         std::shared_ptr<Widget> manager{};  ///< Pointer to the current manager of this Gadget.
 
         [[maybe_unused]] Rectangle desiredLayout{};          ///< The desired layout set by the Gadget or constructor.
@@ -54,8 +56,88 @@ namespace rose {
          */
         auto getManager() { return manager; }
 
-
         virtual ~Gadget() = default;
+    };
+
+    template<class T>
+            concept StringLike = std::is_convertible_v<T, std::string_view>;
+
+    /**
+     * @class Builder
+     * @brief Base class for object builders for specializations of Gadgets. Once complete
+     * the Builder can be passed to Widget::manage().
+     */
+    class Builder {
+        friend class Widget;
+    protected:
+        std::shared_ptr<Gadget> gadget;     ///< Where the Gadget is built.
+    public:
+        Builder() = delete;
+
+        explicit Builder(std::shared_ptr<Gadget> g) : gadget(std::move(g)) {}
+
+        /**
+         * @brief Manage the built Gadget by the specified Widget.
+         * @param widget the manager.
+         */
+        void operator >> (Widget &widget);
+
+        /**
+         * @brief Manage the built Gadget by the specified Widget.
+         * @param widget a std::shared_ptr to the manager.
+         */
+        void operator >> (std::shared_ptr<Widget> &widget);
+
+        /**
+         * @brief Manage the contents of this Builder by the contents of another Builder (presumably a WidgetBuilder.
+         * @details Probably more complicated than its worth.
+         * @param builder The WidgetBuilder.
+         */
+        void operator >> (Builder& builder);
+
+        /**
+         */
+        /**
+         * @brief Get a std::shared_ptr to a Widget from a builder, if it contains a Widget.
+         * @tparam T the type of gadget to extract.
+         * @return std::shared_ptr<T> which may be empty.
+         */
+        template<class T>
+        auto get() {
+            return std::dynamic_pointer_cast<Widget>(gadget);
+        }
+    };
+
+    class GadgetBuilder : public Builder {
+    public:
+        explicit GadgetBuilder(std::shared_ptr<Gadget> g) : Builder(std::move(g)) {}
+
+        GadgetBuilder() : Builder(std::make_shared<Gadget>()) {}
+
+        ~GadgetBuilder() = default;
+
+        /**
+         * @brief Set the Gadget name.
+         * @tparam T StringLike concept.
+         * @param t String like value.
+         * @return this builder
+         */
+        template<typename T>
+        requires StringLike<T>
+        auto name(T t) {
+            gadget->mName = t;
+            return *this;
+        }
+
+        /**
+         * @brief Set the desired layout rectangle.
+         * @param rectangle containing the desired layout
+         * @return this builder
+         */
+        auto layout(const Rectangle &rectangle) {
+            gadget->desiredLayout = rectangle;
+            return *this;
+        }
     };
 
     /**
@@ -65,7 +147,7 @@ namespace rose {
      * std::vector methods are exposed allowing colling programs to utilize
      * these methods and range based algorithms.
      */
-    class Widget: public std::enable_shared_from_this<Widget>, Gadget {
+    class Widget: public std::enable_shared_from_this<Widget>, public Gadget {
     protected:
         constexpr static GadgetType ThisType = GadgetType::Widget;
 
@@ -87,6 +169,8 @@ namespace rose {
          * @param gadget The Gadget to manage.
          */
         void manage(std::shared_ptr<Gadget> gadget);
+
+        void manage(Builder &builder);
 
         /**
          * @brief Get a pointer to the first Gadget on the list of managed Gadgets.
@@ -143,6 +227,15 @@ namespace rose {
         auto end() { return gadgetList.end(); }
 
         ~Widget() override = default;
+    };
+
+    class WidgetBuilder : public GadgetBuilder {
+    public:
+        explicit WidgetBuilder(std::shared_ptr<Widget> w) : GadgetBuilder(std::move(w)) {}
+
+        WidgetBuilder() : GadgetBuilder(std::make_shared<Widget>()) {}
+
+        ~WidgetBuilder() = default;
     };
 
 } // rose

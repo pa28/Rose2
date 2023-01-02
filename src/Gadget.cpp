@@ -21,7 +21,26 @@ namespace rose {
         gadgetList.push_back(std::move(gadget));
     }
 
+    void Widget::manage(Builder &builder) {
+        builder.gadget->managedBy(shared_from_this());
+        gadgetList.push_back(std::move(builder.gadget));
+    }
+
     void Widget::unManage(const std::shared_ptr<Gadget> &gadget) {
         gadgetList.erase(std::remove(gadgetList.begin(), gadgetList.end(), gadget), gadgetList.end());
+    }
+
+    void Builder::operator>>(Widget &widget) {
+        widget.manage(*this);
+    }
+
+    void Builder::operator>>(std::shared_ptr<Widget> &widget) {
+        widget->manage(*this);
+    }
+
+    void Builder::operator>>(Builder &builder) {
+        if (auto ptr = std::dynamic_pointer_cast<Widget>(builder.gadget); ptr) {
+            ptr->manage(*this);
+        }
     }
 } // rose
