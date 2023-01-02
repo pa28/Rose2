@@ -37,9 +37,9 @@ namespace rose {
 
         ~Size() = default;
 
-        auto operator <=> (const Size &) const = default;
-
         explicit operator bool () const { return set; }
+
+        auto operator <=> (const Size &) const = default;
     };
 
     /**

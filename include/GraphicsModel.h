@@ -90,7 +90,7 @@ namespace rose {
         constexpr RenderFlip() noexcept: mFlip(SDL_FLIP_NONE) {}
 
         /// Constructor -- user specified flipping.
-        constexpr explicit RenderFlip(SDL_RendererFlip flip) noexcept: mFlip(flip) {}
+        [[maybe_unused]] constexpr explicit RenderFlip(SDL_RendererFlip flip) noexcept: mFlip(flip) {}
     };
 
 
@@ -114,7 +114,8 @@ namespace rose {
         ~TextureRuntimeError() override = default;
 
         explicit TextureRuntimeError(const std::string &what) : std::runtime_error(what) {}
-        explicit TextureRuntimeError(const char *what) : std::runtime_error(what) {}
+
+        [[maybe_unused]] explicit TextureRuntimeError(const char *what) : std::runtime_error(what) {}
     };
 
     class Context;
@@ -155,7 +156,7 @@ namespace rose {
             return SDL_SetTextureBlendMode(get(), blendMode);
         }
 
-        [[nodiscard]] Size getSize() const {
+        [[maybe_unused]] [[nodiscard]] Size getSize() const {
             Size size{};
             SDL_QueryTexture(get(), nullptr, nullptr, &size.w, &size.h);
             return size;
@@ -168,7 +169,7 @@ namespace rose {
      *  @brief Flags used when creating a rendering context
      */
     enum RendererFlags : uint32_t {
-        RENDERER_SOFTWARE = static_cast<uint32_t>(SDL_RENDERER_SOFTWARE),         /**< The renderer is a software fallback */
+        RENDERER_SOFTWARE [[maybe_unused]] = static_cast<uint32_t>(SDL_RENDERER_SOFTWARE),         /**< The renderer is a software fallback */
         RENDERER_ACCELERATED = static_cast<uint32_t>(SDL_RENDERER_ACCELERATED),   /**< The renderer uses hardware acceleration */
         RENDERER_PRESENTVSYNC = static_cast<uint32_t>(SDL_RENDERER_PRESENTVSYNC), /**< Present is synchronized with the refresh rate */
         RENDERER_TARGETTEXTURE = static_cast<uint32_t>(SDL_RENDERER_TARGETTEXTURE) /**< The renderer supports rendering to texture */
@@ -249,7 +250,7 @@ namespace rose {
          * @param texture The texture to copy.
          * @return The return status of the API call.
          */
-        int renderCopy(const Texture &texture);
+        void renderCopy(const Texture &texture);
 
         /**
          * @brief Copy a Texture to the current render target using the size of the Texture and specified
@@ -258,7 +259,7 @@ namespace rose {
          * @param dst The destination Rectangle.
          * @return The return status of the API call.
          */
-        [[maybe_unused]] int renderCopy(const Texture &texture, Rectangle dst);
+        [[maybe_unused]] void renderCopy(const Texture &texture, Rectangle dst);
 
         /**
          * @brief Copy part of the Texture specified by the source Rectangle to the render target location
@@ -268,7 +269,7 @@ namespace rose {
          * @param dst The destination Rectangle.
          * @return The return status of API call.
          */
-        [[maybe_unused]] int renderCopy(const Texture &texture, Rectangle src, Rectangle dst);
+        [[maybe_unused]] void renderCopy(const Texture &texture, Rectangle src, Rectangle dst);
 
         /**
          * @brief Render with extensions.
@@ -279,8 +280,8 @@ namespace rose {
          * @param point Rotation Position if specified.
          * @return Status code returned by SDL_RenderCopyEx()
          */
-        [[maybe_unused]] int renderCopyEx(Texture &texture, Rectangle src, Rectangle dst, double angle, RenderFlip renderFlip,
-                         std::optional<Point> point = std::nullopt) const;
+        [[maybe_unused]] void renderCopyEx(Texture &texture, Rectangle src, Rectangle dst, double angle, RenderFlip renderFlip,
+                                           std::optional<Point> point = std::nullopt) const;
 
         /**
          * @brief Set the drawing color used for drawing Rectangles, lines and clearing.
@@ -311,21 +312,26 @@ namespace rose {
         /**
          * @brief Render a filled Rectangle.
          * @param rect The Rectangle
-         * @param color The fill color.
          * @return The status return from the SDL API.
          */
-//        int fillRect(Rectangle rect, color::RGBA color);
-        int fillRect(Rectangle rect);
+        [[nodiscard]] void fillRect(Rectangle rect) const;
 
         /**
          * @brief Render a pixel.
          * @param p The location of the pixel.
          * @return The status return from the SDL API.
          */
-//        int drawPoint(const Position<int> &p, const color::RGBA &color);
+        [[maybe_unused]] [[nodiscard]] void drawPoint(const Point &p) const;
 
-        [[maybe_unused]] [[nodiscard]] int drawLine(const Point &p0, const Point &p1) const;
+        /**
+         * @brief Render a line.
+         * @param p0 Start of the line.
+         * @param p1 End of the line
+         * @return The status return from the SDL API.
+         */
+        [[maybe_unused]] [[maybe_unused]] void drawLine(const Point &p0, const Point &p1) const;
     };
+
     /**
      * @class RenderTargetGuard
      * @brief Store the current render target replacing it with a new render target. When the object is
@@ -334,7 +340,7 @@ namespace rose {
     class RenderTargetGuard {
     protected:
         Context &mContext;                      ///< The Context being guarded
-        bool popped{false};                     ///< True if the target guard has already been popped off the stack.
+//        bool popped{false};                     ///< True if the target guard has already been popped off the stack.
         SDL_Texture *mLastTexture{nullptr};     ///< Save the current render target here.
         int status{0};                          ///< The return status from the last SDL API call.
 
@@ -469,7 +475,7 @@ namespace rose {
      * @brief Store the current clip rectangle replacing it with a new clip rectangle. When the object is
      * destroyed (by going out of scope) the old clip rectangle is set.
      */
-    class ClipRectangleGuard {
+    class [[maybe_unused]] ClipRectangleGuard {
     protected:
         Context &mContext;    ///< The renderer to which the clip rectangles are set.
         SDL_Rect mOldClip{};    ///< The old clip rectangle
@@ -497,7 +503,7 @@ namespace rose {
          * set a new clip rectangle. A new clip rectangle may be set using the assignment operators.
          * @param context The renderer to guard the clip rectangle of.
          */
-        explicit ClipRectangleGuard(Context &context) : mContext(context) {
+        [[maybe_unused]] explicit ClipRectangleGuard(Context &context) : mContext(context) {
             SDL_RenderGetClipRect(mContext.get(), &mOldClip);
         }
 
@@ -519,7 +525,7 @@ namespace rose {
          * @param w Width of the new clip rectangle.
          * @param h Height of the new clip rectangle.
          */
-        ClipRectangleGuard(Context &context, int x, int y, int w, int h)
+        [[maybe_unused]] ClipRectangleGuard(Context &context, int x, int y, int w, int h)
                 : ClipRectangleGuard(context, SDL_Rect{x, y, w, h}) {}
 
         /**
@@ -529,7 +535,7 @@ namespace rose {
          * @param renderer The renderer to set the clip rectangles on.
          * @param clip A, possibly invalid, RectangleInt.
          */
-        ClipRectangleGuard(Context &context, const Rectangle &clip) : mContext(context) {
+        [[maybe_unused]] ClipRectangleGuard(Context &context, const Rectangle &clip) : mContext(context) {
             SDL_RenderGetClipRect(mContext.get(), &mOldClip);
             SDL_Rect rect{clip.point.x, clip.point.y, clip.size.w, clip.size.h};
             mStatus = SDL_RenderSetClipRect(mContext.get(), &rect);
@@ -557,7 +563,7 @@ namespace rose {
             return *this;
         }
 
-        ClipRectangleGuard &intersection(Rectangle &clip) {
+        [[maybe_unused]] ClipRectangleGuard &intersection(Rectangle &clip) {
             SDL_Rect current;
             SDL_RenderGetClipRect(mContext.get(), &current);
             if (SDL_RectEmpty(&current)) {
@@ -577,11 +583,11 @@ namespace rose {
      * @brief Rose object error codes.
      */
     enum class RoseErrorCode {
-        OK,                         ///< No error
-        ROSE_EXCEPTION,             ///< Exception thrown and caught in main().
+        OK [[maybe_unused]],                         ///< No error
+        ROSE_EXCEPTION [[maybe_unused]],             ///< Exception thrown and caught in main().
         SDL_WINDOW_CREATE,          ///< Error while creating the SDL_Window
         SDL_RENDERER_CREATE,        ///< Error while creating the SDL_Renderer
-        XDG_PATH_FAIL,              ///< Insufficient information to generate standard XDG Base Directories.
+        XDG_PATH_FAIL [[maybe_unused]],              ///< Insufficient information to generate standard XDG Base Directories.
     };
 
     /**
@@ -633,32 +639,32 @@ namespace rose {
             return static_cast<size_t>(SDL_GetWindowDisplayIndex(mSdlWindow.get()));
         }
 
-        Rectangle displayBounds() {
+        [[maybe_unused]] Rectangle displayBounds() {
             return mDisplayBounds.at(currentDisplayIndex());
         }
 
-        Rectangle displayBounds(size_t displayIndex) {
+        [[maybe_unused]] Rectangle displayBounds(size_t displayIndex) {
             if (displayIndex >= mDisplayBounds.size())
                 return mDisplayBounds.at(0);
 
             return mDisplayBounds.at(displayIndex);
         }
 
-        Rectangle screenRectangle() {
+        [[maybe_unused]] Rectangle screenRectangle() {
             Rectangle screenRectangle{};
             SDL_GetWindowSize(mSdlWindow.get(), &screenRectangle.size.w, &screenRectangle.size.h);
             return screenRectangle;
         }
 
-        void redrawBackground() { mRedrawBackground = true; }
+        [[maybe_unused]] void redrawBackground() { mRedrawBackground = true; }
 
-        [[nodiscard]] Padding windowBorders() const noexcept {
+        [[maybe_unused]] [[nodiscard]] Padding windowBorders() const noexcept {
             Padding p{};
             SDL_GetWindowBordersSize(mSdlWindow.get(), &p.t, &p.l, &p.b, &p.r);
             return p;
         }
 
-        SdlWindow& getSdlWindow() {
+        [[maybe_unused]] SdlWindow& getSdlWindow() {
             return mSdlWindow;
         }
     };
