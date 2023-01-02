@@ -123,6 +123,13 @@ namespace rose {
                     "Arguments to Size() must be convertable to ScreenCoordType");
         }
 
+        /**
+         * @brief Construct a Rectangle from a Point and a Size.
+         * @param point The Point.
+         * @param size The Size.
+         */
+        [[maybe_unused]] Rectangle(const Point& point, const Size &size) : point(point), size(size) {}
+
         Rectangle& operator=(const Point &p) {
             point = p;
             return *this;

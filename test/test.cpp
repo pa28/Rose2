@@ -76,7 +76,7 @@ int main(int argc, char **argv) {
 //    widget1->manage(widget->front());
 
     auto widget = WidgetBuilder{}.name("widget").layout(Rectangle{100, 100, 800, 600}).get<Widget>();
-    widget << GadgetBuilder{}.name("test").layout(Rectangle{100,100,300,300});
+    widget << GadgetBuilder{}.name("test").layout(100,100,300,300);
 
     Application application(argc, argv);
     application.initializeGraphics();

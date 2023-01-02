@@ -97,8 +97,6 @@ namespace rose {
         void operator >> (Builder& builder);
 
         /**
-         */
-        /**
          * @brief Get a std::shared_ptr to a Widget from a builder, if it contains a Widget.
          * @tparam T the type of gadget to extract.
          * @return std::shared_ptr<T> which may be empty.
@@ -138,10 +136,42 @@ namespace rose {
          * @param rectangle containing the desired layout
          * @return this builder
          */
-        auto layout(const Rectangle &rectangle) {
+        [[maybe_unused]] auto layout(const Rectangle &rectangle) {
             gadget->desiredLayout = rectangle;
             return *this;
         }
+
+        /**
+         * @brief Set the desired layout rectangle from a Point and Size.
+         * @param point The Point.
+         * @param size The Size.
+         * @return this builder.
+         */
+        [[maybe_unused]] auto layout(const Point &point, const Size &size) {
+            gadget->desiredLayout = Rectangle(point, size);
+        }
+
+        /**
+         * @brief Set the desired layout rectangle from individual values.
+         * @tparam Tx Type of X
+         * @tparam Ty Type of Y
+         * @tparam Tw Type of W
+         * @tparam Th Type of H
+         * @param X The X coordinate
+         * @param Y The Y coordinate
+         * @param W The Width
+         * @param H The Height
+         * @return this builder.
+         */
+        template<typename Tx, typename Ty, typename Tw, typename Th>
+        [[maybe_unused]] auto layout(Tx X, Ty Y, Tw W, Th H) {
+            static_assert(std::is_convertible_v<Tx, ScreenCoordType> && std::is_convertible_v<Ty, ScreenCoordType> &&
+                          std::is_convertible_v<Tw, ScreenCoordType> && std::is_convertible_v<Th, ScreenCoordType>,
+                          "Arguments to Size() must be convertable to ScreenCoordType");
+            gadget->desiredLayout = Rectangle(X, Y, W, H);
+            return *this;
+        }
+
     };
 
     /**
@@ -246,6 +276,7 @@ namespace rose {
 
 /**
  * @brief Manage the built Gadget by the specified Widget
+ * @tparam B Concept rose::IsBuilder<B> requires B is derived from Builder.
  * @param widget The managing Widget
  * @param builder The builder of the Gadget
  */
