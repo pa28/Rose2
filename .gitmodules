@@ -1,3 +1,9 @@
 [submodule "src/util"]
 	path = src/util
 	url = git@github.com:pa28/ve3ysh_utilities.git
+[submodule "src/fmt"]
+	path = src/fmt
+	url = https://github.com/fmtlib/fmt.git
+[submodule "fmt"]
+	path = fmt
+	url = https://github.com/fmtlib/fmt.git
