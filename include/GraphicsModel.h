@@ -457,11 +457,12 @@ namespace rose {
          * @param color The Color to set.
          * @return The SDL2 API return status code.
          */
-        int setDrawColor(color::RGBA color) {
-            return setDrawColor(color.toSdlColor());
+        [[maybe_unused]] void setDrawColor(Color& color) {
+            if (setDrawColor(color.sdlColor()))
+                throw DrawColorGuardException(fmt::format("DrawColorGuard exception {}: {}",
+                                                          __FUNCTION__, SDL_GetError()));
         }
     };
-#endif
 
     /**
      * @class ClipRectangleGuard

@@ -8,6 +8,7 @@
 #include <type_traits>
 #include <compare>
 #include <iostream>
+#include <fmt/format.h>
 
 namespace rose {
 
@@ -175,9 +176,97 @@ namespace rose {
 
             return Rectangle{x5, y5, x6 - x5, y6 - y5};
         }
-
     };
 } // rose
+
+namespace fmt {
+    template<>
+    class formatter<rose::Point> {
+        char presentation_ = 'd';
+    public:
+        // parse format and store it
+        constexpr auto parse(format_parse_context &ctx) {
+            auto i = ctx.begin(), end = ctx.end();
+            if (i != end && (*i == 'd' || *i == 'o')) {
+                presentation_ = *i++;
+            }
+            if (i != end && *i != '}') {
+                throw format_error("Invalid rectangle format.");
+            }
+            return i;
+        }
+
+        // format a value using stored specification:
+        template<class FmtContext>
+        constexpr auto format(const rose::Point &p, FmtContext &ctx) const {
+            // note: we can't use ternary operator '?:' in a constexpr
+            switch (presentation_) {
+                default:
+                    // 'ctx.out()' is an output iterator
+                case 'd':
+                    return format_to(ctx.out(), "[{:d},{:d}]", p.x, p.y);
+            }
+        }
+    };
+
+    template<>
+    class formatter<rose::Size> {
+        char presentation_ = 'd';
+    public:
+        // parse format and store it
+        constexpr auto parse(format_parse_context &ctx) {
+            auto i = ctx.begin(), end = ctx.end();
+            if (i != end && (*i == 'd' || *i == 'o')) {
+                presentation_ = *i++;
+            }
+            if (i != end && *i != '}') {
+                throw format_error("Invalid rectangle format.");
+            }
+            return i;
+        }
+
+        // format a value using stored specification:
+        template<class FmtContext>
+        constexpr auto format(const rose::Size &s, FmtContext &ctx) const {
+            // note: we can't use ternary operator '?:' in a constexpr
+            switch (presentation_) {
+                default:
+                    // 'ctx.out()' is an output iterator
+                case 'd':
+                    return format_to(ctx.out(), "[{:d},{:d}]", s.w, s.h);
+            }
+        }
+    };
+
+    template<>
+    class formatter<rose::Rectangle> {
+        char presentation_ = 'd';
+    public:
+        // parse format and store it
+        constexpr auto parse(format_parse_context &ctx) {
+            auto i = ctx.begin(), end = ctx.end();
+            if (i != end && (*i == 'd' || *i == 'o')) {
+                presentation_ = *i++;
+            }
+            if (i != end && *i != '}') {
+                throw format_error("Invalid rectangle format.");
+            }
+            return i;
+        }
+
+        // format a value using stored specification:
+        template<class FmtContext>
+        constexpr auto format(const rose::Rectangle &r, FmtContext &ctx) const {
+            // note: we can't use ternary operator '?:' in a constexpr
+            switch (presentation_) {
+                default:
+                    // 'ctx.out()' is an output iterator
+                case 'd':
+                    return format_to(ctx.out(), "[{:d},{:d},{:d},{:d}]", r.point.x, r.point.y, r.size.w, r.size.h);
+            }
+        }
+    };
+}
 
 inline rose::Size operator - (const rose::Point &p0, const rose::Point &p1) {
     return {p0.x - p1.x, p0.y - p1.y};

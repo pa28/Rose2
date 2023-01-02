@@ -27,16 +27,18 @@ include_directories(${CURLPP_INCLUDE_DIR})
 include_directories(${SOCI_INCLUDE_DIRS})
 include_directories(${LOCALTIME_INCLUDE_DIR})
 
-include_directories(include src/util)
+include_directories(include src/util fmt/include)
+
+list(APPEND LIB_FMT fmt/src/format.cc fmt/src/os.cc)
 
 list(APPEND EXTRA_LIBS GL Xxf86vm Xrandr Xinerama Xcursor Xi X11 sqlite3 pthread dl rt m stdc++fs uuid)
 
 list(APPEND RoseLibraries Rose2 ${SDL2_LIBRARY} ${SDL2IMAGE_LIBRARY} ${SDL2TTF_LIBRARY} ${CURLPP_LIBRARIES} ${SOCI_LIBRARY}
         ${SOCI_sqlite3_PLUGIN} ${LOCALTIME_LIBRARY} ${EXTRA_LIBS})
 
-list(APPEND ROSE_SRC src/Application.cpp src/GraphicsModel.cpp src/Rose.cpp src/Gadget.cpp src/Manager.cpp)
+list(APPEND ROSE_SRC src/Application.cpp src/GraphicsModel.cpp src/Rose.cpp src/Gadget.cpp src/Manager.cpp src/Color.cpp)
 
-add_library(Rose2 SHARED ${ROSE_SRC})
+add_library(Rose2 SHARED ${ROSE_SRC} ${LIB_FMT})
 
 add_executable(Test test/test.cpp)
 target_link_libraries(Test ${RoseLibraries})

@@ -26,54 +26,64 @@ namespace rose {
         destination.setBlendMode(SDL_BLENDMODE_BLEND);
     }
 
-    int Context::renderCopy(const Texture &texture) {
+    void Context::renderCopy(const Texture &texture) {
         if (!texture) {
-            std::cerr << __PRETTY_FUNCTION__ << "Invalid Texture.\n";
-            return -1;
+            throw ContextException(fmt::format("{}: {}", __FUNCTION__, "Invalid Texture"));
         }
-        return SDL_RenderCopy(mRenderer.get(), texture.get(), nullptr, nullptr);
+        if (SDL_RenderCopy(mRenderer.get(), texture.get(), nullptr, nullptr))
+            throw ContextException(fmt::format("{}: {}", __FUNCTION__, SDL_GetError()));
     }
 
-    [[maybe_unused]] int Context::renderCopy(const Texture &texture, Rectangle dst) {
+    [[maybe_unused]] void Context::renderCopy(const Texture &texture, Rectangle dst) {
         SDL_Rect dstRect{dst.point.x, dst.point.y, dst.size.w, dst.size.h};
         if (!texture) {
-            std::cerr << __PRETTY_FUNCTION__ << "Invalid Texture.\n";
-            return -1;
+            throw ContextException(fmt::format("{}: {}", __FUNCTION__, "Invalid Texture"));
         }
 
-        return SDL_RenderCopy(mRenderer.get(), texture.get(), nullptr, &dstRect);
+        if (SDL_RenderCopy(mRenderer.get(), texture.get(), nullptr, &dstRect))
+            throw ContextException(fmt::format("{}: {}", __FUNCTION__, SDL_GetError()));
     }
 
-    [[maybe_unused]] int Context::renderCopy(const Texture &texture, Rectangle src, Rectangle dst) {
+    [[maybe_unused]] void Context::renderCopy(const Texture &texture, Rectangle src, Rectangle dst) {
         SDL_Rect srcRect{src.point.x, src.point.y, src.size.w, src.size.h};
         SDL_Rect dstRect{dst.point.x, dst.point.y, src.size.w, src.size.h};
         if (!texture) {
-            std::cerr << __PRETTY_FUNCTION__ << "Invalid Texture.\n";
-            return -1;
+            throw ContextException(fmt::format("{}: {}", __FUNCTION__, "Invalid Texture"));
         }
-        return SDL_RenderCopy(mRenderer.get(), texture.get(), &srcRect, &dstRect);
+        if (SDL_RenderCopy(mRenderer.get(), texture.get(), &srcRect, &dstRect))
+            throw ContextException(fmt::format("{}: {}", __FUNCTION__, SDL_GetError()));
     }
 
-    [[maybe_unused]] int Context::renderCopyEx(Texture &texture, Rectangle src, Rectangle dst, double angle, RenderFlip renderFlip,
-                              std::optional<Point> point) const {
+    [[maybe_unused]] void Context::renderCopyEx(Texture &texture, Rectangle src, Rectangle dst, double angle, RenderFlip renderFlip,
+                                                std::optional<Point> point) const {
         SDL_Rect srcRect{src.point.x, src.point.y, src.size.w, src.size.h};
         SDL_Rect dstRect{dst.point.x, dst.point.y, dst.size.w, dst.size.h};
         if (point) {
             SDL_Point sdlPoint;
             sdlPoint.x = point->x;
             sdlPoint.y = point->y;
-            return SDL_RenderCopyEx(get(), texture.get(), &srcRect, &dstRect, angle, &sdlPoint, renderFlip.mFlip);
+            if (SDL_RenderCopyEx(get(), texture.get(), &srcRect, &dstRect, angle, &sdlPoint, renderFlip.mFlip))
+                throw ContextException(fmt::format("{}: {}", __FUNCTION__, SDL_GetError()));
         } else {
-            return SDL_RenderCopyEx(get(), texture.get(), &srcRect, &dstRect, angle, nullptr, renderFlip.mFlip);
+            if (SDL_RenderCopyEx(get(), texture.get(), &srcRect, &dstRect, angle, nullptr, renderFlip.mFlip))
+                throw ContextException(fmt::format("{}: {}", __FUNCTION__, SDL_GetError()));
         }
     }
 
-    int Context::setDrawColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
-        return SDL_SetRenderDrawColor(get(), r, g, b, a);
+    [[maybe_unused]] void Context::setDrawColor(Color color) const {
+        auto sdlColor = color.sdlColor();
+        if (SDL_SetRenderDrawColor(get(), sdlColor.r, sdlColor.g, sdlColor.b, sdlColor.a))
+            throw ContextException(fmt::format("{}: {}", __FUNCTION__, SDL_GetError()));
     }
 
-    [[maybe_unused]] int Context::drawLine(const Point &p0, const Point &p1) const {
-        return SDL_RenderDrawLine(get(), p0.x, p0.y, p1.x, p1.y);
+    void Context::setDrawColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a) const {
+        if (SDL_SetRenderDrawColor(get(), r, g, b, a))
+            throw ContextException(fmt::format("{}: {}", __FUNCTION__, SDL_GetError()));
+    }
+
+    [[maybe_unused]] void Context::drawLine(const Point &p0, const Point &p1) const {
+        if (SDL_RenderDrawLine(get(), p0.x, p0.y, p1.x, p1.y))
+            throw ContextException(fmt::format("{}: {}", __FUNCTION__, SDL_GetError()));
     }
 
     int Context::fillRect(Rectangle rect) {
@@ -82,7 +92,13 @@ namespace rose {
         sdlRect.w = rect.size.w;
         sdlRect.x = rect.point.x;
         sdlRect.y = rect.point.y;
-        return SDL_RenderFillRect(get(), &sdlRect);
+        if (SDL_RenderFillRect(get(), &sdlRect))
+            throw ContextException(fmt::format("{}: {}", __FUNCTION__, SDL_GetError()));
+    }
+
+    [[maybe_unused]] void Context::drawPoint(const Point &p) const {
+        if (SDL_RenderDrawPoint(get(), p.x, p.y))
+            throw ContextException(fmt::format("{}: {}", __FUNCTION__, SDL_GetError()));
     }
 
     /**
@@ -111,18 +127,14 @@ namespace rose {
     [[maybe_unused]] Texture::Texture(Context &context, SDL_PixelFormatEnum format, SDL_TextureAccess access, int width, int height) {
         reset(SDL_CreateTexture(context.get(), format, access, width, height));
         if (!operator bool()) {
-            throw TextureRuntimeError(
-                    StringCompositor("SDL_CreateTexture: (", width, 'x', height, ") -- ",
-                                     SDL_GetError()));
+            throw TextureRuntimeError(fmt::format("SDL_CreateTexture: ({}x{}) -- {}", width, height, SDL_GetError()));
         }
     }
 
     [[maybe_unused]] Texture::Texture(Context &context, Size size) {
         reset(SDL_CreateTexture(context.get(), SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, size.w, size.h));
         if (!operator bool()) {
-            throw TextureRuntimeError(
-                    StringCompositor("SDL_CreateTexture: (", size.w, 'x', size.h, ") -- ",
-                                     SDL_GetError()));
+            throw TextureRuntimeError(fmt::format("SDL_CreateTexture: ({}x{}) -- {}", size.w, size.h, SDL_GetError()));
         }
     }
 
@@ -171,10 +183,9 @@ namespace rose {
         if (mSdlWindow) {
             SDL_version sdlVersion;
             SDL_VERSION(&sdlVersion);
-            std::cout << "    Number of displays: " << SDL_GetNumVideoDisplays() << ", On: "
-                      << SDL_GetWindowDisplayIndex(mSdlWindow.get()) << '\n'
-                      << "    Version " << (int) sdlVersion.major << '.' << (int) sdlVersion.minor << '.'
-                      << (int) sdlVersion.patch << '\n';
+            fmt::print("   Number of displays: {}, On: {}\n", SDL_GetNumVideoDisplays(),
+                       SDL_GetWindowDisplayIndex(mSdlWindow.get()));
+            fmt::print("   Version: {}.{}.{}\n", (int) sdlVersion.major, (int) sdlVersion.minor, (int) sdlVersion.patch);
             for (int i = 0; i < SDL_GetNumVideoDisplays(); ++i) {
                 SDL_Rect displayBounds{0, 0, 0, 0};
 
@@ -183,7 +194,7 @@ namespace rose {
                 } else {
                     mDisplayBounds.emplace_back(
                             displayBounds.x, displayBounds.y, displayBounds.w, displayBounds.h);
-                    std::cout << "    Display " << i << ": " << mDisplayBounds.back() << '\n';
+                    fmt::print("   Display {}: {:o}\n", i, mDisplayBounds.back());
                 }
             }
 
