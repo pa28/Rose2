@@ -146,8 +146,7 @@ namespace rose {
     /**
      * GraphicsModel
      */
-    bool GraphicsModel::initialize(const std::string &title, Size initialSize, const Point &initialPosition,
-                                   uint32_t extraFlags) {
+    bool GraphicsModel::initialize() {
 //        Settings &settings{Settings::getSettings()};
 //        SDL_RendererInfo info;
 
@@ -159,9 +158,6 @@ namespace rose {
 
         atexit(SDL_Quit);
 
-//        SDL_Window *window;        // Declare a pointer to an SDL_Window
-        uint32_t flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
-
         SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
         SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
         SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
@@ -169,55 +165,6 @@ namespace rose {
         SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
         SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
         SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-
-        // Create an application window with the following settings:
-        mSdlWindow.reset(SDL_CreateWindow(
-                (title.empty() ? "SDL2 window" : std::string{title}.c_str()),         //    const char* title
-                initialPosition.x,        //    int x: initial x position
-                initialPosition.y,        //    int y: initial y position
-                initialSize.w,            //    int w: width, in pixels
-                initialSize.h,            //    int h: height, in pixels
-                flags | extraFlags
-        ));
-
-        if (mSdlWindow) {
-            SDL_version sdlVersion;
-            SDL_VERSION(&sdlVersion);
-            fmt::print("   Number of displays: {}, On: {}\n", SDL_GetNumVideoDisplays(),
-                       SDL_GetWindowDisplayIndex(mSdlWindow.get()));
-            fmt::print("   Version: {}.{}.{}\n", (int) sdlVersion.major, (int) sdlVersion.minor, (int) sdlVersion.patch);
-            for (int i = 0; i < SDL_GetNumVideoDisplays(); ++i) {
-                SDL_Rect displayBounds{0, 0, 0, 0};
-
-                if (SDL_GetDisplayBounds(i, &displayBounds)) {
-                    mDisplayBounds.emplace_back();
-                } else {
-                    mDisplayBounds.emplace_back(
-                            displayBounds.x, displayBounds.y, displayBounds.w, displayBounds.h);
-                    fmt::print("   Display {}: {:o}\n", i, mDisplayBounds.back());
-                }
-            }
-
-            mContext = Context{mSdlWindow, -1, RendererFlags::RENDERER_ACCELERATED
-                                               | RendererFlags::RENDERER_TARGETTEXTURE
-                                               | RendererFlags::RENDERER_PRESENTVSYNC};
-
-            if (mContext) {
-                mContext.setDrawBlendMode(SDL_BLENDMODE_BLEND);
-            } else {
-                ErrorCode = RoseErrorCode::SDL_RENDERER_CREATE;
-                std::cerr << "Could not create SDL_Renderer: " << SDL_GetError() << '\n';
-                return false;
-            }
-        } else {
-            std::string sdlError{SDL_GetError()};
-            std::cerr << "Could not create SDL_Window: " << sdlError << '\n';
-            if (sdlError == "Could not initialize EGL") {
-                throw std::runtime_error("If X11 is running, check DISPLAY environment variable.");
-            }
-            ErrorCode = RoseErrorCode::SDL_WINDOW_CREATE;
-            return false;
-        }
         return true;
     }
 

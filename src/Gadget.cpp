@@ -13,6 +13,11 @@ namespace rose {
         manager = std::move(widget);
     }
 
+    void Gadget::draw(Context &context) {
+        DrawColorGuard colorGuard{context, background};
+        context.fillRect(desiredLayout);
+    }
+
     void Widget::manage(std::shared_ptr<Gadget> gadget) {
         if (auto manager = gadget->getManager(); manager) {
             manager->unManage(gadget);
@@ -28,6 +33,14 @@ namespace rose {
 
     void Widget::unManage(const std::shared_ptr<Gadget> &gadget) {
         gadgetList.erase(std::remove(gadgetList.begin(), gadgetList.end(), gadget), gadgetList.end());
+    }
+
+    void Widget::draw(Context &context) {
+        Gadget::draw(context);
+
+        for (const auto& gadget : gadgetList) {
+            gadget->draw(context);
+        }
     }
 
     void Builder::operator>>(Widget &widget) {

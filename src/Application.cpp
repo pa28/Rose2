@@ -12,14 +12,12 @@
 
 namespace rose {
     Application::Application(int argc, char **argv) : mInputParser(argc, argv) {
-
         // Determine if a keyboard is attached.
         std::regex kbPathRegEx{std::string{KeyboardPathRegEx}.c_str()};
         for(auto& p: std::filesystem::directory_iterator(UsbDeviceByPath)) {
             if (mKeyboardFound = std::regex_match(p.path().string(), kbPathRegEx); mKeyboardFound)
                 break;
         }
-
     }
 
     void Application::basicEventLoop() {
@@ -36,28 +34,39 @@ namespace rose {
                 }
             }
 
-            applicationDraw(mGraphicsModel.context());
+            applicationDraw();
 
             fps.next();
         }
     }
 
-    void Application::applicationDraw(Context& context) {
-        context.setDrawColor(0x00, 0x7f, 0x00, 0xff);
-        context.renderClear();
-        context.setDrawColor(0x00, 0x00, 0x7f, 0xff);
-        context.fillRect(Rectangle(120, 160, 680, 440));
-        context.renderPresent();
+    void Application::applicationDraw() {
+        for (const auto &window : mWindows) {
+            window->draw();
+//            window->context().setDrawColor(0x00, 0x7f, 0x00, 0xff);
+//            window->context().renderClear();
+//            window->context().setDrawColor(0x00, 0x00, 0x7f, 0xff);
+//            window->context().fillRect(Rectangle(120, 160, 680, 440));
+            window->context().renderPresent();
+        }
     }
 
-    bool Application::initializeGraphics(uint32_t extraFlags) {
-        if (!mWidowSizePos)
-            mWidowSizePos = Rectangle(100,100,800,600);
+    bool Application::initializeGraphics() {
+        if (!mWidowSizePos) {
+            mWidowSizePos = Rectangle(static_cast<int>(SDL_WINDOWPOS_CENTERED_DISPLAY(1)),
+                                      static_cast<int>(SDL_WINDOWPOS_CENTERED_DISPLAY(1)),
+                                      800, 600);
+        }
         if (mWindowName.empty()) {
             std::filesystem::path appPath{mInputParser.programPathName};
             mWindowName = appPath.filename().string();
         }
-        return mGraphicsModel.initialize(mWindowName, mWidowSizePos.size, mWidowSizePos.point, extraFlags);
+        return mGraphicsModel.initialize();
+    }
+
+    std::string Application::applicationName() const {
+        std::filesystem::path appPath = mInputParser.programPathName;
+        return appPath.filename().string();
     }
 
 } // rose

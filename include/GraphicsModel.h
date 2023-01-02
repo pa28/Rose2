@@ -612,7 +612,7 @@ namespace rose {
     public:
         RoseErrorCode ErrorCode{RoseErrorCode::OK};
 
-        bool initialize(const std::string &title, Size initialSize, const Point& initialPosition, uint32_t extraFlags);
+        bool initialize();
 
 //        void eventLoop(std::shared_ptr<Screen> &screen);
 

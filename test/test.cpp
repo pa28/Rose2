@@ -78,6 +78,16 @@ int main(int argc, char **argv) {
 
     Application application(argc, argv);
     application.initializeGraphics();
+    application.createWindow(application.applicationName(), Size(800,480), Point::CenterScreen(0), 0);
+
+    auto container = WidgetBuilder{}.name(application.applicationName())
+            .layout(Point(0,0), Size(800,480))
+            .background(color::TransparentBlack);
+
+    GadgetBuilder{}.name("Map").layout(Point(140,150),Size(660,330))
+            .background(Color(0.0, 0.5, 0.0, 1.0)) >> container;
+
+    application.begin()->get()->emplace_back(container.get<Widget>());
     application.run();
 //    mGraphicsModel.initialize("Test", Size{300,300}, Point{100, 100}, 0);
 //    mGraphicsModel.eventLoop();

@@ -12,6 +12,9 @@
 #include <Rose.h>
 #include <InputParser.h>
 #include <GraphicsModel.h>
+#include <Window.h>
+#include <vector>
+#include <InputParser.h>
 
 namespace rose {
 
@@ -27,6 +30,8 @@ namespace rose {
         bool mKeyboardFound{false};     ///< Set to true if a keyboard is attached at startup.
         bool mRunEventLoop{true};       ///< The event loop runs while this is true.
 
+        std::vector<std::unique_ptr<Window>>    mWindows{};
+
         InputParser mInputParser;
 
         GraphicsModel mGraphicsModel;
@@ -37,7 +42,7 @@ namespace rose {
 
         void basicEventLoop();
 
-        void applicationDraw(Context& context);
+        void applicationDraw();
 
     public:
         Application() = delete;
@@ -54,11 +59,24 @@ namespace rose {
             return *this;
         }
 
-        bool initializeGraphics(uint32_t extraFlags = 0);
+        bool initializeGraphics();
+
+        auto begin() { return mWindows.begin(); }
+
+        auto end() { return mWindows.end(); }
+
+        template<class S>
+        requires StringLike<S>
+        void createWindow(S title, const Size &size, const Point &point, unsigned flags) {
+            mWindows.emplace_back(std::make_unique<Window>());
+            mWindows.back()->initialize(title, size, point, flags);
+        }
 
         void run() {
             basicEventLoop();
         }
+
+        [[nodiscard]] std::string applicationName() const;
     };
 
 #if 0

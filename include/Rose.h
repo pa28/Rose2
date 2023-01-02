@@ -5,12 +5,16 @@
 #ifndef ROSE2_ROSE_H
 #define ROSE2_ROSE_H
 
+#include <SDL.h>
 #include <type_traits>
 #include <compare>
 #include <iostream>
 #include <fmt/format.h>
 
 namespace rose {
+
+    template<class T>
+    concept StringLike = std::is_convertible_v<T, std::string_view>;
 
     enum class GadgetType {
         Gadget,
@@ -86,6 +90,11 @@ namespace rose {
 
         Point operator - (const Size& size) {
             return Point(*this) -= size;
+        }
+
+        static Point CenterScreen(unsigned int screen = 0) {
+            auto pos = static_cast<int>(SDL_WINDOWPOS_CENTERED_DISPLAY(screen));
+            return Point{pos, pos };
         }
     };
 

@@ -16,7 +16,9 @@
 #include <utility>
 #include <algorithm>
 #include <concepts>
-#include "Rose.h"
+#include <Rose.h>
+#include <Color.h>
+#include <GraphicsModel.h>
 
 namespace rose {
 
@@ -33,8 +35,9 @@ namespace rose {
         std::string_view mName{};
         std::shared_ptr<Widget> manager{};  ///< Pointer to the current manager of this Gadget.
 
-        [[maybe_unused]] Rectangle desiredLayout{};          ///< The desired layout set by the Gadget or constructor.
-        [[maybe_unused]] Rectangle managedLayout{};          ///< The layout set by the manager if it provides layout management.
+        [[maybe_unused]] Rectangle desiredLayout{};     ///< The desired layout set by the Gadget or constructor.
+        [[maybe_unused]] Rectangle managedLayout{};     ///< The layout set by the manager if it provides layout management.
+        [[maybe_unused]] Color background{};            ///< The background color.
 
     public:
         Gadget() = default;
@@ -57,11 +60,10 @@ namespace rose {
          */
         auto getManager() { return manager; }
 
+        virtual void draw(Context& context);
+
         virtual ~Gadget() = default;
     };
-
-    template<class T>
-            concept StringLike = std::is_convertible_v<T, std::string_view>;
 
     /**
      * @class Builder
@@ -103,7 +105,7 @@ namespace rose {
          */
         template<class T>
         auto get() {
-            return std::dynamic_pointer_cast<Widget>(gadget);
+            return std::dynamic_pointer_cast<T>(gadget);
         }
     };
 
@@ -149,6 +151,7 @@ namespace rose {
          */
         [[maybe_unused]] auto layout(const Point &point, const Size &size) {
             gadget->desiredLayout = Rectangle(point, size);
+            return *this;
         }
 
         /**
@@ -172,6 +175,10 @@ namespace rose {
             return *this;
         }
 
+        [[maybe_unused]] auto background(const Color& color) {
+            gadget->background = color;
+            return *this;
+        }
     };
 
     /**
@@ -259,6 +266,8 @@ namespace rose {
          * @return The return value of vector::end().
          */
         auto end() { return gadgetList.end(); }
+
+        void draw(Context& context) override;
 
         ~Widget() override = default;
     };
