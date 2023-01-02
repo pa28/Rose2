@@ -9,6 +9,7 @@
 #include <Rose.h>
 #include <Gadget.h>
 #include <Application.h>
+#include <Color.h>
 
 using namespace rose;
 

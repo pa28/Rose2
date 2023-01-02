@@ -9,8 +9,10 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 
-#include "GraphicsModel.h"
-#include "Utilities.h"
+#include <GraphicsModel.h>
+#include <Color.h>
+
+#include <fmt/format.h>
 
 namespace rose {
 
@@ -289,4 +291,14 @@ namespace rose {
         mFrame++;
     }
 #endif
+
+    DrawColorGuard::DrawColorGuard(Context &context, SDL_Color color) : mContext(context) {
+        mStatus = 0;
+        if (int status = SDL_GetRenderDrawColor( mContext.get(), &mOldColor.r, &mOldColor.g,
+                                                 &mOldColor.b, &mOldColor.a); status == 0 ) {
+            mStatus = SDL_SetRenderDrawColor( mContext.get(), color.r, color.g, color.b, color.a);
+        } else {
+            mStatus = status;
+        }
+    }
 } // rose

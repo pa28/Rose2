@@ -19,6 +19,9 @@
 #include <functional>
 #include <SDL.h>
 #include <Rose.h>
+#include "Color.h"
+#include "Utilities.h"
+#include "fmt/format.h"
 
 namespace rose {
     /**
@@ -284,9 +287,17 @@ namespace rose {
          * @param color The new drawing Color.
          * @return Status code returned by the API.
          */
-//        int setDrawColor(color::RGBA color);
+        [[maybe_unused]] [[nodiscard]] void setDrawColor(Color color) const;
 
-        int setDrawColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a);
+        /**
+         * @brief Set the drawing color used or drawing Rectangles, lines and clearing.
+         * @param r red channel
+         * @param g green channel
+         * @param b blue channel
+         * @param a alpha channel
+         * @return Status code returned by the API.
+         */
+        void setDrawColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a) const;
 
         /**
          * @brief Set the drawing color used for drawing Rectangles, lines and clearing.
@@ -362,13 +373,34 @@ namespace rose {
         [[maybe_unused]] int setRenderTarget(Texture &texture);
     };
 
-#if 0
+    /**
+     * @class DrawColorGuardException
+     * @brief Thrown by DrawColorGuard on errors.
+     */
+    class DrawColorGuardException : public std::runtime_error {
+    public:
+        explicit DrawColorGuardException(const std::string &what_arg) : std::runtime_error(what_arg) {}
+
+        [[maybe_unused]] explicit DrawColorGuardException(const char *what_arg) : std::runtime_error(what_arg) {}
+    };
+
+    /**
+     * @class ContextException
+     * @brief Thrown by SDL API errors in Context methods.
+     */
+    class ContextException : public std::runtime_error {
+    public:
+        explicit ContextException(const std::string &what_arg) : std::runtime_error(what_arg) {}
+
+        [[maybe_unused]] explicit ContextException(const char *what_arg) : std::runtime_error(what_arg) {}
+    };
+
     /**
      * @class DrawColorGuard
      * @brief Store the current draw color replacing it with a new draw color. When the object is
      * destroyed (by going out of scope) the old draw color is set.
      */
-    class DrawColorGuard {
+    class [[maybe_unused]] DrawColorGuard {
     protected:
         Context &mContext;      ///< The renderer to which the draw colors are set.
         SDL_Color mOldColor{};  ///< The old draw color
@@ -403,7 +435,7 @@ namespace rose {
          * @param renderer The renderer to set the color on.
          * @param color The rose::Color.
          */
-        DrawColorGuard(Context &context, color::RGBA color);
+        [[maybe_unused]] DrawColorGuard(Context &context, Color& color) : DrawColorGuard(context, color.sdlColor()) {}
 
         /**
          * @brief Test the validity of the DrawColorGuard.
@@ -416,7 +448,9 @@ namespace rose {
          * @param color The SDL_Color to set.
          * @return The SDL2 API return status code.
          */
-        int setDrawColor(SDL_Color color);
+        int setDrawColor(SDL_Color color) {
+            return SDL_SetRenderDrawColor(mContext.get(), color.r, color.g, color.b, color.a);
+        }
 
         /**
          * @brief Set the draw Color on the renderer without pushing the old color on the stack.
