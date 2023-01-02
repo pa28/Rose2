@@ -9,7 +9,9 @@
 #ifndef ROSE2_APPLICATION_H
 #define ROSE2_APPLICATION_H
 
-#include "InputParser.h"
+#include <Rose.h>
+#include <InputParser.h>
+#include <GraphicsModel.h>
 
 namespace rose {
 
@@ -23,13 +25,40 @@ namespace rose {
         static constexpr std::string_view KeyboardPathRegEx{".*-kbd"};
 
         bool mKeyboardFound{false};     ///< Set to true if a keyboard is attached at startup.
+        bool mRunEventLoop{true};       ///< The event loop runs while this is true.
 
-        InputParser inputParser;
+        InputParser mInputParser;
+
+        GraphicsModel mGraphicsModel;
+
+        Rectangle mWidowSizePos{};
+
+        std::string mWindowName{};
+
+        void basicEventLoop();
+
+        void applicationDraw(Context& context);
 
     public:
         Application() = delete;
 
         Application(int argc, char **argv);
+
+        Application& operator=(const Rectangle &rectangle) {
+            mWidowSizePos = rectangle;
+            return *this;
+        }
+
+        Application& operator=(const std::string &windowName) {
+            mWindowName = windowName;
+            return *this;
+        }
+
+        bool initializeGraphics(uint32_t extraFlags = 0);
+
+        void run() {
+            basicEventLoop();
+        }
     };
 
 #if 0

@@ -11,7 +11,7 @@
 #include <filesystem>
 
 namespace rose {
-    Application::Application(int argc, char **argv) : inputParser(argc, argv) {
+    Application::Application(int argc, char **argv) : mInputParser(argc, argv) {
 
         // Determine if a keyboard is attached.
         std::regex kbPathRegEx{std::string{KeyboardPathRegEx}.c_str()};
@@ -21,4 +21,43 @@ namespace rose {
         }
 
     }
+
+    void Application::basicEventLoop() {
+        SDL_Event e;
+        Fps fps;
+
+        while (mRunEventLoop) {
+            //Handle events on queue
+            while (SDL_PollEvent(&e) != 0) {
+                //User requests quit
+                if (e.type == SDL_QUIT) {
+                    mRunEventLoop = false;
+                    continue;
+                }
+            }
+
+            applicationDraw(mGraphicsModel.context());
+
+            fps.next();
+        }
+    }
+
+    void Application::applicationDraw(Context& context) {
+        context.setDrawColor(0x00, 0x7f, 0x00, 0xff);
+        context.renderClear();
+        context.setDrawColor(0x00, 0x00, 0x7f, 0xff);
+        context.fillRect(Rectangle(120, 160, 680, 440));
+        context.renderPresent();
+    }
+
+    bool Application::initializeGraphics(uint32_t extraFlags) {
+        if (!mWidowSizePos)
+            mWidowSizePos = Rectangle(100,100,800,600);
+        if (mWindowName.empty()) {
+            std::filesystem::path appPath{mInputParser.programPathName};
+            mWindowName = appPath.filename().string();
+        }
+        return mGraphicsModel.initialize(mWindowName, mWidowSizePos.size, mWidowSizePos.point, extraFlags);
+    }
+
 } // rose

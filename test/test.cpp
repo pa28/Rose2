@@ -8,7 +8,7 @@
 #include <tuple>
 #include <Rose.h>
 #include <Gadget.h>
-#include <GraphicsModel.h>
+#include <Application.h>
 
 using namespace rose;
 
@@ -55,7 +55,7 @@ std::tuple<int,int> screen_obj_compare_test(const std::vector<binomial_compare_t
     return std::make_tuple(total, pass);
 }
 
-int main() {
+int main(int argc, char **argv) {
 //    int pass{0}, total{0};
 //
 //    auto [testTotal,testPass] = screen_obj_compare_test(binomial_compare_test_1);
@@ -75,8 +75,11 @@ int main() {
 //    auto widget1 = std::make_shared<Widget>();
 //    widget1->manage(widget->front());
 
-    gm::GraphicsModel graphicsModel{};
-    graphicsModel.initialize("Test", Size{100,100}, Point{0, 0}, 0);
+    Application application(argc, argv);
+    application.initializeGraphics();
+    application.run();
+//    mGraphicsModel.initialize("Test", Size{300,300}, Point{100, 100}, 0);
+//    mGraphicsModel.eventLoop();
 
     return 0;
 }

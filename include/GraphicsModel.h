@@ -16,11 +16,48 @@
 #include <memory>
 #include <vector>
 #include <optional>
+#include <functional>
 #include <SDL.h>
 #include <Rose.h>
-#include <Application.h>
 
-namespace rose::gm {
+namespace rose {
+    /**
+     * @class Fps
+     * @brief Throttle the application to limit the number of frames per second the scene is refreshed.
+     */
+    class [[maybe_unused]] Fps {
+    public:
+        /**
+         * @brief Constructor
+         * @param tickInterval The number of SDL ticks desired between frames.
+         */
+        explicit Fps(Uint32 tickInterval = 30)
+                : m_tickInterval(tickInterval), m_nextTime(SDL_GetTicks() + tickInterval) {
+        }
+
+        /**
+         * @brief Wait until the next frame interval.
+         */
+        [[maybe_unused]] void next() {
+            SDL_Delay(getTicksToNextFrame());
+
+            m_nextTime += m_tickInterval;
+        }
+
+    private:
+        Uint32 m_tickInterval;       ///< The number of SDL ticks per frame.
+        Uint32 m_nextTime;              ///< The time of the next frame start.
+
+        /**
+         * Compute the number of ticks to wait until the next frame time.
+         * @return The number of ticks to wait
+         */
+        [[nodiscard]] Uint32 getTicksToNextFrame() const {
+            Uint32 now = SDL_GetTicks();
+
+            return (m_nextTime <= now) ? 0 : m_nextTime - now;
+        }
+    };
 
     /**
      * @brief A functor to destroy an SDL_Window in a std::unique_ptr (rose::sdl::Window).
@@ -133,7 +170,6 @@ namespace rose::gm {
         RENDERER_PRESENTVSYNC = static_cast<uint32_t>(SDL_RENDERER_PRESENTVSYNC), /**< Present is synchronized with the refresh rate */
         RENDERER_TARGETTEXTURE = static_cast<uint32_t>(SDL_RENDERER_TARGETTEXTURE) /**< The renderer supports rendering to texture */
     };
-
 
     /**
      * @classs Context
@@ -250,6 +286,8 @@ namespace rose::gm {
          */
 //        int setDrawColor(color::RGBA color);
 
+        int setDrawColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a);
+
         /**
          * @brief Set the drawing color used for drawing Rectangles, lines and clearing.
          * @param color The new drawing Color.
@@ -266,6 +304,7 @@ namespace rose::gm {
          * @return The status return from the SDL API.
          */
 //        int fillRect(Rectangle rect, color::RGBA color);
+        int fillRect(Rectangle rect);
 
         /**
          * @brief Render a pixel.
@@ -274,7 +313,7 @@ namespace rose::gm {
          */
 //        int drawPoint(const Position<int> &p, const color::RGBA &color);
 
-        [[maybe_unused]] int drawLine(const Point &p0, const Point &p1) const;
+        [[maybe_unused]] [[nodiscard]] int drawLine(const Point &p0, const Point &p1) const;
     };
     /**
      * @class RenderTargetGuard
@@ -536,6 +575,8 @@ namespace rose::gm {
 
 //        void eventLoop(std::shared_ptr<Screen> &screen);
 
+        void eventLoop();
+
         /**
          * @brief Draw the screen.
          * @details Screen drawing is accomplished in two steps. If/when the background needs to be redrawn
@@ -587,6 +628,6 @@ namespace rose::gm {
         }
     };
 
-} // rose::gm
+} // rose
 
 #endif //ROSE2_GRAPHICSMODEL_H

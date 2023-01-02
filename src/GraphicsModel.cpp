@@ -12,45 +12,7 @@
 #include "GraphicsModel.h"
 #include "Utilities.h"
 
-namespace rose::gm {
-
-    /**
-     * @class Fps
-     * @brief Throttle the application to limit the number of frames per second the scene is refreshed.
-     */
-    class [[maybe_unused]] Fps {
-    public:
-        /**
-         * @brief Constructor
-         * @param tickInterval The number of SDL ticks desired between frames.
-         */
-        explicit Fps(Uint32 tickInterval = 30)
-                : m_tickInterval(tickInterval), m_nextTime(SDL_GetTicks() + tickInterval) {
-        }
-
-        /**
-         * @brief Wait until the next frame interval.
-         */
-        [[maybe_unused]] void next() {
-            SDL_Delay(getTicksToNextFrame());
-
-            m_nextTime += m_tickInterval;
-        }
-
-    private:
-        Uint32 m_tickInterval;       ///< The number of SDL ticks per frame.
-        Uint32 m_nextTime;              ///< The time of the next frame start.
-
-        /**
-         * Compute the number of ticks to wait until the next frame time.
-         * @return The number of ticks to wait
-         */
-        [[nodiscard]] Uint32 getTicksToNextFrame() const {
-            Uint32 now = SDL_GetTicks();
-
-            return (m_nextTime <= now) ? 0 : m_nextTime - now;
-        }
-    };
+namespace rose {
 
     /**
      * Context
@@ -104,8 +66,21 @@ namespace rose::gm {
         }
     }
 
+    int Context::setDrawColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
+        return SDL_SetRenderDrawColor(get(), r, g, b, a);
+    }
+
     [[maybe_unused]] int Context::drawLine(const Point &p0, const Point &p1) const {
         return SDL_RenderDrawLine(get(), p0.x, p0.y, p1.x, p1.y);
+    }
+
+    int Context::fillRect(Rectangle rect) {
+        SDL_Rect sdlRect;
+        sdlRect.h = rect.size.h;
+        sdlRect.w = rect.size.w;
+        sdlRect.x = rect.point.x;
+        sdlRect.y = rect.point.y;
+        return SDL_RenderFillRect(get(), &sdlRect);
     }
 
     /**
@@ -233,6 +208,28 @@ namespace rose::gm {
         return true;
     }
 
+    void GraphicsModel::eventLoop() {
+        SDL_Event e;
+        Fps fps;
+
+        while (mRunEventLoop) {
+            //Handle events on queue
+            while (SDL_PollEvent(&e) != 0) {
+                //User requests quit
+                if (e.type == SDL_QUIT) {
+                    mRunEventLoop = false;
+                    continue;
+                }
+                if (eventCallback)
+                    eventCallback(e);
+            }
+
+//            drawAll(screen);
+
+            fps.next();
+        }
+    }
+
 #if 0
     void GraphicsModel::eventLoop(std::shared_ptr<Screen> &screen) {
         SDL_Event e;
@@ -292,4 +289,4 @@ namespace rose::gm {
         mFrame++;
     }
 #endif
-} // rose::gm
+} // rose
