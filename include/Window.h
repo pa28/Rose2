@@ -14,6 +14,10 @@
 #include <GraphicsModel.h>
 #include <Gadget.h>
 #include <exception>
+#include <functional>
+#include <stack>
+#include <queue>
+#include <ranges>
 
 namespace rose {
 
@@ -26,7 +30,9 @@ namespace rose {
         Context mContext{};
         std::vector<Rectangle> mDisplayBounds{};
 
-        std::vector<std::shared_ptr<Widget>> mWidgets{};
+        std::vector<std::shared_ptr<Gadget>> mGadgets{};
+
+        std::vector<std::shared_ptr<Gadget>> mFocusChain{};
 
     public:
         Window() = default;
@@ -42,7 +48,37 @@ namespace rose {
 
         void draw();
 
-        auto emplace_back(const std::shared_ptr<Widget>& widget) { return mWidgets.emplace_back(widget); }
+        auto emplace_back(const std::shared_ptr<Gadget>& gadget) { return mGadgets.emplace_back(gadget); }
+
+        /**
+         * @brief Clear focus chain.
+         * @details Each gadget on the focus chain has their focus flag set to false. The focus chain is cleared.
+         */
+        void clearFocusChain();
+
+        /**
+         * @brief The specified gadget, and all its managers have their focus flag set and are pushed onto
+         * the back of the focus chain.
+         * @details This results in the focus chain representing a bottom up list. A Window can search the
+         * list forward to find a gadget that is able to accept a focus related event.
+         * @param gadget the lowest gadget to be added to the chain.
+         */
+        [[maybe_unused]] void setFocusGadget(std::shared_ptr<Gadget> &gadget);
+
+        /**
+         * @brief Preorder traversal of a Widget tree applying a lambda to all Gadgets.
+         * @details The tree is traversed starting from the specified Gadget. Gadgets which are also Widgets are
+         * traversed in turn. The provided lambda is applied to all Gadgets. Traversal preorder.
+         * @param topGadget The Gadget to start traversal from.
+         * @param lambda The lambda to apply.
+         */
+        static void gadgetTraversal(std::shared_ptr<Gadget> &topGadget,
+                                    const std::function< void(std::shared_ptr<Gadget>&) >& lambda);
+
+        /**
+         * @brief Clear all focus flags for Gadgets attached to this Window using gadgetTraversal.
+         */
+        [[maybe_unused]] [[maybe_unused]] void clearAllFocusFlags();
 
         void initialize(const std::string& title, Size initialSize, const Point &initialPosition,
                                        uint32_t extraFlags) {
@@ -60,7 +96,7 @@ namespace rose {
 
             if (mSdlWindow) {
                 SDL_version sdlVersion;
-                SDL_VERSION(&sdlVersion);
+                SDL_GetVersion(&sdlVersion);
                 fmt::print("   Number of displays: {}, On: {}\n", SDL_GetNumVideoDisplays(),
                            SDL_GetWindowDisplayIndex(mSdlWindow.get()));
                 fmt::print("   Version: {}.{}.{}\n", (int) sdlVersion.major, (int) sdlVersion.minor, (int) sdlVersion.patch);

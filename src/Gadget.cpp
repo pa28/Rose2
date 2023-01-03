@@ -18,27 +18,27 @@ namespace rose {
         context.fillRect(desiredLayout);
     }
 
-    void Widget::manage(std::shared_ptr<Gadget> gadget) {
+    [[maybe_unused]] void Widget::manage(std::shared_ptr<Gadget> gadget) {
         if (auto manager = gadget->getManager(); manager) {
             manager->unManage(gadget);
         }
         gadget->managedBy(shared_from_this());
-        gadgetList.push_back(std::move(gadget));
+        mGadgetList.push_back(std::move(gadget));
     }
 
     void Widget::manage(Builder &builder) {
         builder.gadget->managedBy(shared_from_this());
-        gadgetList.push_back(std::move(builder.gadget));
+        mGadgetList.push_back(std::move(builder.gadget));
     }
 
-    void Widget::unManage(const std::shared_ptr<Gadget> &gadget) {
-        gadgetList.erase(std::remove(gadgetList.begin(), gadgetList.end(), gadget), gadgetList.end());
+    [[maybe_unused]] void Widget::unManage(const std::shared_ptr<Gadget> &gadget) {
+        mGadgetList.erase(std::remove(mGadgetList.begin(), mGadgetList.end(), gadget), mGadgetList.end());
     }
 
     void Widget::draw(Context &context) {
         Gadget::draw(context);
 
-        for (const auto& gadget : gadgetList) {
+        for (const auto& gadget : mGadgetList) {
             gadget->draw(context);
         }
     }

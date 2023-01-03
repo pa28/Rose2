@@ -31,13 +31,16 @@ namespace rose {
     class Gadget {
     protected:
         friend class GadgetBuilder;
+        friend class Window;
+
         constexpr static GadgetType ThisType = GadgetType::Gadget;
-        std::string_view mName{};
+        [[maybe_unused]] std::string_view mName{};
         std::shared_ptr<Widget> manager{};  ///< Pointer to the current manager of this Gadget.
 
         [[maybe_unused]] Rectangle desiredLayout{};     ///< The desired layout set by the Gadget or constructor.
         [[maybe_unused]] Rectangle managedLayout{};     ///< The layout set by the manager if it provides layout management.
         [[maybe_unused]] Color background{};            ///< The background color.
+        [[maybe_unused]] bool mHasFocus{};              ///< This gadget (and managers) has focus.
 
     public:
         Gadget() = default;
@@ -46,7 +49,7 @@ namespace rose {
         Gadget& operator = (const Gadget &) = delete;
         Gadget& operator = (Gadget &&) = default;
 
-        [[nodiscard]] virtual GadgetType gadgetType() const { return Gadget::ThisType; }
+        [[maybe_unused]] [[nodiscard]] virtual GadgetType gadgetType() const { return Gadget::ThisType; }
 
         /**
          * @brief Set the pointer to the current manager of this Gadget.
@@ -60,7 +63,17 @@ namespace rose {
          */
         auto getManager() { return manager; }
 
+        /**
+         * @brief Draw this Gadget.
+         * @param context The graphics context to use.
+         */
         virtual void draw(Context& context);
+
+        /**
+         * @brief Layout this Gadget.
+         * @details The process of layout is to find the minimum size the Gadget requires to be fully displayed.
+         */
+        virtual void layout() {}
 
         virtual ~Gadget() = default;
     };
@@ -181,6 +194,26 @@ namespace rose {
         }
     };
 
+    class LayoutManager {
+    private:
+
+    public:
+        LayoutManager() = default;
+        LayoutManager(const LayoutManager&) = delete;
+        LayoutManager(LayoutManager&&) = default;
+        LayoutManager& operator = (const LayoutManager&) = delete;
+        LayoutManager& operator = (LayoutManager&&) = default;
+
+        virtual ~LayoutManager() = default;
+
+        /**
+         * @brief Default layout strategy is to do nothing.
+         * @param widget The widget to layout.
+         * @return true on success, false on fail.
+         */
+        [[maybe_unused]] virtual bool layoutWidget(std::shared_ptr<Widget> &) { return true; }
+    };
+
     /**
      * @class Widget
      * @brief A Widget is a visual UI element that does manage other Gadgets.
@@ -189,10 +222,15 @@ namespace rose {
      * these methods and range based algorithms.
      */
     class Widget: public std::enable_shared_from_this<Widget>, public Gadget {
+        friend class LayoutManager;
+        friend class Window;
+
     protected:
         constexpr static GadgetType ThisType = GadgetType::Widget;
 
-        std::vector<std::shared_ptr<Gadget>> gadgetList{};  ///< The list of Gadgets managed.
+        std::vector<std::shared_ptr<Gadget>> mGadgetList{};  ///< The list of Gadgets managed.
+
+        std::unique_ptr<LayoutManager> mLayoutManager{};
 
     public:
         Widget() = default;
@@ -209,23 +247,27 @@ namespace rose {
          * gadget from the management list of its current manager, if any.
          * @param gadget The Gadget to manage.
          */
-        void manage(std::shared_ptr<Gadget> gadget);
+        [[maybe_unused]] void manage(std::shared_ptr<Gadget> gadget);
 
-        void manage(Builder &builder);
+        /**
+         * @brief Add a Gadget from a builder to the management list of this Widget
+         * @param builder The Builder holding the new Gadget.
+         */
+        [[maybe_unused]] void manage(Builder &builder);
 
         /**
          * @brief Get a pointer to the first Gadget on the list of managed Gadgets.
          * @details This does not un-manage the Gadget.
          * @return std::shared_ptr<Gadget>
          */
-        [[maybe_unused]] auto front() { return gadgetList.front(); }
+        [[maybe_unused]] auto front() { return mGadgetList.front(); }
 
         /**
          * @brief Get a pointer to the last Gadget on the list of managed Gadgets.
          * @details This does not un-manage the Gadget.
          * @return std::shared_ptr<Gadget>
          */
-        [[maybe_unused]] auto back() { return gadgetList.back(); }
+        [[maybe_unused]] auto back() { return mGadgetList.back(); }
 
         /**
          * @brief Get a pointer to the Gadget at idx on the list of managed Gadgets.
@@ -233,7 +275,7 @@ namespace rose {
          * @param idx The index of the Gadget to return.
          * @return std::shared_ptr<Gadget>
          */
-        [[maybe_unused]] auto at(size_t idx) { return gadgetList.at(idx); }
+        [[maybe_unused]] auto at(size_t idx) { return mGadgetList.at(idx); }
 
         /**
          * @brief Get a pointer to the Gadget at idx on the list of managed Gadgets.
@@ -241,32 +283,36 @@ namespace rose {
          * @param idx The index of the Gadget to return.
          * @return std::shared_ptr<Gadget>
          */
-        [[maybe_unused]] auto operator[](size_t idx) { return gadgetList.operator[](idx); }
+        [[maybe_unused]] auto operator[](size_t idx) { return mGadgetList.operator[](idx); }
 
         /**
          * @brief Get the count of Gadgets managed by this Widget by calling vector::size().
          * @return The number of Gadgets.
          */
-        [[maybe_unused]] auto gadgetCount() const { return gadgetList.size(); }
+        [[maybe_unused]] auto gadgetCount() const { return mGadgetList.size(); }
 
         /**
          * @brief Un-manage the Gadget if it is found by std::remove.
          * @param gadget The gadget to remove.
          */
-        void unManage(const std::shared_ptr<Gadget>& gadget);
+        [[maybe_unused]] void unManage(const std::shared_ptr<Gadget>& gadget);
 
         /**
          * @brief Get the begin iterator of the Gadget list.
          * @return The return value of vector::begin().
          */
-        auto begin() { return gadgetList.begin(); }
+        auto begin() { return mGadgetList.begin(); }
 
         /**
          * @brief Get the begin iterator of the Gadget list.
          * @return The return value of vector::end().
          */
-        auto end() { return gadgetList.end(); }
+        auto end() { return mGadgetList.end(); }
 
+        /**
+         * @brief Draw this Widget and all managed Gadgets.
+         * @param context The graphics context to use.
+         */
         void draw(Context& context) override;
 
         ~Widget() override = default;
@@ -274,7 +320,7 @@ namespace rose {
 
     class WidgetBuilder : public GadgetBuilder {
     public:
-        explicit WidgetBuilder(std::shared_ptr<Widget> w) : GadgetBuilder(std::move(w)) {}
+        [[maybe_unused]] explicit WidgetBuilder(std::shared_ptr<Widget> w) : GadgetBuilder(std::move(w)) {}
 
         WidgetBuilder() : GadgetBuilder(std::make_shared<Widget>()) {}
 
