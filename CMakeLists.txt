@@ -36,7 +36,7 @@ list(APPEND EXTRA_LIBS GL Xxf86vm Xrandr Xinerama Xcursor Xi X11 sqlite3 pthread
 list(APPEND RoseLibraries Rose2 ${SDL2_LIBRARY} ${SDL2IMAGE_LIBRARY} ${SDL2TTF_LIBRARY} ${CURLPP_LIBRARIES} ${SOCI_LIBRARY}
         ${SOCI_sqlite3_PLUGIN} ${LOCALTIME_LIBRARY} ${EXTRA_LIBS})
 
-list(APPEND ROSE_SRC src/Application.cpp src/GraphicsModel.cpp src/Rose.cpp src/Gadget.cpp src/Manager.cpp src/Color.cpp
+list(APPEND ROSE_SRC src/Application.cpp src/GraphicsModel.cpp src/Rose.cpp src/Gadget.cpp src/Color.cpp
         src/Window.cpp)
 
 add_library(Rose2 SHARED ${ROSE_SRC} ${LIB_FMT})
