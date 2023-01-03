@@ -46,6 +46,8 @@ namespace rose {
 
         Context& context() { return mContext; }
 
+        void layout();
+
         void draw();
 
         auto emplace_back(const std::shared_ptr<Gadget>& gadget) { return mGadgets.emplace_back(gadget); }

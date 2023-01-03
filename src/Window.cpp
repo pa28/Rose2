@@ -9,6 +9,11 @@
 #include "Window.h"
 
 namespace rose {
+
+    void Window::layout() {
+        mGadgets.front()->layout(context());
+    }
+
     void Window::draw() {
         mGadgets.front()->draw(context());
     }

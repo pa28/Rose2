@@ -73,6 +73,7 @@ namespace rose {
         }
 
         void run() {
+            mWindows.front()->layout();
             basicEventLoop();
         }
 

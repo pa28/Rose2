@@ -8,6 +8,7 @@
 #include <tuple>
 #include <Rose.h>
 #include <Gadget.h>
+#include <TextGadget.h>
 #include <Application.h>
 #include <Color.h>
 
@@ -78,19 +79,27 @@ int main(int argc, char **argv) {
 
     Application application(argc, argv);
     application.initializeGraphics();
-    application.createWindow(application.applicationName(), Size(800,480), Point::CenterScreen(0), 0);
+    application.createWindow(application.applicationName(), Size(800,480), Point::CenterScreen(1), 0);
 
     auto container = WidgetBuilder{}.name(application.applicationName())
             .layout(Point(0,0), Size(800,480))
             .background(color::TransparentBlack);
 
-    GadgetBuilder{}.name("Map").layout(Point(140,150),Size(660,330))
-            .background(Color(0.0, 0.5, 0.0, 1.0)) >> container;
+    if (TextGadgetBuilder b{}; b) {
+        b.name("Text");
+        b.layout(Point(0,0), Size(10,10));
+        b.foreground(color::OpaqueWhite).text("Hello").pointSize(30);
+        b.background(Color( 0.5, 0.0, 0.0, 1.0)) >> container;
+    }
+
+    if (GadgetBuilder g{}; g) {
+        g.name("Map").layout(Point(140,150),Size(660,330));
+        g.background(Color(0.0, 0.5, 0.0, 1.0)) >> container;
+    }
+
 
     application.begin()->get()->emplace_back(container.get<Widget>());
     application.run();
-//    mGraphicsModel.initialize("Test", Size{300,300}, Point{100, 100}, 0);
-//    mGraphicsModel.eventLoop();
 
     return 0;
 }

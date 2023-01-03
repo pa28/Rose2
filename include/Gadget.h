@@ -73,7 +73,7 @@ namespace rose {
          * @brief Layout this Gadget.
          * @details The process of layout is to find the minimum size the Gadget requires to be fully displayed.
          */
-        virtual void layout() {}
+        virtual void layout(Context &context);
 
         virtual ~Gadget() = default;
     };
@@ -90,7 +90,11 @@ namespace rose {
     public:
         Builder() = delete;
 
+        virtual ~Builder() = default;
+
         explicit Builder(std::shared_ptr<Gadget> g) : gadget(std::move(g)) {}
+
+        explicit operator bool () { return true; }
 
         /**
          * @brief Manage the built Gadget by the specified Widget.
@@ -131,7 +135,7 @@ namespace rose {
 
         GadgetBuilder() : Builder(std::make_shared<Gadget>()) {}
 
-        ~GadgetBuilder() = default;
+        ~GadgetBuilder() override = default;
 
         /**
          * @brief Set the Gadget name.
@@ -241,6 +245,8 @@ namespace rose {
 
         [[nodiscard]] GadgetType gadgetType() const override { return Widget::ThisType; }
 
+        void layout(Context &context) override;
+
         /**
          * @brief Add a Gadget to the management list of this Widget.
          * @details This will include setting this Widget as the manager of the Gadget, which will remove the
@@ -324,7 +330,7 @@ namespace rose {
 
         WidgetBuilder() : GadgetBuilder(std::make_shared<Widget>()) {}
 
-        ~WidgetBuilder() = default;
+        ~WidgetBuilder() override = default;
     };
 
 } // rose

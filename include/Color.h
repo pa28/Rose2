@@ -35,9 +35,21 @@ namespace rose {
         Color& operator=(Color&&) = default;
         ~Color() = default;
 
-        constexpr Color(float r, float g, float b, float a) : channels({r,g,b,a}) {
+        template<class T>
+        requires std::is_floating_point_v<T>
+        constexpr Color(T r, T g, T b, T a) :
+            channels({(float)r,(float)g,(float)b,(float)a}) {
             std::ranges::transform( channels.begin(), channels.begin(), channels.begin(),
                                     [] (auto chan) { return fmin(1.0, fabs(chan)); });
+        }
+
+        template<class T>
+        requires std::is_integral_v<T>
+        constexpr Color(T r, T g, T b, T a) {
+            channels[RED] = static_cast<float>(r) / 255.0f;
+            channels[GREEN] = static_cast<float>(g) / 255.0f;
+            channels[BLUE] = static_cast<float>(b) / 255.0f;
+            channels[ALPHA] = static_cast<float>(a) / 255.0f;
         }
 
         [[maybe_unused]] [[nodiscard]] constexpr SDL_Color sdlColor() const {
@@ -48,6 +60,8 @@ namespace rose {
             });
             return SDL_Color{sdlChan[RED], sdlChan[GREEN], sdlChan[BLUE], sdlChan[ALPHA]};
         }
+
+        auto operator <=> (const Color &) const = default;
     };
 
     namespace color {

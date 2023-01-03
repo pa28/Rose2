@@ -18,6 +18,10 @@ namespace rose {
         context.fillRect(desiredLayout);
     }
 
+    void Gadget::layout(Context &) {
+
+    }
+
     [[maybe_unused]] void Widget::manage(std::shared_ptr<Gadget> gadget) {
         if (auto manager = gadget->getManager(); manager) {
             manager->unManage(gadget);
@@ -40,6 +44,14 @@ namespace rose {
 
         for (const auto& gadget : mGadgetList) {
             gadget->draw(context);
+        }
+    }
+
+    void Widget::layout(Context &context) {
+        Gadget::layout(context);
+
+        for (auto &gadget : mGadgetList) {
+            gadget->layout(context);
         }
     }
 
