@@ -25,7 +25,7 @@ namespace rose {
  * @class Window
  */
     class Window {
-    private:
+    public:
         SdlWindow mSdlWindow{};
         Context mContext{};
         std::vector<Rectangle> mDisplayBounds{};
@@ -49,8 +49,6 @@ namespace rose {
         void layout();
 
         void draw();
-
-        auto emplace_back(const std::shared_ptr<Gadget>& gadget) { return mGadgets.emplace_back(gadget); }
 
         /**
          * @brief Clear focus chain.
@@ -123,6 +121,10 @@ namespace rose {
                 } else {
                     throw ContextException(fmt::format("Could not create SDL_Renderer: {}", SDL_GetError() ));
                 }
+
+                mGadgets.push_back(std::make_shared<Widget>());
+                mGadgets.front()->desiredSize = initialSize;
+                mGadgets.front()->background = color::TransparentBlack;
             } else {
                 std::string sdlError{SDL_GetError()};
                 if (sdlError == "Could not initialize EGL") {
