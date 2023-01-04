@@ -30,7 +30,7 @@ namespace rose {
         bool mKeyboardFound{false};     ///< Set to true if a keyboard is attached at startup.
         bool mRunEventLoop{true};       ///< The event loop runs while this is true.
 
-        std::vector<std::unique_ptr<Window>>    mWindows{};
+        std::vector<std::shared_ptr<Window>>    mWindows{};
 
         InputParser mInputParser;
 
@@ -59,6 +59,14 @@ namespace rose {
             return *this;
         }
 
+        std::optional<std::shared_ptr<Window>> window(size_t idx = 0) {
+            if (idx < mWindows.size()) {
+                return mWindows.at(idx);
+            } else {
+                return std::nullopt;
+            }
+        }
+
         bool initializeGraphics();
 
         auto begin() { return mWindows.begin(); }
@@ -68,8 +76,9 @@ namespace rose {
         template<class S>
         requires StringLike<S>
         void createWindow(S title, const Size &size, const Point &point, unsigned flags) {
-            mWindows.emplace_back(std::make_unique<Window>());
-            mWindows.back()->initialize(title, size, point, flags);
+            auto window = std::make_unique<Window>();
+            window->initialize(title, size, point, flags);
+            mWindows.push_back(std::move(window));
         }
 
         void run() {
