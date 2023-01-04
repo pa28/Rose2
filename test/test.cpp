@@ -3,15 +3,12 @@
 //
 
 #include <iostream>
-#include <vector>
 #include <array>
-#include <tuple>
 #include <Rose.h>
 #include <Gadget.h>
 #include <TextGadget.h>
 #include <Application.h>
 #include <Color.h>
-#include <fmt/format.h>
 
 using namespace rose;
 
@@ -20,6 +17,7 @@ struct binomial_compare_test {
     std::array<bool,6> result;
 };
 
+#if 0
 std::vector<binomial_compare_test> binomial_compare_test_1 = {{
     {0, 0, 0, 0, {false, true, true, false, true, false} },
     {0, 0, 1, 0, {true, true, false, true, false, false} },
@@ -57,6 +55,7 @@ std::tuple<int,int> screen_obj_compare_test(const std::vector<binomial_compare_t
 
     return std::make_tuple(total, pass);
 }
+#endif
 
 int main(int argc, char **argv) {
 //    int pass{0}, total{0};
