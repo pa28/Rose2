@@ -77,29 +77,37 @@ int main(int argc, char **argv) {
 //    auto widget1 = std::make_shared<Widget>();
 //    widget1->manage(widget->front());
 
+
     Application application(argc, argv);
-    application.initializeGraphics();
-    application.createWindow(application.applicationName(), Size(800,480), Point::CenterScreen(1), 0);
+    {
+        application.initializeGraphics();
+        application.createWindow(application.applicationName(), Size(800, 480), Point::CenterScreen(1), 0);
 
-    auto container = WidgetBuilder{}.name(application.applicationName())
-            .layout(Point(0,0), Size(800,480))
-            .background(color::TransparentBlack);
+        if (auto container = WidgetBuilder{}; container) {
+            /**
+             * Problem is with the builder system.
+             */
 
-    if (TextGadgetBuilder b{}; b) {
-        b.name("Text");
-        b.layout(Point(0,0), Size(10,10));
-        b.foreground(color::OpaqueWhite).text("Hello").pointSize(30);
-        b.background(Color( 0.5, 0.0, 0.0, 1.0)) >> container;
+            if (TextGadgetBuilder text{}; text) {
+                text.text("Hello")
+                    .foreground(color::OpaqueWhite)
+                    .pointSize(30)
+                    .layout(Point(0,0),Size(10,10))
+                    .name("Text")
+                    .background(Color(0.5, 0.0, 0.0, 1.0))
+                    >> application.window().value()->gadget<Widget>().value();
+                std::cout << "Text\n";
+            }
+
+            if (GadgetBuilder g{}; g) {
+                g.name("Map")
+                    .layout(Point(140, 150), Size(660, 330))
+                    .background(Color(0.0, 0.5, 0.0, 1.0))
+                    >> application.window().value()->gadget<Widget>().value();
+            }
+        }
+        application.run();
     }
-
-    if (GadgetBuilder g{}; g) {
-        g.name("Map").layout(Point(140,150),Size(660,330));
-        g.background(Color(0.0, 0.5, 0.0, 1.0)) >> container;
-    }
-
-
-    application.begin()->get()->emplace_back(container.get<Widget>());
-    application.run();
 
     return 0;
 }
