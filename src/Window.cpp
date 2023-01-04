@@ -11,13 +11,13 @@
 namespace rose {
 
     void Window::layout() {
-        if (!mGadgets.empty())
-            mGadgets.front()->layout(context());
+        if (!mWidgets.empty())
+            mWidgets.front()->layout(context());
     }
 
     void Window::draw() {
-        if (!mGadgets.empty())
-            mGadgets.front()->draw(context());
+        if (!mWidgets.empty())
+            mWidgets.front()->draw(context());
     }
 
     [[maybe_unused]] void Window::setFocusGadget(std::shared_ptr<Gadget> &gadget) {
@@ -38,12 +38,12 @@ namespace rose {
     }
 
     [[maybe_unused]] void Window::clearAllFocusFlags() {
-        for (auto &gadget : mGadgets) {
-            gadgetTraversal(gadget, [](std::shared_ptr<Gadget> &g) { g->mHasFocus = false; });
+        for (auto &widget : mWidgets) {
+            gadgetTraversal(widget, [](std::shared_ptr<Gadget> &g) { g->mHasFocus = false; });
         }
     }
 
-    void Window::gadgetTraversal(std::shared_ptr<Gadget> &topGadget,
+    void Window::gadgetTraversal(std::shared_ptr<Widget> &topGadget,
                                  const std::function<void(std::shared_ptr<Gadget> &)> &lambda) {
         std::stack<std::shared_ptr<Gadget>> stack{};
         stack.push(topGadget);
