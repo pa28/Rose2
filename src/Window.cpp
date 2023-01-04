@@ -25,7 +25,7 @@ namespace rose {
         while (gadget) {
             gadget->mHasFocus = true;
             mFocusChain.push_back(gadget);
-            gadget = gadget->manager;
+            gadget = gadget->manager.lock();
         }
     }
 
