@@ -287,12 +287,6 @@ namespace rose {
         Widget& operator = (const Widget &) = delete;
         Widget& operator = (Widget &&) = default;
 
-        explicit Widget(const Size& size) {
-            mName = "Top";
-            desiredSize = size;
-            background = color::TransparentBlack;
-        }
-
         [[nodiscard]] GadgetType gadgetType() const override { return Widget::ThisType; }
 
         Point layout(Context &context) override;

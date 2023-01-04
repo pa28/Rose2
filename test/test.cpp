@@ -78,10 +78,10 @@ int main(int argc, char **argv) {
 //    widget1->manage(widget->front());
 
 
-    Application application(argc, argv);
+    auto application = std::make_shared<Application>(argc, argv);
     {
-        application.initializeGraphics();
-        application.createWindow(application.applicationName(), Size(800, 480), Point::CenterScreen(1), 0);
+        application->initializeGraphics();
+        application->createWindow(application->applicationName(), Size(800, 480), Point::CenterScreen(1), 0);
 
         if (auto container = WidgetBuilder{}; container) {
             /**
@@ -106,7 +106,7 @@ int main(int argc, char **argv) {
                     >> application;
             }
         }
-        application.run();
+        application->run();
     }
 
     return 0;
