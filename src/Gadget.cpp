@@ -62,7 +62,7 @@ namespace rose {
         widget.manage(*this);
     }
 
-    void Builder::operator>>(std::shared_ptr<Widget> &widget) {
+    void Builder::operator>>(const std::shared_ptr<Widget>& widget) {
         widget->manage(*this);
     }
 
