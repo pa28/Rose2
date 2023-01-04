@@ -11,11 +11,13 @@
 namespace rose {
 
     void Window::layout() {
-        mGadgets.front()->layout(context());
+        if (!mGadgets.empty())
+            mGadgets.front()->layout(context());
     }
 
     void Window::draw() {
-        mGadgets.front()->draw(context());
+        if (!mGadgets.empty())
+            mGadgets.front()->draw(context());
     }
 
     [[maybe_unused]] void Window::setFocusGadget(std::shared_ptr<Gadget> &gadget) {
