@@ -65,4 +65,8 @@ namespace rose {
         return appPath.filename().string();
     }
 
+    std::shared_ptr<Application> Application::createApplication(int argc, char **argv) {
+        return std::make_shared<Application>(argc, argv);
+    }
+
 } // rose

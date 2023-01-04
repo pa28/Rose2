@@ -12,17 +12,18 @@
 #include <Rose.h>
 #include <InputParser.h>
 #include <GraphicsModel.h>
-#include <Window.h>
 #include <vector>
+#include <memory>
 #include <InputParser.h>
+#include <Window.h>
 
 namespace rose {
 
-/**
- * @class Application
- * @brief Abstraction of a Rose2 application.
- */
-    class Application {
+    /**
+     * @class Application
+     * @brief Abstraction of a Rose2 application.
+     */
+    class Application : public std::enable_shared_from_this<Application> {
     protected:
         static constexpr std::string_view UsbDeviceByPath{"/dev/input/by-path/"};
         static constexpr std::string_view KeyboardPathRegEx{".*-kbd"};
@@ -48,6 +49,8 @@ namespace rose {
         Application() = delete;
 
         Application(int argc, char **argv);
+
+        std::shared_ptr<Application> createApplication(int argc, char **argv);
 
         Application& operator=(const Rectangle &rectangle) {
             mWidowSizePos = rectangle;
@@ -75,9 +78,10 @@ namespace rose {
 
         template<class S>
         requires StringLike<S>
+
         void createWindow(S title, const Size &size, const Point &point, unsigned flags) {
-            auto window = std::make_unique<Window>();
-            window->initialize(title, size, point, flags);
+            auto window = Window::createWindow();
+            window->initialize(shared_from_this(), title, size, point, flags);
             mWindows.push_back(std::move(window));
         }
 
@@ -139,8 +143,8 @@ namespace rose {
 
 } // rose
 
-void operator >> (rose::Builder builder, rose::Application &application) {
-    application.window().value()->gadget<rose::Widget>().value()->manage(builder.get<rose::Gadget>());
+void operator >> (rose::Builder builder, std::shared_ptr<rose::Application> &application) {
+    application->window().value()->gadget<rose::Widget>().value()->manage(builder.get<rose::Gadget>());
 }
 
 

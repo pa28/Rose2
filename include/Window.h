@@ -20,22 +20,59 @@
 #include <ranges>
 
 namespace rose {
+    class Application;
+    class Window;
 
-/**
- * @class Window
- */
-    class Window {
+    /**
+     * @class Screen
+     * @brief The top level widget of a tree managed by a Window.
+     * @details A Screen is derived from a Widget but is private to Application and is inserted on
+     * top of all the individual trees managed by a Window.
+     */
+    class Screen : public Widget {
+    private:
+        std::weak_ptr<Window> mWindowPtr{};
+
     public:
+        Screen() = default;
+
+        Screen(const Screen&) = delete;
+        Screen(Screen &&) = default;
+        Screen& operator=(const Screen &) = delete;
+        Screen& operator=(Screen &&) = default;
+
+        Screen(const std::shared_ptr<Window>& windowPtr, const Size& size) {
+            mWindowPtr = windowPtr;
+            mName = "Top";
+            desiredSize = size;
+            background = color::TransparentBlack;
+        }
+
+        ~Screen() override = default;
+    };
+
+    /**
+     * @class Window
+     */
+    class Window : public std::enable_shared_from_this<Window> {
         SdlWindow mSdlWindow{};
         Context mContext{};
         std::vector<Rectangle> mDisplayBounds{};
 
-        std::vector<std::shared_ptr<Widget>> mWidgets{};
+        std::weak_ptr<Application> mApplicationPtr{};
+
+        std::vector<std::shared_ptr<Screen>> mScreens{};
 
         std::vector<std::shared_ptr<Gadget>> mFocusChain{};
 
     public:
         Window() = default;
+
+        explicit Window(std::shared_ptr<Application>& applicationPtr) : mApplicationPtr(applicationPtr) {}
+
+        static std::shared_ptr<Window> createWindow() {
+            return std::make_shared<Window>();
+        }
 
         Window(const Window&) = delete;
         Window(Window &&) = default;
@@ -52,8 +89,8 @@ namespace rose {
 
         template<class UiType>
         [[maybe_unused]] std::optional<std::shared_ptr<UiType>> gadget(size_t idx = 0) {
-            if (idx < mWidgets.size()) {
-                if (auto wdg = std::dynamic_pointer_cast<UiType>(mWidgets.at(idx)); wdg) {
+            if (idx < mScreens.size()) {
+                if (auto wdg = std::dynamic_pointer_cast<UiType>(mScreens.at(idx)); wdg) {
                     return wdg;
                 }
             }
@@ -82,7 +119,7 @@ namespace rose {
          * @param topGadget The Gadget to start traversal from.
          * @param lambda The lambda to apply.
          */
-        static void gadgetTraversal(std::shared_ptr<Widget> &topGadget,
+        static void gadgetTraversal(std::shared_ptr<Screen> &topGadget,
                                     const std::function< void(std::shared_ptr<Gadget>&) >& lambda);
 
         /**
@@ -90,59 +127,8 @@ namespace rose {
          */
         [[maybe_unused]] [[maybe_unused]] void clearAllFocusFlags();
 
-        void initialize(const std::string& title, Size initialSize, const Point &initialPosition,
-                                       uint32_t extraFlags) {
-            uint32_t flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
-
-            // Create an application window with the following settings:
-            mSdlWindow.reset(SDL_CreateWindow(
-                    (title.empty() ? "SDL2 window" : std::string{title}.c_str()),         //    const char* title
-                    initialPosition.x,        //    int x: initial x position
-                    initialPosition.y,        //    int y: initial y position
-                    initialSize.w,            //    int w: width, in pixels
-                    initialSize.h,            //    int h: height, in pixels
-                    flags | extraFlags
-            ));
-
-            if (mSdlWindow) {
-                SDL_version sdlVersion;
-                SDL_GetVersion(&sdlVersion);
-                fmt::print("   Number of displays: {}, On: {}\n", SDL_GetNumVideoDisplays(),
-                           SDL_GetWindowDisplayIndex(mSdlWindow.get()));
-                fmt::print("   Version: {}.{}.{}\n", (int) sdlVersion.major, (int) sdlVersion.minor, (int) sdlVersion.patch);
-                for (int i = 0; i < SDL_GetNumVideoDisplays(); ++i) {
-                    SDL_Rect displayBounds{0, 0, 0, 0};
-
-                    if (SDL_GetDisplayBounds(i, &displayBounds)) {
-                        mDisplayBounds.emplace_back();
-                    } else {
-                        mDisplayBounds.emplace_back(
-                                displayBounds.x, displayBounds.y, displayBounds.w, displayBounds.h);
-                        fmt::print("   Display {}: {:o}\n", i, mDisplayBounds.back());
-                    }
-                }
-
-                mContext = Context{mSdlWindow, -1, RendererFlags::RENDERER_ACCELERATED
-                                                   | RendererFlags::RENDERER_TARGETTEXTURE
-                                                   | RendererFlags::RENDERER_PRESENTVSYNC};
-
-                if (mContext) {
-                    mContext.setDrawBlendMode(SDL_BLENDMODE_BLEND);
-                } else {
-                    throw ContextException(fmt::format("Could not create SDL_Renderer: {}", SDL_GetError() ));
-                }
-
-                auto widget = std::make_shared<Widget>(initialSize);
-                mWidgets.push_back(std::move(widget));
-                widget.reset();
-            } else {
-                std::string sdlError{SDL_GetError()};
-                if (sdlError == "Could not initialize EGL") {
-                    throw std::runtime_error("If X11 is running, check DISPLAY environment variable.");
-                }
-                throw std::runtime_error(fmt::format("Could not create SDL_Window: {}", sdlError));
-            }
-        }
+        void initialize(const std::shared_ptr<Application>& applicationPtr, const std::string &title, Size initialSize,
+                        const Point &initialPosition, uint32_t extraFlags);
     };
 
 } // rose
