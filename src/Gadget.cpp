@@ -23,10 +23,10 @@ namespace rose {
     }
 
     [[maybe_unused]] void Widget::manage(std::shared_ptr<Gadget> gadget) {
-        if (auto manager = gadget->getManager(); manager) {
-            manager->unManage(gadget);
+        if (isManaged()) {
+            manager.lock()->unManage(gadget);
         }
-        gadget->managedBy(shared_from_this());
+        manager = shared_from_this();
         mGadgetList.push_back(std::move(gadget));
     }
 

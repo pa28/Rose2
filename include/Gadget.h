@@ -35,7 +35,7 @@ namespace rose {
 
         constexpr static GadgetType ThisType = GadgetType::Gadget;
         [[maybe_unused]] std::string_view mName{};
-        std::shared_ptr<Widget> manager{};  ///< Pointer to the current manager of this Gadget.
+        std::weak_ptr<Widget> manager{};  ///< Pointer to the current manager of this Gadget.
 
         [[maybe_unused]] int managerBorder{};           ///< Space allocated for a border placed by the manager
         [[maybe_unused]] Padding managerPadding{};      ///< Padding used by the manager for alignment
@@ -53,6 +53,13 @@ namespace rose {
         Gadget(Gadget&&) = default;
         Gadget& operator = (const Gadget &) = delete;
         Gadget& operator = (Gadget &&) = default;
+
+        [[nodiscard]] bool isManaged() const {
+            using wt = std::weak_ptr<Widget>;
+            bool a = manager.owner_before(wt{});
+            bool b = wt{}.owner_before(manager);
+            return !(!a && !b);
+        }
 
         void layoutGadget(const Point &drawLocation, const Padding &mgrPadding) {
             managerPadding = mgrPadding;
