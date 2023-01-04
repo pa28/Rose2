@@ -50,6 +50,16 @@ namespace rose {
 
         void draw();
 
+        template<class UiType>
+        [[maybe_unused]] std::optional<std::shared_ptr<UiType>> gadget(size_t idx = 0) {
+            if (idx < mWidgets.size()) {
+                if (auto wdg = std::dynamic_pointer_cast<UiType>(mWidgets.at(idx)); wdg) {
+                    return wdg;
+                }
+            }
+            return std::nullopt;
+        }
+
         /**
          * @brief Clear focus chain.
          * @details Each gadget on the focus chain has their focus flag set to false. The focus chain is cleared.
