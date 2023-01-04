@@ -82,7 +82,7 @@ namespace rose {
          * @param topGadget The Gadget to start traversal from.
          * @param lambda The lambda to apply.
          */
-        static void gadgetTraversal(std::shared_ptr<Gadget> &topGadget,
+        static void gadgetTraversal(std::shared_ptr<Widget> &topGadget,
                                     const std::function< void(std::shared_ptr<Gadget>&) >& lambda);
 
         /**
