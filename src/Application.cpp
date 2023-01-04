@@ -43,10 +43,6 @@ namespace rose {
     void Application::applicationDraw() {
         for (const auto &window : mWindows) {
             window->draw();
-//            window->context().setDrawColor(0x00, 0x7f, 0x00, 0xff);
-//            window->context().renderClear();
-//            window->context().setDrawColor(0x00, 0x00, 0x7f, 0xff);
-//            window->context().fillRect(Rectangle(120, 160, 680, 440));
             window->context().renderPresent();
         }
     }
