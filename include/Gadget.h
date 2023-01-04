@@ -98,6 +98,23 @@ namespace rose {
         virtual Point layout(Context &context);
 
         virtual ~Gadget() = default;
+
+        void setSize(const Size &size) { desiredSize = size; }
+
+        void setDrawLocation(const Point &point) { mgrDrawLoc = point; }
+
+        void setBackground(const Color& color) { background = color; }
+
+        /**
+         * @brief Set the Gadget name.
+         * @tparam String StringLike concept.
+         * @param string String like value.
+         * @return this builder
+         */
+        template<typename String>
+        requires StringLike<String>
+        auto setName(String string) { mName = string; }
+
     };
 
     /**
