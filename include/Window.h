@@ -30,7 +30,7 @@ namespace rose {
         Context mContext{};
         std::vector<Rectangle> mDisplayBounds{};
 
-        std::vector<std::shared_ptr<Gadget>> mGadgets{};
+        std::vector<std::shared_ptr<Widget>> mWidgets{};
 
         std::vector<std::shared_ptr<Gadget>> mFocusChain{};
 
