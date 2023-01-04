@@ -132,9 +132,9 @@ namespace rose {
                     throw ContextException(fmt::format("Could not create SDL_Renderer: {}", SDL_GetError() ));
                 }
 
-                mGadgets.push_back(std::make_shared<Widget>());
-                mGadgets.front()->desiredSize = initialSize;
-                mGadgets.front()->background = color::TransparentBlack;
+                auto widget = std::make_shared<Widget>(initialSize);
+                mWidgets.push_back(std::move(widget));
+                widget.reset();
             } else {
                 std::string sdlError{SDL_GetError()};
                 if (sdlError == "Could not initialize EGL") {
