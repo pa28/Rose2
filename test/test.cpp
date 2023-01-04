@@ -95,7 +95,7 @@ int main(int argc, char **argv) {
                     .layout(Point(0,0),Size(10,10))
                     .name("Text")
                     .background(Color(0.5, 0.0, 0.0, 1.0))
-                    >> application.window().value()->gadget<Widget>().value();
+                    >> application;
                 std::cout << "Text\n";
             }
 
@@ -103,7 +103,7 @@ int main(int argc, char **argv) {
                 g.name("Map")
                     .layout(Point(140, 150), Size(660, 330))
                     .background(Color(0.0, 0.5, 0.0, 1.0))
-                    >> application.window().value()->gadget<Widget>().value();
+                    >> application;
             }
         }
         application.run();

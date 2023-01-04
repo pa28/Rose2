@@ -139,4 +139,9 @@ namespace rose {
 
 } // rose
 
+void operator >> (rose::Builder builder, rose::Application &application) {
+    application.window().value()->gadget<rose::Widget>().value()->manage(builder.get<rose::Gadget>());
+}
+
+
 #endif //ROSE2_APPLICATION_H

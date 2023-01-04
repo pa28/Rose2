@@ -10,7 +10,7 @@
 
 namespace rose {
     void Gadget::managedBy(std::shared_ptr<Widget> widget) {
-        manager = std::move(widget);
+        manager = widget;
     }
 
     void Gadget::draw(Context &context) {
