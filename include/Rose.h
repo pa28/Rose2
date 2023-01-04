@@ -41,6 +41,18 @@ namespace rose {
 
         ~Size() = default;
 
+        template<class I>
+        requires std::is_integral_v<I>
+        Size& operator=(I i) {
+            w = i;
+            h = i;
+            return *this;
+        }
+
+        Size operator + (int border) {
+            Size size{*this}; size.w += border; size.h += border; return size;
+        }
+
         explicit operator bool () const { return set; }
 
         auto operator <=> (const Size &) const = default;
@@ -68,40 +80,39 @@ namespace rose {
 
         ~Point() = default;
 
+        template<class I>
+        requires std::is_integral_v<I>
+        Point& operator=(I i) {
+            x = i;
+            y = i;
+            return *this;
+        }
+
         auto operator <=> (const Point &) const = default;
 
         explicit operator bool () const { return set; }
-
-        Point& operator += (const Size& size) {
-            x += size.w;
-            y += size.h;
-            return *this;
-        }
-
-        Point& operator -= (const Size& size) {
-            x -= size.w;
-            y -= size.h;
-            return *this;
-        }
-
-        Point operator + (const Size& size) {
-            return Point(*this) += size;
-        }
-
-        Point operator - (const Size& size) {
-            return Point(*this) -= size;
-        }
 
         static Point CenterScreen(unsigned int screen = 0) {
             auto pos = static_cast<int>(SDL_WINDOWPOS_CENTERED_DISPLAY(screen));
             return Point{pos, pos };
         }
+
+        Point operator+(const Size& size) const {
+            Point p{*this}; p.x += size.w; p.y += size.h; return p;
+        }
+
+        Point operator+(int border) const {
+            Point p{*this}; p.x += border; p.y += border; return p;
+        }
+
+        Point operator+(const Point &p) const {
+            Point r{*this}; r.x += p.x; r.y += p.y; return r;
+        }
     };
 
     struct Padding {
-        ScreenCoordType t{}, b{}, l{}, r{};
-
-        bool set{false};
+        Point topLeft{};
+        Point botRight{};
 
         Padding() = default;
         Padding(const Padding&) = default;
@@ -109,9 +120,17 @@ namespace rose {
         Padding& operator=(const Padding &) = default;
         Padding& operator=(Padding&&) = default;
 
+        template<class I>
+        requires std::is_integral_v<I>
+        Padding& operator=(I i) {
+            topLeft = i;
+            botRight = i;
+            return *this;
+        }
+
         auto operator <=> (const Padding &) const = default;
 
-        explicit operator bool () const { return set; }
+        explicit operator bool () const { return topLeft && botRight; }
 
         ~Padding() = default;
     };
@@ -187,6 +206,11 @@ namespace rose {
         }
     };
 } // rose
+
+
+inline rose::Size operator + (const rose::Size &s, const rose::Point& p) {
+    rose::Size r{s}; r.w += p.x; r.h += p.y; return r;
+}
 
 namespace fmt {
     template<>

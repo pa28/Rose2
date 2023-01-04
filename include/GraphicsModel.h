@@ -660,7 +660,7 @@ namespace rose {
 
         [[maybe_unused]] [[nodiscard]] Padding windowBorders() const noexcept {
             Padding p{};
-            SDL_GetWindowBordersSize(mSdlWindow.get(), &p.t, &p.l, &p.b, &p.r);
+            SDL_GetWindowBordersSize(mSdlWindow.get(), &p.topLeft.y, &p.topLeft.x, &p.botRight.y, &p.botRight.x);
             return p;
         }
 

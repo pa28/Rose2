@@ -37,8 +37,13 @@ namespace rose {
         [[maybe_unused]] std::string_view mName{};
         std::shared_ptr<Widget> manager{};  ///< Pointer to the current manager of this Gadget.
 
-        [[maybe_unused]] Rectangle desiredLayout{};     ///< The desired layout set by the Gadget or constructor.
-        [[maybe_unused]] Rectangle managedLayout{};     ///< The layout set by the manager if it provides layout management.
+        [[maybe_unused]] int managerBorder{};           ///< Space allocated for a border placed by the manager
+        [[maybe_unused]] Padding managerPadding{};      ///< Padding used by the manager for alignment
+        [[maybe_unused]] Padding gadgetPadding{};       ///< Padding for Gadget presentation.
+        [[maybe_unused]] Rectangle renderRect{};        ///< The rendering rectangle for content.
+        [[maybe_unused]] Size desiredSize{};            ///< The desired layout size set by the Gadget or constructor.
+        [[maybe_unused]] Point mgrDrawLoc{};            ///< The manager draw location.
+        [[maybe_unused]] Rectangle clipRectangle{};     ///< The clipping rectangle (the padding rectangle).
         [[maybe_unused]] Color background{};            ///< The background color.
         [[maybe_unused]] bool mHasFocus{};              ///< This gadget (and managers) has focus.
 
@@ -48,6 +53,16 @@ namespace rose {
         Gadget(Gadget&&) = default;
         Gadget& operator = (const Gadget &) = delete;
         Gadget& operator = (Gadget &&) = default;
+
+        void layoutGadget(const Point &drawLocation, const Padding &mgrPadding) {
+            managerPadding = mgrPadding;
+            mgrDrawLoc = drawLocation;
+
+            renderRect = mgrDrawLoc + managerBorder + managerPadding.topLeft + gadgetPadding.topLeft;
+            renderRect = desiredSize;
+            clipRectangle = mgrDrawLoc + managerBorder + mgrPadding.topLeft;
+            clipRectangle = desiredSize + gadgetPadding.topLeft + gadgetPadding.botRight;
+        }
 
         [[maybe_unused]] [[nodiscard]] virtual GadgetType gadgetType() const { return Gadget::ThisType; }
 
@@ -73,7 +88,7 @@ namespace rose {
          * @brief Layout this Gadget.
          * @details The process of layout is to find the minimum size the Gadget requires to be fully displayed.
          */
-        virtual void layout(Context &context);
+        virtual Point layout(Context &context);
 
         virtual ~Gadget() = default;
     };
@@ -95,6 +110,8 @@ namespace rose {
         explicit Builder(std::shared_ptr<Gadget> g) : gadget(std::move(g)) {}
 
         explicit operator bool () { return true; }
+
+        void reset() { gadget.reset(); }
 
         /**
          * @brief Manage the built Gadget by the specified Widget.
@@ -156,7 +173,8 @@ namespace rose {
          * @return this builder
          */
         [[maybe_unused]] auto layout(const Rectangle &rectangle) {
-            gadget->desiredLayout = rectangle;
+            gadget->desiredSize = rectangle.size;
+            gadget->mgrDrawLoc = rectangle.point;
             return *this;
         }
 
@@ -166,8 +184,9 @@ namespace rose {
          * @param size The Size.
          * @return this builder.
          */
-        [[maybe_unused]] auto layout(const Point &point, const Size &size) {
-            gadget->desiredLayout = Rectangle(point, size);
+        [[maybe_unused]] GadgetBuilder& layout(const Point &point, const Size &size) {
+            gadget->desiredSize = size;
+            gadget->mgrDrawLoc = point;
             return *this;
         }
 
@@ -188,7 +207,8 @@ namespace rose {
             static_assert(std::is_convertible_v<Tx, ScreenCoordType> && std::is_convertible_v<Ty, ScreenCoordType> &&
                           std::is_convertible_v<Tw, ScreenCoordType> && std::is_convertible_v<Th, ScreenCoordType>,
                           "Arguments to Size() must be convertable to ScreenCoordType");
-            gadget->desiredLayout = Rectangle(X, Y, W, H);
+            gadget->desiredSize = Size(W,H);
+            gadget->mgrDrawLoc = Point(X,Y);
             return *this;
         }
 
@@ -245,7 +265,7 @@ namespace rose {
 
         [[nodiscard]] GadgetType gadgetType() const override { return Widget::ThisType; }
 
-        void layout(Context &context) override;
+        Point layout(Context &context) override;
 
         /**
          * @brief Add a Gadget to the management list of this Widget.

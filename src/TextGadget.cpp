@@ -45,8 +45,7 @@ namespace rose {
                     break;
             }
             if (surface) {
-                mTextSize.w = surface->w;
-                mTextSize.h = surface->h;
+                mTextSize = Size{surface->w, surface->h};
                 mTexture.reset(SDL_CreateTextureFromSurface(context.get(), surface.get()));
                 if (!mTexture)
                     throw TextGadgetException( fmt::format("Texture error: {}", SDL_GetError()));
@@ -63,22 +62,25 @@ namespace rose {
         mTexture.reset();
     }
 
-    void TextGadget::layout(Context &context) {
+    Point TextGadget::layout(Context &context) {
         Gadget::layout(context);
+        if (!gadgetPadding)
+            gadgetPadding = 5;
         if (!mText.empty()) {
             try {
                 createTexture(context);
-                desiredLayout = mTextSize;
+                desiredSize = mTextSize;
             } catch (TextGadgetException &e) {
                 fmt::print("{}\n", e.what());
             }
         }
+        return mgrDrawLoc;
     }
 
     void TextGadget::draw(Context &context) {
         Gadget::draw(context);
         if (mTexture)
-            context.renderCopy(mTexture, desiredLayout);
+            context.renderCopy(mTexture, renderRect);
     }
 
 } // rose

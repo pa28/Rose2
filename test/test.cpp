@@ -11,6 +11,7 @@
 #include <TextGadget.h>
 #include <Application.h>
 #include <Color.h>
+#include <fmt/format.h>
 
 using namespace rose;
 

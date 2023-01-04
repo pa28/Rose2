@@ -15,11 +15,11 @@ namespace rose {
 
     void Gadget::draw(Context &context) {
         DrawColorGuard colorGuard{context, background};
-        context.fillRect(desiredLayout);
+        context.fillRect(clipRectangle);
     }
 
-    void Gadget::layout(Context &) {
-
+    Point Gadget::layout(Context &) {
+        return mgrDrawLoc;
     }
 
     [[maybe_unused]] void Widget::manage(std::shared_ptr<Gadget> gadget) {
@@ -47,12 +47,15 @@ namespace rose {
         }
     }
 
-    void Widget::layout(Context &context) {
+    Point Widget::layout(Context &context) {
         Gadget::layout(context);
 
         for (auto &gadget : mGadgetList) {
-            gadget->layout(context);
+            Point drawLocation = gadget->layout(context);
+            gadget->layoutGadget(drawLocation, Padding{});
         }
+
+        return Point{};
     }
 
     void Builder::operator>>(Widget &widget) {
