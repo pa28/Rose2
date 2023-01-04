@@ -130,7 +130,7 @@ namespace rose {
          * @brief Manage the built Gadget by the specified Widget.
          * @param widget a std::shared_ptr to the manager.
          */
-        void operator >> (std::shared_ptr<Widget> &widget);
+        void operator >> (const std::shared_ptr<Widget>& widget);
 
         /**
          * @brief Manage the contents of this Builder by the contents of another Builder (presumably a WidgetBuilder.
@@ -269,6 +269,12 @@ namespace rose {
         Widget(Widget&&) = default;
         Widget& operator = (const Widget &) = delete;
         Widget& operator = (Widget &&) = default;
+
+        explicit Widget(const Size& size) {
+            mName = "Top";
+            desiredSize = size;
+            background = color::TransparentBlack;
+        }
 
         [[nodiscard]] GadgetType gadgetType() const override { return Widget::ThisType; }
 
