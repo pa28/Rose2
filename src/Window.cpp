@@ -11,8 +11,22 @@
 namespace rose {
 
     void Window::layout() {
-        if (!mScreens.empty())
-            mScreens.front()->layout(context());
+        /**
+         * Layout stage one.
+         */
+        Rectangle unset{};
+        for (const auto& screen : mScreens)
+            screen->layout(context(), unset);
+
+        /**
+         * Layout stage two.
+         */
+        Size sdlWindowSize{};
+        Point point{0,0};
+        SDL_GetWindowSize(mSdlWindow.get(), &sdlWindowSize.w, &sdlWindowSize.h);
+        sdlWindowSize.set = true;
+        for (const auto& screen : mScreens)
+            screen->layout(context(), Rectangle{point, sdlWindowSize});
     }
 
     void Window::draw() {
@@ -108,6 +122,7 @@ namespace rose {
 
             auto screen = std::make_shared<Screen>(shared_from_this(), initialSize);
             mScreens.emplace_back(std::move(screen));
+            mScreens.back()->setLayoutManager(std::make_unique<LayoutManager>());
         } else {
             std::string sdlError{SDL_GetError()};
             if (sdlError == "Could not initialize EGL") {

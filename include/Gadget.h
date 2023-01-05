@@ -27,11 +27,13 @@ namespace rose {
  * @brief A Gadget is a visual UI element that does not manage any other elements.
  */
     class Widget;
+    class LayoutManager;
 
     class Gadget {
     protected:
         friend class GadgetBuilder;
         friend class Window;
+        friend class LayoutManager;
 
         constexpr static GadgetType ThisType = GadgetType::Gadget;
         [[maybe_unused]] std::string_view mName{};
@@ -95,7 +97,7 @@ namespace rose {
          * @brief Layout this Gadget.
          * @details The process of layout is to find the minimum size the Gadget requires to be fully displayed.
          */
-        virtual Point layout(Context &context);
+        virtual Point layout(Context &context, Rectangle constraint);
 
         virtual ~Gadget() = default;
 
@@ -242,26 +244,6 @@ namespace rose {
         }
     };
 
-    class LayoutManager {
-    private:
-
-    public:
-        LayoutManager() = default;
-        LayoutManager(const LayoutManager&) = delete;
-        LayoutManager(LayoutManager&&) = default;
-        LayoutManager& operator = (const LayoutManager&) = delete;
-        LayoutManager& operator = (LayoutManager&&) = default;
-
-        virtual ~LayoutManager() = default;
-
-        /**
-         * @brief Default layout strategy is to do nothing.
-         * @param widget The widget to layout.
-         * @return true on success, false on fail.
-         */
-        [[maybe_unused]] virtual bool layoutWidget(std::shared_ptr<Widget> &) { return true; }
-    };
-
     /**
      * @class Widget
      * @brief A Widget is a visual UI element that does manage other Gadgets.
@@ -289,7 +271,13 @@ namespace rose {
 
         [[nodiscard]] GadgetType gadgetType() const override { return Widget::ThisType; }
 
-        Point layout(Context &context) override;
+        Point layout(Context &context, Rectangle constraint) override;
+
+        template<class Layout>
+        requires std::derived_from<LayoutManager,Layout>
+        void setLayoutManager(std::unique_ptr<Layout>&& layout) {
+            mLayoutManager = std::move(layout);
+        }
 
         /**
          * @brief Add a Gadget to the management list of this Widget.
@@ -375,6 +363,26 @@ namespace rose {
         WidgetBuilder() : GadgetBuilder(std::make_shared<Widget>()) {}
 
         ~WidgetBuilder() override = default;
+    };
+
+    class LayoutManager {
+    private:
+
+    public:
+        LayoutManager() = default;
+        LayoutManager(const LayoutManager&) = delete;
+        LayoutManager(LayoutManager&&) = default;
+        LayoutManager& operator = (const LayoutManager&) = delete;
+        LayoutManager& operator = (LayoutManager&&) = default;
+
+        virtual ~LayoutManager() = default;
+
+        /**
+         * @brief Default layout strategy is to do nothing.
+         * @param widget The widget to layout.
+         * @return true on success, false on fail.
+         */
+        [[maybe_unused]] Point layoutWidget(Context &context, Rectangle constraint, std::shared_ptr<Widget> &widget);
     };
 
 } // rose

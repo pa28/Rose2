@@ -62,8 +62,8 @@ namespace rose {
         mTexture.reset();
     }
 
-    Point TextGadget::layout(Context &context) {
-        Gadget::layout(context);
+    Point TextGadget::layout(Context &context, Rectangle constraint) {
+        Gadget::layout(context, constraint);
         if (!gadgetPadding)
             gadgetPadding = 5;
         if (!mText.empty()) {

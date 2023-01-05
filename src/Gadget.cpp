@@ -18,7 +18,7 @@ namespace rose {
         context.fillRect(clipRectangle);
     }
 
-    Point Gadget::layout(Context &) {
+    Point Gadget::layout(Context &, Rectangle /*constraint*/) {
         return mgrDrawLoc;
     }
 
@@ -47,17 +47,6 @@ namespace rose {
         }
     }
 
-    Point Widget::layout(Context &context) {
-        Gadget::layout(context);
-
-        for (auto &gadget : mGadgetList) {
-            Point drawLocation = gadget->layout(context);
-            gadget->layoutGadget(drawLocation, Padding{});
-        }
-
-        return Point{};
-    }
-
     void Builder::operator>>(Widget &widget) {
         widget.manage(*this);
     }
@@ -70,5 +59,48 @@ namespace rose {
         if (auto ptr = std::dynamic_pointer_cast<Widget>(builder.gadget); ptr) {
             ptr->manage(*this);
         }
+    }
+
+    Point Widget::layout(Context &context, Rectangle constraint) {
+        if (mLayoutManager) {
+            auto widget = shared_from_this();
+            return mLayoutManager->layoutWidget(context, constraint, widget);
+        } else {
+            if (!constraint) {
+                Gadget::layout(context, constraint);
+
+                for (auto &gadget: mGadgetList) {
+                    Point drawLocation = gadget->layout(context, constraint);
+                    gadget->layoutGadget(drawLocation, Padding{});
+                }
+
+                return Point{};
+            } else {
+                Gadget::layout(context, constraint);
+
+                for (auto &gadget: mGadgetList) {
+                    Point drawLocation = gadget->layout(context, constraint);
+                    gadget->layoutGadget(drawLocation, Padding{});
+                }
+
+                return Point{};
+            }
+        }
+    }
+
+    Point LayoutManager::layoutWidget(Context &context, Rectangle constraint, std::shared_ptr<Widget> &widget) {
+        if (!constraint) {
+            for (auto &gadget: widget->mGadgetList) {
+                auto drawLocation = gadget->layout(context, constraint);
+                gadget->layoutGadget(drawLocation, Padding());
+            }
+        } else {
+            for (auto &gadget: widget->mGadgetList) {
+                auto drawLocation = gadget->layout(context, constraint);
+                gadget->layoutGadget(drawLocation, Padding());
+            }
+        }
+
+        return Point{};
     }
 } // rose

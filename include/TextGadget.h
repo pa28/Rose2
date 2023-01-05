@@ -66,7 +66,7 @@ namespace rose {
         TextGadget& operator = (TextGadget&&) = default;
         ~TextGadget() override = default;
 
-        Point layout(Context &context) override;
+        Point layout(Context &context, Rectangle constraint) override;
 
         void draw(Context &context) override;
 

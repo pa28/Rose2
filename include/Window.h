@@ -83,8 +83,19 @@ namespace rose {
 
         Context& context() { return mContext; }
 
+        /**
+         * @brief Layout the contents of the window.
+         * @details Layout is a two stage process.
+         * Stage one is exploratory. Layout managers gather data on the Gadgets they have to layout.
+         * Stage two is executive. Layout managers tell Gadgets where they are positioned and how much space
+         * they have to occupy.
+         */
         void layout();
 
+        /**
+         * @brief Draw the contents of the window.
+         * @details The scene is rendered from the bottom up (root of the tree to the leaves) in preorder.
+         */
         void draw();
 
         template<class UiType>
