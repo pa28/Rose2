@@ -9,13 +9,15 @@
 #include "Gadget.h"
 
 namespace rose {
-    void Gadget::managedBy(std::shared_ptr<Widget> widget) {
+    void Gadget::managedBy(const std::shared_ptr<Widget>& widget) {
         manager = widget;
     }
 
     void Gadget::draw(Context &context) {
-        DrawColorGuard colorGuard{context, background};
-        context.fillRect(clipRectangle);
+        if (background) {
+            DrawColorGuard colorGuard{context, background};
+            context.fillRect(clipRectangle);
+        }
     }
 
     Point Gadget::layout(Context &, Rectangle /*constraint*/) {

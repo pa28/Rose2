@@ -26,6 +26,7 @@ namespace rose {
         /**
          * Red, Green, Blue and Alpha channels as floats
          */
+        bool set{false};                        ///< Indicates if the color should be used or not
         std::array<float,4> channels{};
 
         Color() = default;
@@ -35,10 +36,13 @@ namespace rose {
         Color& operator=(Color&&) = default;
         ~Color() = default;
 
+        explicit operator bool () const noexcept { return set; }
+
         template<class T>
         requires std::is_floating_point_v<T>
         constexpr Color(T r, T g, T b, T a) :
             channels({(float)r,(float)g,(float)b,(float)a}) {
+            set = true;
             std::ranges::transform( channels.begin(), channels.begin(), channels.begin(),
                                     [] (auto chan) { return fmin(1.0, fabs(chan)); });
         }
@@ -46,6 +50,7 @@ namespace rose {
         template<class T>
         requires std::is_integral_v<T>
         constexpr Color(T r, T g, T b, T a) {
+            set = true;
             channels[RED] = static_cast<float>(r) / 255.0f;
             channels[GREEN] = static_cast<float>(g) / 255.0f;
             channels[BLUE] = static_cast<float>(b) / 255.0f;

@@ -79,7 +79,7 @@ namespace rose {
          * @brief Set the pointer to the current manager of this Gadget.
          * @param widget
          */
-        void managedBy(std::shared_ptr<Widget> widget);
+        void managedBy(const std::shared_ptr<Widget>& widget);
 
         /**
          * @brief Get the current manager of this Gadget if any.

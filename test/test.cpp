@@ -94,7 +94,7 @@ int main(int argc, char **argv) {
                     .pointSize(30)
                     .layout(Point(0,0),Size(10,10))
                     .name("Text")
-                    .background(Color(0.5, 0.0, 0.0, 1.0))
+//                    .background(Color(0.5, 0.0, 0.0, 1.0))
                     >> application;
                 std::cout << "Text\n";
             }
