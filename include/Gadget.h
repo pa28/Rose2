@@ -366,7 +366,10 @@ namespace rose {
     };
 
     class LayoutManager {
-    private:
+    protected:
+        static auto getGadgetList(std::shared_ptr<Widget> &widget) {
+            return widget->mGadgetList;
+        }
 
     public:
         LayoutManager() = default;
@@ -382,7 +385,7 @@ namespace rose {
          * @param widget The widget to layout.
          * @return true on success, false on fail.
          */
-        [[maybe_unused]] Point layoutWidget(Context &context, Rectangle constraint, std::shared_ptr<Widget> &widget);
+         virtual Point layoutWidget(Context &context, Rectangle constraint, std::shared_ptr<Widget> &widget);
     };
 
 } // rose
