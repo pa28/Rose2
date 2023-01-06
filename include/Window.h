@@ -44,8 +44,8 @@ namespace rose {
         Screen(const std::shared_ptr<Window>& windowPtr, const Size& size) {
             mWindowPtr = windowPtr;
             mName = "Top";
-            desiredSize = size;
-            background = color::TransparentBlack;
+            mVisualMetrics.desiredSize = size;
+            mVisualMetrics.background = color::TransparentBlack;
         }
 
         ~Screen() override = default;

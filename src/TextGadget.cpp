@@ -38,7 +38,7 @@ namespace rose {
                 case Shaded:
                     surface.reset(
                             TTF_RenderUTF8_Shaded(mFont.get(), textAndSuffix.c_str(), fgColor.sdlColor(),
-                                                  background.sdlColor()));
+                                                  mVisualMetrics.background.sdlColor()));
                     break;
                 case Solid:
                     surface.reset(TTF_RenderUTF8_Solid(mFont.get(), textAndSuffix.c_str(), fgColor.sdlColor()));
@@ -64,23 +64,25 @@ namespace rose {
 
     Point TextGadget::layout(Context &context, Rectangle constraint) {
         Gadget::layout(context, constraint);
-        if (!gadgetPadding)
-            gadgetPadding = 5;
+        if (!mVisualMetrics.gadgetPadding)
+            mVisualMetrics.gadgetPadding = 5;
         if (!mText.empty()) {
             try {
                 createTexture(context);
-                desiredSize = mTextSize;
+                mVisualMetrics.desiredSize = mTextSize;
             } catch (TextGadgetException &e) {
                 fmt::print("{}\n", e.what());
             }
         }
-        return mgrDrawLoc;
+        return mVisualMetrics.drawLocation;
     }
 
     void TextGadget::draw(Context &context) {
         Gadget::draw(context);
-        if (mTexture)
-            context.renderCopy(mTexture, renderRect);
+        if (mTexture) {
+            Rectangle textRenderRect = mVisualMetrics.renderRect;
+            context.renderCopy(mTexture, textRenderRect);
+        }
     }
 
 } // rose

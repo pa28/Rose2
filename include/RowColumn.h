@@ -30,6 +30,8 @@ namespace rose {
 
     protected:
         MajorAxis mMajorAxis{MajorAxis::HORIZONTAL};
+        ScreenCoordType mMajorAxisSize{};       ///< Total size of the major axis.
+        ScreenCoordType mMinorAxisMax{};        ///< The minor axis maximum Gadget size.
 
     public:
         LinearLayout() = default;
@@ -40,6 +42,10 @@ namespace rose {
         LinearLayout& operator = (LinearLayout&&) = default;
 
         ~LinearLayout() override = default;
+
+        void clearSizes() {
+            mMajorAxisSize = mMinorAxisMax = 0;
+        }
 
         /**
          * @brief Default layout strategy is to do nothing.
@@ -60,7 +66,23 @@ namespace rose {
         RowColumn& operator=(const RowColumn &) = delete;
         RowColumn& operator=(RowColumn&&) = default;
 
+        void draw(Context& context) override {
+            Widget::draw(context);
+        }
+
         ~RowColumn() override = default;
+    };
+
+    /**
+     * @class RowColumnBuilder
+     */
+    class RowColumnBuilder : public WidgetBuilder {
+    public:
+        [[maybe_unused]] explicit RowColumnBuilder(std::shared_ptr<Widget> w) : WidgetBuilder(std::move(w)) {}
+
+        RowColumnBuilder() : WidgetBuilder(std::make_shared<RowColumn>()) {}
+
+        ~RowColumnBuilder() override = default;
     };
 
     /**
@@ -78,6 +100,18 @@ namespace rose {
     };
 
     /**
+     * @class RowBuilder
+     */
+    class RowBuilder : public RowColumnBuilder {
+    public:
+        [[maybe_unused]] explicit RowBuilder(std::shared_ptr<Widget> w) : RowColumnBuilder(std::move(w)) {}
+
+        RowBuilder() : RowColumnBuilder(std::make_shared<Row>()) {}
+
+        ~RowBuilder() override = default;
+    };
+
+    /**
      * @class Column
      */
     class Column : public RowColumn {
@@ -89,6 +123,18 @@ namespace rose {
         Column& operator=(Column&&) = default;
 
         ~Column() override = default;
+    };
+
+    /**
+     * @class ColumnBuilder
+     */
+    class ColumnBuilder : public RowColumnBuilder {
+    public:
+        [[maybe_unused]] explicit ColumnBuilder(std::shared_ptr<Widget> w) : RowColumnBuilder(std::move(w)) {}
+
+        ColumnBuilder() : RowColumnBuilder(std::make_shared<Column>()) {}
+
+        ~ColumnBuilder() override = default;
     };
 
 } // rose

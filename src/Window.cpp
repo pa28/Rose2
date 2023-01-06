@@ -7,6 +7,7 @@
  */
 
 #include "Window.h"
+#include <fmt/printf.h>
 
 namespace rose {
 
@@ -14,6 +15,7 @@ namespace rose {
         /**
          * Layout stage one.
          */
+        fmt::print("Layout stage 1\n");
         Rectangle unset{};
         for (const auto& screen : mScreens)
             screen->layout(context(), unset);
@@ -21,6 +23,7 @@ namespace rose {
         /**
          * Layout stage two.
          */
+        fmt::print("Layout stage 2\n");
         Size sdlWindowSize{};
         Point point{0,0};
         SDL_GetWindowSize(mSdlWindow.get(), &sdlWindowSize.w, &sdlWindowSize.h);
@@ -37,7 +40,7 @@ namespace rose {
     [[maybe_unused]] void Window::setFocusGadget(std::shared_ptr<Gadget> &gadget) {
         clearFocusChain();
         while (gadget) {
-            gadget->mHasFocus = true;
+            gadget->mVisualMetrics.mHasFocus = true;
             mFocusChain.push_back(gadget);
             gadget = gadget->manager.lock();
         }
@@ -45,7 +48,7 @@ namespace rose {
 
     void Window::clearFocusChain() {
         for (auto &gadget : mFocusChain) {
-            gadget->mHasFocus = false;
+            gadget->mVisualMetrics.mHasFocus = false;
         }
 
         mFocusChain.clear();
@@ -53,7 +56,7 @@ namespace rose {
 
     [[maybe_unused]] void Window::clearAllFocusFlags() {
         for (auto &screen : mScreens) {
-            gadgetTraversal(screen, [](std::shared_ptr<Gadget> &g) { g->mHasFocus = false; });
+            gadgetTraversal(screen, [](std::shared_ptr<Gadget> &g) { g->mVisualMetrics.mHasFocus = false; });
         }
     }
 

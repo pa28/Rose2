@@ -19,6 +19,7 @@
 #include <Rose.h>
 #include <Color.h>
 #include <GraphicsModel.h>
+#include <fmt/format.h>
 
 namespace rose {
 
@@ -30,7 +31,7 @@ namespace rose {
     class LayoutManager;
 
     class Gadget {
-    protected:
+    public:
         friend class GadgetBuilder;
         friend class Window;
         friend class LayoutManager;
@@ -39,15 +40,61 @@ namespace rose {
         [[maybe_unused]] std::string_view mName{};
         std::weak_ptr<Widget> manager{};  ///< Pointer to the current manager of this Gadget.
 
-        [[maybe_unused]] int managerBorder{};           ///< Space allocated for a border placed by the manager
-        [[maybe_unused]] Padding managerPadding{};      ///< Padding used by the manager for alignment
-        [[maybe_unused]] Padding gadgetPadding{};       ///< Padding for Gadget presentation.
-        [[maybe_unused]] Rectangle renderRect{};        ///< The rendering rectangle for content.
-        [[maybe_unused]] Size desiredSize{};            ///< The desired layout size set by the Gadget or constructor.
-        [[maybe_unused]] Point mgrDrawLoc{};            ///< The manager draw location.
-        [[maybe_unused]] Rectangle clipRectangle{};     ///< The clipping rectangle (the padding rectangle).
-        [[maybe_unused]] Color background{};            ///< The background color.
-        [[maybe_unused]] bool mHasFocus{};              ///< This gadget (and managers) has focus.
+        struct VisualMetrics {
+            /**
+             * @brief The drawing location provided by the manager.
+             */
+            Point drawLocation{};
+
+            /**
+             * @brief The content drawing size requested by the Gadget.
+             */
+            Size desiredSize{};
+
+            /**
+             * @brief The size of the boarder the Gadget is rendering.
+             * @details This is included in the clip rectangle.
+             */
+            int gadgetBorder{};
+
+            /**
+             * @brief Padding used by the layout manager to position the Gadget.
+             * @details This is not included in the Gadget clip rectangle.
+             */
+            Padding managerPadding{};      ///< Padding used by the manager for alignment
+
+            /**
+             * @brief Padding used by the Gadget.
+             * @details This can be used for better visual presentation, and/or managing the location
+             * of the Gadget graphics within the allocated space. Included in the clip rectangle.
+             */
+            Padding gadgetPadding{};
+
+            /**
+             * @brief The Gadget content rendering rectangle.
+             * @details May be used to render Textures directly, or used to derive rectangles for rendering
+             * peaces.
+             */
+            Rectangle renderRect{};
+
+//            Size mDesiredSize{};            ///< The desired layout size set by the Gadget or constructor.
+//            Point mgrDrawLoc{};            ///< The manager draw location.
+
+            /**
+             * @brief The clipping rectangle for the Gadget.
+             * @details The Gadget must not draw outside this rectangle. This is the location and size
+             * that all other UI objects will expect the Gadget to manage. Gadget borders, padding and
+             * graphics are all rendered inside this rectangle.
+             */
+            Rectangle clipRectangle{};
+
+            /**
+             * @brief The background color of the Gadget.
+             * @details If set this color is rendered to the clipRectangle before any other drawing.
+             */
+            Color background{};
+            bool mHasFocus{};              ///< This gadget (and managers) has focus.
+        } mVisualMetrics;
 
     public:
         Gadget() = default;
@@ -64,13 +111,31 @@ namespace rose {
         }
 
         void layoutGadget(const Point &drawLocation, const Padding &mgrPadding) {
-            managerPadding = mgrPadding;
-            mgrDrawLoc = drawLocation;
+            mVisualMetrics.managerPadding = mgrPadding;
+            mVisualMetrics.drawLocation = drawLocation;
 
-            renderRect = mgrDrawLoc + managerBorder + managerPadding.topLeft + gadgetPadding.topLeft;
-            renderRect = desiredSize;
-            clipRectangle = mgrDrawLoc + managerBorder + mgrPadding.topLeft;
-            clipRectangle = desiredSize + gadgetPadding.topLeft + gadgetPadding.botRight;
+            mVisualMetrics.clipRectangle = mVisualMetrics.drawLocation + mVisualMetrics.managerPadding.topLeft;
+
+            mVisualMetrics.renderRect = mVisualMetrics.clipRectangle.point + mVisualMetrics.gadgetPadding.topLeft;
+
+            mVisualMetrics.renderRect = mVisualMetrics.desiredSize + mVisualMetrics.gadgetPadding.topLeft
+                    + mVisualMetrics.gadgetPadding.botRight + mVisualMetrics.gadgetBorder * 2;
+
+            mVisualMetrics.clipRectangle = mVisualMetrics.renderRect.size + mVisualMetrics.renderRect.point +
+                    mVisualMetrics.managerPadding.botRight;
+
+            fmt::print("layoutGadget: {}"
+                       "\n\tdrawLocation:    {}"
+                       "\n\tmanagerPadding:  {}"
+                       "\n\tgadgetPadding:   {}"
+                       "\n\tgadgetBoarder:   {}"
+                       "\n\tdesiredSize:     {}"
+                       "\n\trenderRectangle: {}"
+                       "\n\tclipRectangle:   {}\n\n",
+                       mName, drawLocation, mVisualMetrics.managerPadding, mVisualMetrics.gadgetPadding,
+                       mVisualMetrics.gadgetBorder, mVisualMetrics.desiredSize, mVisualMetrics.renderRect,
+                       mVisualMetrics.clipRectangle
+                       );
         }
 
         [[maybe_unused]] [[nodiscard]] virtual GadgetType gadgetType() const { return Gadget::ThisType; }
@@ -99,13 +164,17 @@ namespace rose {
          */
         virtual Point layout(Context &context, Rectangle constraint);
 
+        VisualMetrics& getVisualMetrics() { return mVisualMetrics; }
+
         virtual ~Gadget() = default;
 
-        void setSize(const Size &size) { desiredSize = size; }
+        void setSize(const Size &size) { mVisualMetrics.desiredSize = size; }
 
-        void setDrawLocation(const Point &point) { mgrDrawLoc = point; }
+        void setDrawLocation(const Point &point) {
+            mVisualMetrics.drawLocation = point;
+        }
 
-        void setBackground(const Color& color) { background = color; }
+        void setBackground(const Color& color) { mVisualMetrics.background = color; }
 
         /**
          * @brief Set the Gadget name.
@@ -199,8 +268,8 @@ namespace rose {
          * @return this builder
          */
         [[maybe_unused]] auto layout(const Rectangle &rectangle) {
-            gadget->desiredSize = rectangle.size;
-            gadget->mgrDrawLoc = rectangle.point;
+            gadget->mVisualMetrics.desiredSize = rectangle.size;
+            gadget->mVisualMetrics.drawLocation = rectangle.point;
             return *this;
         }
 
@@ -211,8 +280,8 @@ namespace rose {
          * @return this builder.
          */
         [[maybe_unused]] GadgetBuilder& layout(const Point &point, const Size &size) {
-            gadget->desiredSize = size;
-            gadget->mgrDrawLoc = point;
+            gadget->mVisualMetrics.desiredSize = size;
+            gadget->mVisualMetrics.drawLocation = point;
             return *this;
         }
 
@@ -233,13 +302,13 @@ namespace rose {
             static_assert(std::is_convertible_v<Tx, ScreenCoordType> && std::is_convertible_v<Ty, ScreenCoordType> &&
                           std::is_convertible_v<Tw, ScreenCoordType> && std::is_convertible_v<Th, ScreenCoordType>,
                           "Arguments to Size() must be convertable to ScreenCoordType");
-            gadget->desiredSize = Size(W,H);
-            gadget->mgrDrawLoc = Point(X,Y);
+            gadget->mVisualMetrics.desiredSize = Size(W, H);
+            gadget->mVisualMetrics.drawLocation = Point(X,Y);
             return *this;
         }
 
         [[maybe_unused]] auto background(const Color& color) {
-            gadget->background = color;
+            gadget->mVisualMetrics.background = color;
             return *this;
         }
     };

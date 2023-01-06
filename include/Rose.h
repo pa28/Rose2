@@ -130,6 +130,13 @@ namespace rose {
 
         auto operator <=> (const Padding &) const = default;
 
+        Padding operator + (const int i) {
+            Padding result{};
+            result.topLeft = topLeft + i;
+            result.botRight = botRight + i;
+            return result;
+        }
+
         explicit operator bool () const { return topLeft && botRight; }
 
         ~Padding() = default;
@@ -296,6 +303,35 @@ namespace fmt {
                     // 'ctx.out()' is an output iterator
                 case 'd':
                     return format_to(ctx.out(), "[{:d},{:d},{:d},{:d}]", r.point.x, r.point.y, r.size.w, r.size.h);
+            }
+        }
+    };
+
+    template<>
+    class formatter<rose::Padding> {
+        char presentation_ = 'd';
+    public:
+        // parse format and store it
+        constexpr auto parse(format_parse_context &ctx) {
+            auto i = ctx.begin(), end = ctx.end();
+            if (i != end && (*i == 'd' || *i == 'o')) {
+                presentation_ = *i++;
+            }
+            if (i != end && *i != '}') {
+                throw format_error("Invalid Padding format.");
+            }
+            return i;
+        }
+
+        // format a value using stored specification:
+        template<class FmtContext>
+        constexpr auto format(const rose::Padding &r, FmtContext &ctx) const {
+            // note: we can't use ternary operator '?:' in a constexpr
+            switch (presentation_) {
+                default:
+                    // 'ctx.out()' is an output iterator
+                case 'd':
+                    return format_to(ctx.out(), "[{:d},{:d},{:d},{:d}]", r.topLeft.x, r.topLeft.y, r.botRight.x, r.botRight.y);
             }
         }
     };

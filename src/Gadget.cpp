@@ -14,14 +14,14 @@ namespace rose {
     }
 
     void Gadget::draw(Context &context) {
-        if (background) {
-            DrawColorGuard colorGuard{context, background};
-            context.fillRect(clipRectangle);
+        if (mVisualMetrics.background) {
+            DrawColorGuard colorGuard{context, mVisualMetrics.background};
+            context.fillRect(mVisualMetrics.clipRectangle);
         }
     }
 
     Point Gadget::layout(Context &, Rectangle /*constraint*/) {
-        return mgrDrawLoc;
+        return mVisualMetrics.drawLocation;
     }
 
     [[maybe_unused]] void Widget::manage(std::shared_ptr<Gadget> gadget) {

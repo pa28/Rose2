@@ -6,6 +6,7 @@
 #include <array>
 #include <Rose.h>
 #include <Gadget.h>
+#include <RowColumn.h>
 #include <TextGadget.h>
 #include <Application.h>
 #include <Color.h>
@@ -83,29 +84,44 @@ int main(int argc, char **argv) {
         application->initializeGraphics();
         application->createWindow(application->applicationName(), Size(800, 480), Point::CenterScreen(1), 0);
 
-        if (auto container = WidgetBuilder{}; container) {
-            /**
-             * Problem is with the builder system.
-             */
+        if (auto container = ColumnBuilder{}; container) {
+            container.name("container")
+                    .background(Color{0.0, 0.0, 0.9, 1.0})
+                    .layout(Point(0,0), Size(10,10));
 
-            if (TextGadgetBuilder text{}; text) {
-                text.text("Hello")
-                    .foreground(color::OpaqueWhite)
-                    .pointSize(30)
-                    .layout(Point(0,0),Size(10,10))
-                    .name("Text")
+            if (TextGadgetBuilder world{}; world) {
+                world.text("Morld")
+                        .foreground(color::OpaqueWhite)
+                        .pointSize(30)
+                        .layout(Point(0,0),Size(10,10))
+                        .name("World")
 //                    .background(Color(0.5, 0.0, 0.0, 1.0))
-                    >> application;
-                std::cout << "Text\n";
+                        >> container;
+                std::cout << "World\n";
             }
 
-            if (GadgetBuilder g{}; g) {
-                g.name("Map")
-                    .layout(Point(140, 150), Size(660, 330))
-                    .background(Color(0.0, 0.5, 0.0, 1.0))
-                    >> application;
+            if (TextGadgetBuilder hello{}; hello) {
+                hello.text("Helld")
+                        .foreground(color::OpaqueWhite)
+                        .pointSize(30)
+                        .layout(Point(0,0),Size(10,10))
+                        .name("Hello")
+//                    .background(Color(0.5, 0.0, 0.0, 1.0))
+                        >> container;
+                std::cout << "Hello\n";
             }
+
+            container >> application;
         }
+
+
+        if (GadgetBuilder g{}; g) {
+            g.name("Map")
+                .layout(Point(140, 150), Size(660, 330))
+                .background(Color(0.0, 0.5, 0.0, 1.0))
+                >> application;
+        }
+
         application->run();
     }
 
