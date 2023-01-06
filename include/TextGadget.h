@@ -66,9 +66,9 @@ namespace rose {
         TextGadget& operator = (TextGadget&&) = default;
         ~TextGadget() override = default;
 
-        Point layout(Context &context, Rectangle constraint) override;
+        bool initialGadgetLayout(Context &context) override;
 
-        void draw(Context &context) override;
+        void draw(Context &context, Point drawLocation) override;
 
         /**
          * @brief Create a Blended Texture from text.

@@ -15,26 +15,26 @@ namespace rose {
         /**
          * Layout stage one.
          */
-        fmt::print("Layout stage 1\n");
         Rectangle unset{};
+        bool constraintRequired = false;
         for (const auto& screen : mScreens)
-            screen->layout(context(), unset);
+            constraintRequired |= screen->initialGadgetLayout(context());
 
-        /**
-         * Layout stage two.
-         */
-        fmt::print("Layout stage 2\n");
-        Size sdlWindowSize{};
-        Point point{0,0};
-        SDL_GetWindowSize(mSdlWindow.get(), &sdlWindowSize.w, &sdlWindowSize.h);
-        sdlWindowSize.set = true;
-        for (const auto& screen : mScreens)
-            screen->layout(context(), Rectangle{point, sdlWindowSize});
+        if (constraintRequired) {
+            /**
+             * Layout stage two.
+             */
+            Size sdlWindowSize{};
+            SDL_GetWindowSize(mSdlWindow.get(), &sdlWindowSize.w, &sdlWindowSize.h);
+            sdlWindowSize.set = true;
+            for (const auto &screen: mScreens)
+                screen->constrainedGadgetLayout(context(), Rectangle{Point{0, 0,}, sdlWindowSize});
+        }
     }
 
     void Window::draw() {
         if (!mScreens.empty())
-            mScreens.front()->draw(context());
+            mScreens.front()->draw(context(), Point());
     }
 
     [[maybe_unused]] void Window::setFocusGadget(std::shared_ptr<Gadget> &gadget) {

@@ -16,61 +16,114 @@
 #include "RowColumn.h"
 
 namespace rose {
-    Point LinearLayout::layoutWidget(Context &context, Rectangle constraint, std::shared_ptr<Widget> &widget) {
-        if (!constraint) {
-            clearSizes();
-            for (auto &gadget: getGadgetList(widget)) {
-                auto drawLocation = gadget->layout(context, constraint);
-                gadget->layoutGadget(drawLocation, Padding());
-                auto visualMetrics = gadget->getVisualMetrics();
-                switch (mMajorAxis) {
-                    case MajorAxis::VERTICAL:
-                        mMajorAxisSize += visualMetrics.clipRectangle.size.h;
-                        mMinorAxisMax = std::max(mMinorAxisMax, visualMetrics.clipRectangle.size.w);
-                        break;
-                    case MajorAxis::HORIZONTAL:
-                        mMajorAxisSize += visualMetrics.clipRectangle.size.w;
-                        mMinorAxisMax = std::max(mMinorAxisMax, visualMetrics.clipRectangle.size.h);
-                        break;
-                }
-            }
+    bool LinearLayout::initialWidgetLayout(Context &context, std::shared_ptr<Widget> &widget) {
+        bool constraintLayoutRequired = false;
+
+        Point position{0,0};
+        clearSizes();
+        for (auto &gadget : getGadgetList(widget)) {
+            constraintLayoutRequired |= gadget->initialGadgetLayout(context);
+            gadget->getVisualMetrics().drawLocation = position;
             switch (mMajorAxis) {
-                case MajorAxis::VERTICAL:
-                    widget->getVisualMetrics().desiredSize = Size(mMinorAxisMax, mMajorAxisSize);
-                    break;
                 case MajorAxis::HORIZONTAL:
-                    widget->getVisualMetrics().desiredSize = Size(mMajorAxisSize, mMinorAxisMax);
+                    mMajorAxisSize += gadget->getVisualMetrics().clipRectangle.size.w;
+                    mMinorAxisMax = std::max(mMinorAxisMax, gadget->getVisualMetrics().clipRectangle.size.h);
+                    position.x += gadget->getVisualMetrics().clipRectangle.size.w;
+                    break;
+                case MajorAxis::VERTICAL:
+                    mMajorAxisSize += gadget->getVisualMetrics().clipRectangle.size.h;
+                    mMinorAxisMax = std::max(mMinorAxisMax, gadget->getVisualMetrics().clipRectangle.size.w);
+                    position.y += gadget->getVisualMetrics().clipRectangle.size.h;
                     break;
             }
-
-        } else {
-            Point placement = widget->getVisualMetrics().renderRect.point;
-            widget->getVisualMetrics().desiredSize = Size{0,0};
-            for (auto &gadget: getGadgetList(widget)) {
-                gadget->layoutGadget(placement, Padding());
-                auto visualMetrics = gadget->getVisualMetrics();
-                switch (mMajorAxis) {
-                    case MajorAxis::VERTICAL:
-                        placement.y += visualMetrics.clipRectangle.size.h;
-                        widget->getVisualMetrics().desiredSize.h = std::max(widget->getVisualMetrics().desiredSize.h,
-                                                                             visualMetrics.clipRectangle.size.h);
-                        widget->getVisualMetrics().desiredSize.w = std::max(widget->getVisualMetrics().desiredSize.w,
-                                                                            visualMetrics.clipRectangle.size.w);
-                        break;
-                    case MajorAxis::HORIZONTAL:
-                        placement.x += visualMetrics.clipRectangle.size.w;
-                        widget->getVisualMetrics().desiredSize.w = std::max(widget->getVisualMetrics().desiredSize.w,
-                                                                             visualMetrics.clipRectangle.size.w);
-                        widget->getVisualMetrics().desiredSize.h = std::max(widget->getVisualMetrics().desiredSize.h,
-                                                                            visualMetrics.clipRectangle.size.h);
-                        break;
-                }
-
-                gadget->layoutGadget(visualMetrics.drawLocation, Padding());
-            }
-
         }
 
-        return Point{};
+        for (auto &gadget : getGadgetList(widget)) {
+            gadget->getVisualMetrics().innerAlignmentPadding = Padding{};
+            gadget->getVisualMetrics().outerAlignmentPadding = Padding{};
+
+            switch (mMajorAxis) {
+                case MajorAxis::HORIZONTAL:
+                    if (auto residue = mMinorAxisMax - gadget->getVisualMetrics().clipRectangle.size.h; residue > 0) {
+                        Padding padding{0,0,0,0};
+
+                        switch (mAlignment) {
+                            case Alignment::TOP_LEFT:
+                                padding.botRight.y = residue;
+                                if (mAlignmentLoc == AlignmentLoc::INNER) {
+                                    gadget->getVisualMetrics().innerAlignmentPadding = padding;
+                                } else {
+                                    gadget->getVisualMetrics().outerAlignmentPadding = padding;
+                                }
+                                break;
+                            case Alignment::BOTTOM_RIGHT:
+                                padding.topLeft.y = residue;
+                                if (mAlignmentLoc == AlignmentLoc::INNER) {
+                                    gadget->getVisualMetrics().innerAlignmentPadding = padding;
+                                } else {
+                                    gadget->getVisualMetrics().outerAlignmentPadding = padding;
+                                }
+                                break;
+                            case Alignment::CENTER:
+                                padding.topLeft.y = residue / 2;
+                                padding.botRight.y = residue / 2 + (residue % 2 ? 1 : 0);
+                                if (mAlignmentLoc == AlignmentLoc::INNER) {
+                                    gadget->getVisualMetrics().innerAlignmentPadding = padding;
+                                } else {
+                                    gadget->getVisualMetrics().outerAlignmentPadding = padding;
+                                }
+                                break;
+                        }
+                        gadget->forceInitialGadgetLayout();
+                    }
+                    break;
+                case MajorAxis::VERTICAL:
+                    if (auto residue = mMinorAxisMax - gadget->getVisualMetrics().clipRectangle.size.w; residue > 0) {
+                        Padding padding{0,0,0,0};
+
+                        switch (mAlignment) {
+                            case Alignment::TOP_LEFT:
+                                padding.botRight.x = residue;
+                                if (mAlignmentLoc == AlignmentLoc::INNER) {
+                                    gadget->getVisualMetrics().innerAlignmentPadding = padding;
+                                } else {
+                                    gadget->getVisualMetrics().outerAlignmentPadding = padding;
+                                }
+                                break;
+                            case Alignment::BOTTOM_RIGHT:
+                                padding.topLeft.x = residue;
+                                if (mAlignmentLoc == AlignmentLoc::INNER) {
+                                    gadget->getVisualMetrics().innerAlignmentPadding = padding;
+                                } else {
+                                    gadget->getVisualMetrics().outerAlignmentPadding = padding;
+                                }
+                                break;
+                            case Alignment::CENTER:
+                                padding.topLeft.x = residue / 2;
+                                padding.botRight.x = residue / 2 + (residue % 2 ? 1 : 0);
+                                if (mAlignmentLoc == AlignmentLoc::INNER) {
+                                    gadget->getVisualMetrics().innerAlignmentPadding = padding;
+                                } else {
+                                    gadget->getVisualMetrics().outerAlignmentPadding = padding;
+                                }
+                                break;
+                        }
+                        gadget->forceInitialGadgetLayout();
+                    }
+                    break;
+            }
+        }
+
+        switch (mMajorAxis) {
+            case MajorAxis::HORIZONTAL:
+                widget->getVisualMetrics().desiredSize = Size{mMajorAxisSize, mMinorAxisMax };
+                break;
+            case MajorAxis::VERTICAL:
+                widget->getVisualMetrics().desiredSize = Size{ mMinorAxisMax, mMajorAxisSize };
+                break;
+        }
+        constraintLayoutRequired |= widget->forceInitialGadgetLayout();
+
+        return constraintLayoutRequired;
     }
 } // rose

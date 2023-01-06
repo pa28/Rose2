@@ -28,8 +28,19 @@ namespace rose {
             HORIZONTAL, VERTICAL
         };
 
+        enum class Alignment {
+            TOP_LEFT, BOTTOM_RIGHT, CENTER
+        };
+
+        enum class AlignmentLoc {
+            INNER, OUTER
+        };
+
     protected:
         MajorAxis mMajorAxis{MajorAxis::HORIZONTAL};
+        Alignment mAlignment{Alignment::TOP_LEFT};
+        AlignmentLoc mAlignmentLoc{AlignmentLoc::INNER};
+
         ScreenCoordType mMajorAxisSize{};       ///< Total size of the major axis.
         ScreenCoordType mMinorAxisMax{};        ///< The minor axis maximum Gadget size.
 
@@ -52,7 +63,7 @@ namespace rose {
          * @param widget The widget to layout.
          * @return true on success, false on fail.
          */
-         Point layoutWidget(Context &context, Rectangle constraint, std::shared_ptr<Widget> &widget) override;
+        bool initialWidgetLayout(Context &context, std::shared_ptr<Widget> &widget) override;
     };
 
     /**
@@ -66,9 +77,9 @@ namespace rose {
         RowColumn& operator=(const RowColumn &) = delete;
         RowColumn& operator=(RowColumn&&) = default;
 
-        void draw(Context& context) override {
-            Widget::draw(context);
-        }
+//        void draw(Context &context, Point drawLocation) override {
+//            Widget::draw(context, drawLocation + getVisualMetrics().drawLocation);
+//        }
 
         ~RowColumn() override = default;
     };

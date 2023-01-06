@@ -62,8 +62,7 @@ namespace rose {
         mTexture.reset();
     }
 
-    Point TextGadget::layout(Context &context, Rectangle constraint) {
-        Gadget::layout(context, constraint);
+    bool TextGadget::initialGadgetLayout(Context &context) {
         if (!mVisualMetrics.gadgetPadding)
             mVisualMetrics.gadgetPadding = 5;
         if (!mText.empty()) {
@@ -74,13 +73,13 @@ namespace rose {
                 fmt::print("{}\n", e.what());
             }
         }
-        return mVisualMetrics.drawLocation;
+        return Gadget::initialGadgetLayout(context);
     }
 
-    void TextGadget::draw(Context &context) {
-        Gadget::draw(context);
+    void TextGadget::draw(Context &context, Point drawLocation) {
+        Gadget::draw(context, drawLocation);
         if (mTexture) {
-            Rectangle textRenderRect = mVisualMetrics.renderRect;
+            Rectangle textRenderRect = mVisualMetrics.renderRect + drawLocation;
             context.renderCopy(mTexture, textRenderRect);
         }
     }

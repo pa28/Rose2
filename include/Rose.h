@@ -39,6 +39,10 @@ namespace rose {
                     "Arguments to Size() must be convertable to ScreenCoordType");
         }
 
+        template<typename Ts>
+        requires std::is_convertible_v<Ts, ScreenCoordType>
+        explicit Size(Ts s) : w(s), h(s), set(true) {}
+
         ~Size() = default;
 
         template<class I>
@@ -51,6 +55,10 @@ namespace rose {
 
         Size operator + (int border) {
             Size size{*this}; size.w += border; size.h += border; return size;
+        }
+
+        Size operator + (const Size& size) {
+            return Size{w + size.w, h + size.h};
         }
 
         explicit operator bool () const { return set; }
@@ -120,6 +128,13 @@ namespace rose {
         Padding& operator=(const Padding &) = default;
         Padding& operator=(Padding&&) = default;
 
+        template<typename Tx, typename Ty, typename Tw, typename Th>
+        [[maybe_unused]] Padding(Tx X0, Ty Y0, Tw X1, Th Y1) : topLeft(X0,Y0), botRight(X1,Y1) {
+            static_assert(std::is_convertible_v<Tx, ScreenCoordType> && std::is_convertible_v<Ty, ScreenCoordType> &&
+                          std::is_convertible_v<Tw, ScreenCoordType> && std::is_convertible_v<Th, ScreenCoordType>,
+                          "Arguments to Padding() must be convertable to ScreenCoordType");
+        }
+
         template<class I>
         requires std::is_integral_v<I>
         Padding& operator=(I i) {
@@ -176,6 +191,12 @@ namespace rose {
             return *this;
         }
 
+        Rectangle operator + (const Point offset) const {
+            Rectangle result{*this};
+            result.point = result.point + offset;
+            return  result;
+        }
+
         auto operator <=> (const Rectangle &) const = default;
 
         auto operator <=> (const Point &p) const {
@@ -216,7 +237,7 @@ namespace rose {
 
 
 inline rose::Size operator + (const rose::Size &s, const rose::Point& p) {
-    rose::Size r{s}; r.w += p.x; r.h += p.y; return r;
+    return rose::Size {s.w + p.x, s.h + p.y};
 }
 
 namespace fmt {

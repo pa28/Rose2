@@ -21,6 +21,8 @@
 #include <GraphicsModel.h>
 #include <fmt/format.h>
 
+//#define DEBUG_GADGET_DRAW
+
 namespace rose {
 
 /**
@@ -29,6 +31,12 @@ namespace rose {
  */
     class Widget;
     class LayoutManager;
+
+#ifdef DEBUG_GADGET_DRAW
+    static Color ClipRectangleDebugColor{1.0, 0.0, 0.0, 1.0 };
+    static Color BorderRectangleDebugColor{ 0.0, 0.0, 1.0, 1.0 };
+    static Color RenderRectangleDebugColor{0.0, 1.0, 0.0, 1.0};
+#endif
 
     class Gadget {
     public:
@@ -42,7 +50,16 @@ namespace rose {
 
         struct VisualMetrics {
             /**
+             * @brief Set to true when the Gadget layout is constrained.
+             * @details Gadgets are constrained when there is insufficient room to render them fully. The application
+             * designer may wish to use a more flexible solutions such as a ScrollWidget. The Gadget may modify its
+             * rendering to provide a visual cue of the constraint.
+             */
+            bool constrained{false};
+
+            /**
              * @brief The drawing location provided by the manager.
+             * @details This is applied as a Point offset to the render rectangles as the Gadget is drawn.
              */
             Point drawLocation{};
 
@@ -59,9 +76,17 @@ namespace rose {
 
             /**
              * @brief Padding used by the layout manager to position the Gadget.
-             * @details This is not included in the Gadget clip rectangle.
+             * @details This is not included in the Gadget clip rectangle. The gadget retains its original
+             * size and is just pushed around. @see innerAlignmentPadding.
              */
-            Padding managerPadding{};      ///< Padding used by the manager for alignment
+            Padding outerAlignmentPadding{};
+
+            /**
+             * @brief Padding used by the layout manager to position the Gadget.
+             * @details This padding is placed inside the border changing the size inside the border to
+             * align the contents with other gadgets. @see outerAlignmentPadding.
+             */
+            Padding innerAlignmentPadding{};
 
             /**
              * @brief Padding used by the Gadget.
@@ -77,8 +102,11 @@ namespace rose {
              */
             Rectangle renderRect{};
 
-//            Size mDesiredSize{};            ///< The desired layout size set by the Gadget or constructor.
-//            Point mgrDrawLoc{};            ///< The manager draw location.
+            /**
+             * @brief The Gadget border rendering rectangle.
+             * @details This rectangle is used to render a border around the Gadget visual.
+             */
+            Rectangle borderRect{};
 
             /**
              * @brief The clipping rectangle for the Gadget.
@@ -93,7 +121,11 @@ namespace rose {
              * @details If set this color is rendered to the clipRectangle before any other drawing.
              */
             Color background{};
-            bool mHasFocus{};              ///< This gadget (and managers) has focus.
+
+            /**
+             * True if the Gadget has focus.
+             */
+            bool mHasFocus{};
         } mVisualMetrics;
 
     public:
@@ -110,33 +142,90 @@ namespace rose {
             return !(!a && !b);
         }
 
-        void layoutGadget(const Point &drawLocation, const Padding &mgrPadding) {
-            mVisualMetrics.managerPadding = mgrPadding;
-            mVisualMetrics.drawLocation = drawLocation;
+        /**
+         * @brief Perform initial Gadget layout.
+         * @details The Gadget has an opportunity to specify its own desiredSize by overriding this method.
+         * @param drawLocation
+         * @param mgrPadding
+         */
+        virtual bool initialGadgetLayout(Context &) {
+            return forceInitialGadgetLayout();
+        }
 
-            mVisualMetrics.clipRectangle = mVisualMetrics.drawLocation + mVisualMetrics.managerPadding.topLeft;
+        /**
+         * @brief Force initial gadget layout avoiding virtual method.
+         * @details This may be required for Widgets to call after they have configured their Gadgets.
+         * @param mgrPadding
+         * @return
+         */
+        bool forceInitialGadgetLayout() {
 
-            mVisualMetrics.renderRect = mVisualMetrics.clipRectangle.point + mVisualMetrics.gadgetPadding.topLeft;
+            /**
+             * The renderRect size is the Gadget desired size + the Gadget padding.
+             */
+            mVisualMetrics.renderRect.size = mVisualMetrics.desiredSize + mVisualMetrics.gadgetBorder +
+                mVisualMetrics.gadgetPadding.topLeft + mVisualMetrics.gadgetPadding.botRight;
 
-            mVisualMetrics.renderRect = mVisualMetrics.desiredSize + mVisualMetrics.gadgetPadding.topLeft
-                    + mVisualMetrics.gadgetPadding.botRight + mVisualMetrics.gadgetBorder * 2;
+            /**
+             * The borderRect size is the renderRect size + the boarder size all the way around.
+             */
+            mVisualMetrics.borderRect.size = mVisualMetrics.renderRect.size + mVisualMetrics.gadgetPadding.topLeft +
+                    mVisualMetrics.gadgetPadding.botRight + mVisualMetrics.innerAlignmentPadding.topLeft +
+                    mVisualMetrics.innerAlignmentPadding.botRight + mVisualMetrics.gadgetBorder * 2;
 
-            mVisualMetrics.clipRectangle = mVisualMetrics.renderRect.size + mVisualMetrics.renderRect.point +
-                    mVisualMetrics.managerPadding.botRight;
+            /**
+             * The clipRectangle size is the borderRect size + the manager padding.
+             */
+            mVisualMetrics.clipRectangle.size = mVisualMetrics.borderRect.size +
+                    mVisualMetrics.outerAlignmentPadding.topLeft + mVisualMetrics.outerAlignmentPadding.botRight;
 
-            fmt::print("layoutGadget: {}"
+            /**
+             * The clipRectangle point is 0,0
+             */
+            mVisualMetrics.clipRectangle.point = Point{0,0};
+
+            /**
+             * The borderRect point is the clipRectangle point + manager padding.
+             */
+            mVisualMetrics.borderRect.point = mVisualMetrics.clipRectangle.point +
+                    mVisualMetrics.outerAlignmentPadding.topLeft;
+
+            /**
+             * The renderRect point is the borderRect point + the border size.
+             */
+            mVisualMetrics.renderRect.point = mVisualMetrics.borderRect.point + mVisualMetrics.gadgetBorder +
+                    mVisualMetrics.gadgetPadding.topLeft + mVisualMetrics.innerAlignmentPadding.topLeft;
+
+            fmt::print("initialGadgetLayout: {}"
                        "\n\tdrawLocation:    {}"
-                       "\n\tmanagerPadding:  {}"
+                       "\n\touterPadding:    {}"
+                       "\n\tinnerPadding:    {}"
                        "\n\tgadgetPadding:   {}"
                        "\n\tgadgetBoarder:   {}"
                        "\n\tdesiredSize:     {}"
                        "\n\trenderRectangle: {}"
+                       "\n\tborderRectangle: {}"
                        "\n\tclipRectangle:   {}\n\n",
-                       mName, drawLocation, mVisualMetrics.managerPadding, mVisualMetrics.gadgetPadding,
-                       mVisualMetrics.gadgetBorder, mVisualMetrics.desiredSize, mVisualMetrics.renderRect,
-                       mVisualMetrics.clipRectangle
+                       mName, mVisualMetrics.drawLocation, mVisualMetrics.outerAlignmentPadding, mVisualMetrics.innerAlignmentPadding,
+                       mVisualMetrics.gadgetPadding, mVisualMetrics.gadgetBorder, mVisualMetrics.desiredSize, mVisualMetrics.renderRect,
+                       mVisualMetrics.borderRect, mVisualMetrics.clipRectangle
                        );
+
+            return false;
         }
+
+        /**
+         * @brief Find a constrained layout for this Gadget.
+         * @details This method is only called when there is insufficient room to render the Gadget.
+         */
+        virtual void constrainedGadgetLayout(Context &, Rectangle ) {}
+
+        /**
+         * @brief Get access to the visual metrics of the Gadget so they may be manipulated directly.
+         * @details This should only be done by methods involved in layout management.
+         * @return A reference to the VisualMetrics structure.
+         */
+        VisualMetrics& getVisualMetrics() { return mVisualMetrics; }
 
         [[maybe_unused]] [[nodiscard]] virtual GadgetType gadgetType() const { return Gadget::ThisType; }
 
@@ -150,21 +239,13 @@ namespace rose {
          * @brief Get the current manager of this Gadget if any.
          * @return A pointer (possibly empty) to the Gadget's manager.
          */
-        auto getManager() { return manager; }
+        [[nodiscard]] auto getManager() const { return manager; }
 
         /**
          * @brief Draw this Gadget.
          * @param context The graphics context to use.
          */
-        virtual void draw(Context& context);
-
-        /**
-         * @brief Layout this Gadget.
-         * @details The process of layout is to find the minimum size the Gadget requires to be fully displayed.
-         */
-        virtual Point layout(Context &context, Rectangle constraint);
-
-        VisualMetrics& getVisualMetrics() { return mVisualMetrics; }
+        virtual void draw(Context &context, Point drawLocation);
 
         virtual ~Gadget() = default;
 
@@ -340,7 +421,7 @@ namespace rose {
 
         [[nodiscard]] GadgetType gadgetType() const override { return Widget::ThisType; }
 
-        Point layout(Context &context, Rectangle constraint) override;
+        bool initialGadgetLayout(Context &context) override;
 
         template<class Layout>
         requires std::derived_from<LayoutManager,Layout>
@@ -420,7 +501,7 @@ namespace rose {
          * @brief Draw this Widget and all managed Gadgets.
          * @param context The graphics context to use.
          */
-        void draw(Context& context) override;
+        void draw(Context &context, Point drawLocation) override;
 
         ~Widget() override = default;
     };
@@ -454,7 +535,7 @@ namespace rose {
          * @param widget The widget to layout.
          * @return true on success, false on fail.
          */
-         virtual Point layoutWidget(Context &context, Rectangle constraint, std::shared_ptr<Widget> &widget);
+         virtual bool initialWidgetLayout(Context &context, std::shared_ptr<Widget> &widget);
     };
 
 } // rose

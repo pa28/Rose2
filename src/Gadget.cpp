@@ -13,15 +13,20 @@ namespace rose {
         manager = widget;
     }
 
-    void Gadget::draw(Context &context) {
+    void Gadget::draw(Context &context, Point drawLocation) {
+#ifdef DEBUG_GADGET_DRAW
+        DrawColorGuard colorGuard{context, ClipRectangleDebugColor};
+        context.fillRect(mVisualMetrics.clipRectangle + drawLocation);
+        colorGuard.setDrawColor(BorderRectangleDebugColor);
+        context.fillRect(mVisualMetrics.borderRect);
+        colorGuard.setDrawColor(RenderRectangleDebugColor);
+        context.fillRect(mVisualMetrics.renderRect + drawLocation);
+#else
         if (mVisualMetrics.background) {
             DrawColorGuard colorGuard{context, mVisualMetrics.background};
-            context.fillRect(mVisualMetrics.clipRectangle);
+            context.fillRect(mVisualMetrics.borderRect + drawLocation);
         }
-    }
-
-    Point Gadget::layout(Context &, Rectangle /*constraint*/) {
-        return mVisualMetrics.drawLocation;
+#endif
     }
 
     [[maybe_unused]] void Widget::manage(std::shared_ptr<Gadget> gadget) {
@@ -41,11 +46,12 @@ namespace rose {
         mGadgetList.erase(std::remove(mGadgetList.begin(), mGadgetList.end(), gadget), mGadgetList.end());
     }
 
-    void Widget::draw(Context &context) {
-        Gadget::draw(context);
+    void Widget::draw(Context &context, Point drawLocation) {
+        Gadget::draw(context, drawLocation);
 
         for (const auto& gadget : mGadgetList) {
-            gadget->draw(context);
+            Point gadgetDrawLocation = drawLocation + gadget->getVisualMetrics().drawLocation;
+            gadget->draw(context, gadgetDrawLocation);
         }
     }
 
@@ -63,46 +69,26 @@ namespace rose {
         }
     }
 
-    Point Widget::layout(Context &context, Rectangle constraint) {
+    bool Widget::initialGadgetLayout(Context &context) {
         if (mLayoutManager) {
             auto widget = shared_from_this();
-            return mLayoutManager->layoutWidget(context, constraint, widget);
+            return mLayoutManager->initialWidgetLayout(context, widget);
         } else {
-            if (!constraint) {
-                Gadget::layout(context, constraint);
-
-                for (auto &gadget: mGadgetList) {
-                    Point drawLocation = gadget->layout(context, constraint);
-                    gadget->layoutGadget(drawLocation, Padding{});
-                }
-
-                return Point{};
-            } else {
-                Gadget::layout(context, constraint);
-
-                for (auto &gadget: mGadgetList) {
-                    Point drawLocation = gadget->layout(context, constraint);
-                    gadget->layoutGadget(drawLocation, Padding{});
-                }
-
-                return Point{};
+            bool constraintRequired = false;
+            for (auto &gadget: mGadgetList) {
+                constraintRequired |= gadget->initialGadgetLayout(context);
             }
+
+            return constraintRequired;
         }
     }
 
-    Point LayoutManager::layoutWidget(Context &context, Rectangle constraint, std::shared_ptr<Widget> &widget) {
-        if (!constraint) {
-            for (auto &gadget: widget->mGadgetList) {
-                auto drawLocation = gadget->layout(context, constraint);
-                gadget->layoutGadget(drawLocation, Padding());
-            }
-        } else {
-            for (auto &gadget: widget->mGadgetList) {
-                auto drawLocation = gadget->layout(context, constraint);
-                gadget->layoutGadget(drawLocation, Padding());
-            }
+    bool LayoutManager::initialWidgetLayout(Context &context, std::shared_ptr<Widget> &widget) {
+        bool constraintRequired = false;
+        for (auto &gadget: getGadgetList(widget)) {
+            constraintRequired |= gadget->initialGadgetLayout(context);
         }
 
-        return Point{};
+        return constraintRequired;
     }
 } // rose
