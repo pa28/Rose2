@@ -92,8 +92,8 @@ namespace rose {
             if (lambda(gadget)) {
                 result = gadget;
                 if (auto widget = std::dynamic_pointer_cast<Widget>(gadget); widget) {
-                    std::ranges::reverse_view reverseGadgetList{widget->mGadgetList};
-                    for (auto &newGadget : reverseGadgetList) {
+//                    std::ranges::reverse_view reverseGadgetList{widget->mGadgetList};
+                    for (auto &newGadget : widget->mGadgetList) {
                         stack.push(newGadget);
                     }
                 }

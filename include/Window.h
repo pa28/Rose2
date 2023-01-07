@@ -140,7 +140,7 @@ namespace rose {
                                     const std::function< void(std::shared_ptr<Gadget>&) >& lambda);
 
         /**
-         * @brief Preorder traversal of a Widget tree to find a leaf Gadget.
+         * @brief Post-order traversal of a Widget tree to find a leaf Gadget.
          * @details The tree is traversed starting from the specified Gadget. Gadgets which are also Widgets are
          * traversed in turn. The provided lambda is applied to all Gadgets. Only Gadgets for which the lambda
          * returns true are searched.
