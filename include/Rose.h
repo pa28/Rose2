@@ -209,8 +209,11 @@ namespace rose {
 
         explicit operator bool () const { return point.set && size.set; }
 
+        // ToDo: fix all related comparison operators. <=> not really doing what we want.
         [[maybe_unused]] bool contains(const Point &p) {
-            return p >= point && p < (point + size);
+            auto p2 = point + size;
+            auto r = point.x <= p.x && point.y <= p.y && p.x < p2.x && p.y < p2.y;
+            return r;
         }
 
         [[nodiscard]] Rectangle intersection(const Rectangle &o) const {
