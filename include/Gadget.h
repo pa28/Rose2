@@ -151,7 +151,8 @@ namespace rose {
         }
 
         bool containsPoint(const Point &point) {
-            return (mVisualMetrics.borderRect + mVisualMetrics.lastDrawLocation).contains(point);
+            auto r = (mVisualMetrics.borderRect + mVisualMetrics.lastDrawLocation).contains(point);
+            return r;
         }
 
         /**

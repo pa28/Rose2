@@ -61,7 +61,7 @@ namespace rose {
         }
 
 
-        event.setMouseMotion([this](const SDL_MouseMotionEvent &e) -> bool { return mouseMotionEvent(e); });
+        event.setMouseMotion([this](const SDL_MouseMotionEvent &e) -> bool { return handleMouseMotionEvent(e); });
 
         event.setWinStateChange([this](WindowEventType type, const SDL_WindowEvent &e) -> void { winStateChangeEvent(type,e); } );
 
@@ -77,9 +77,13 @@ namespace rose {
         return std::make_shared<Application>(argc, argv);
     }
 
-    bool Application::mouseMotionEvent(const SDL_MouseMotionEvent &e) {
-        fmt::print("Mouse motion {} -> {}\n", Point(e.x, e.y), Point(e.xrel, e.yrel));
-        return true;
+    std::shared_ptr<Gadget> Application::mouseMotionEvent(const SDL_MouseMotionEvent &e) {
+        if (!mMouseWindow.expired())
+            return mMouseWindow.lock()->findGadget([&e](std::shared_ptr<Gadget> &gadget) -> bool {
+                auto r = gadget->containsPoint(Point{e.x, e.y});
+                return r;
+            });
+        return std::make_shared<Gadget>();
     }
 
     void Application::winStateChangeEvent(WindowEventType type, const SDL_WindowEvent &e) {
@@ -98,6 +102,10 @@ namespace rose {
                     if (window->windowID() == e.windowID) {
                         fmt::print("Window found\n");
                         mMouseWindow.reset();
+                        if (!mMouseGadget.expired()) {
+                            fmt::print("Leave event: {}\n", mMouseGadget.lock()->mName);
+                            mMouseGadget.reset();
+                        }
                     }
                 }
                 break;

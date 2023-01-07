@@ -79,6 +79,16 @@ namespace rose {
         }
     }
 
+    std::shared_ptr<Gadget> Window::findGadget(const std::function<bool(std::shared_ptr<Gadget> &)> &lambda) {
+        std::ranges::reverse_view reverseScreenView{mScreens};
+        std::shared_ptr<Gadget> gadget{};
+        for (auto topLevel : reverseScreenView) {
+            if (gadget = gadgetFindLast(topLevel, lambda); gadget)
+                return gadget;
+        }
+        return gadget;
+    }
+
     std::shared_ptr<Gadget> Window::gadgetFindLast(std::shared_ptr<Screen> &topGadget,
                                                    const std::function<bool(std::shared_ptr<Gadget> &)> &lambda) {
 

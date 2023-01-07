@@ -48,6 +48,30 @@ namespace rose {
             mVisualMetrics.background = color::TransparentBlack;
         }
 
+        /**
+         * @brief Perform initial Gadget layout.
+         * @details The Gadget has an opportunity to specify its own desiredSize by overriding this method.
+         * @param drawLocation
+         * @param mgrPadding
+         */
+        bool initialGadgetLayout(Context &context) override {
+            forceInitialGadgetLayout();
+            return Widget::initialGadgetLayout(context);
+        }
+
+        /**
+         * @brief Draw this Widget and all managed Gadgets.
+         * @param context The graphics context to use.
+         */
+//        void draw(Context &context, Point drawLocation) override {
+//            Gadget::draw(context, drawLocation);
+//
+//            for (const auto& gadget : mGadgetList) {
+//                Point gadgetDrawLocation = drawLocation + gadget->getVisualMetrics().drawLocation;
+//                gadget->draw(context, gadgetDrawLocation);
+//            }
+//        }
+
         ~Screen() override = default;
     };
 
@@ -84,6 +108,8 @@ namespace rose {
         Context& context() { return mContext; }
 
         SdlWindow& sdlWindow() { return mSdlWindow; }
+
+        std::shared_ptr<Gadget> findGadget(const std::function< bool(std::shared_ptr<Gadget>&) >& lambda);
 
         auto windowID() { return SDL_GetWindowID(mSdlWindow.get()); }
 
