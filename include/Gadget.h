@@ -64,6 +64,14 @@ namespace rose {
             Point drawLocation{};
 
             /**
+             * @brief The las position provided to Gadget::Draw.
+             * @details This position, along with the remainder of the VisualMetrics, is used to provide aspects
+             * of functionality. If a Gadget does not call the base class draw function it should set this value
+             * correctly itself to maintain this functionality.
+             */
+            Point lastDrawLocation{};
+
+            /**
              * @brief The content drawing size requested by the Gadget.
              */
             Size desiredSize{};
@@ -140,6 +148,11 @@ namespace rose {
             bool a = manager.owner_before(wt{});
             bool b = wt{}.owner_before(manager);
             return !(!a && !b);
+        }
+
+        bool containsPoint(const Point &point) {
+            auto r = (mVisualMetrics.borderRect + mVisualMetrics.lastDrawLocation).contains(point);
+            return r;
         }
 
         /**

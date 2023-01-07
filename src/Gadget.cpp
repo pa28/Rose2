@@ -22,6 +22,7 @@ namespace rose {
         colorGuard.setDrawColor(RenderRectangleDebugColor);
         context.fillRect(mVisualMetrics.renderRect + drawLocation);
 #else
+        mVisualMetrics.lastDrawLocation = drawLocation;
         if (mVisualMetrics.background) {
             DrawColorGuard colorGuard{context, mVisualMetrics.background};
             context.fillRect(mVisualMetrics.borderRect + drawLocation);

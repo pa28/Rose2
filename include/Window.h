@@ -48,6 +48,30 @@ namespace rose {
             mVisualMetrics.background = color::TransparentBlack;
         }
 
+        /**
+         * @brief Perform initial Gadget layout.
+         * @details The Gadget has an opportunity to specify its own desiredSize by overriding this method.
+         * @param drawLocation
+         * @param mgrPadding
+         */
+        bool initialGadgetLayout(Context &context) override {
+            forceInitialGadgetLayout();
+            return Widget::initialGadgetLayout(context);
+        }
+
+        /**
+         * @brief Draw this Widget and all managed Gadgets.
+         * @param context The graphics context to use.
+         */
+//        void draw(Context &context, Point drawLocation) override {
+//            Gadget::draw(context, drawLocation);
+//
+//            for (const auto& gadget : mGadgetList) {
+//                Point gadgetDrawLocation = drawLocation + gadget->getVisualMetrics().drawLocation;
+//                gadget->draw(context, gadgetDrawLocation);
+//            }
+//        }
+
         ~Screen() override = default;
     };
 
@@ -84,6 +108,8 @@ namespace rose {
         Context& context() { return mContext; }
 
         SdlWindow& sdlWindow() { return mSdlWindow; }
+
+        std::shared_ptr<Gadget> findGadget(const std::function< bool(std::shared_ptr<Gadget>&) >& lambda);
 
         auto windowID() { return SDL_GetWindowID(mSdlWindow.get()); }
 
@@ -130,14 +156,25 @@ namespace rose {
         [[maybe_unused]] void setFocusGadget(std::shared_ptr<Gadget> &gadget);
 
         /**
-         * @brief Preorder traversal of a Widget tree applying a lambda to all Gadgets.
+         * @brief Preorder traversal of a Widget tree to apply a lambda to each Gadget.
          * @details The tree is traversed starting from the specified Gadget. Gadgets which are also Widgets are
-         * traversed in turn. The provided lambda is applied to all Gadgets. Traversal preorder.
+         * traversed in turn. The provided lambda is applied to all Gadgets. Traversal is preorder.
          * @param topGadget The Gadget to start traversal from.
          * @param lambda The lambda to apply.
          */
         static void gadgetTraversal(std::shared_ptr<Screen> &topGadget,
                                     const std::function< void(std::shared_ptr<Gadget>&) >& lambda);
+
+        /**
+         * @brief Post-order traversal of a Widget tree to find a leaf Gadget.
+         * @details The tree is traversed starting from the specified Gadget. Gadgets which are also Widgets are
+         * traversed in turn. The provided lambda is applied to all Gadgets. Only Gadgets for which the lambda
+         * returns true are searched.
+         * @param topGadget The Gadget to start traversal from.
+         * @param lambda The lambda to apply.
+         */
+        static std::shared_ptr<Gadget> gadgetFindLast(std::shared_ptr<Screen> &topGadget,
+                                     const std::function< bool(std::shared_ptr<Gadget>&) >& lambda);
 
         /**
          * @brief Clear all focus flags for Gadgets attached to this Window using gadgetTraversal.

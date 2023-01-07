@@ -36,6 +36,8 @@ namespace rose {
 
         std::weak_ptr<Window> mMouseWindow{};
 
+        std::weak_ptr<Gadget> mMouseGadget{};
+
         InputParser mInputParser;
 
         GraphicsModel mGraphicsModel;
@@ -50,7 +52,34 @@ namespace rose {
 
         void applicationDraw();
 
-        bool mouseMotionEvent(const SDL_MouseMotionEvent &e);
+        /**
+         * @brief Evaluate mouse motion events.
+         * @details The action performed depends on the buttons pressed.
+         * If no buttons are pressed the Gadget that contains the mouse pointer is sent to the MouseGadgetStatus
+         * object for processing.
+         * @param e the mouse motion event.
+         * @return true if handled, false if not.
+         */
+        bool handleMouseMotionEvent(const SDL_MouseMotionEvent &e) {
+            if ((e.state & (SDL_BUTTON_LMASK | SDL_BUTTON_RMASK | SDL_BUTTON_MMASK)) == 0) {
+                if (auto gadget = mouseMotionEvent(e); gadget) {
+                    if (!mMouseGadget.expired()) {
+                        if (auto oldGadget = mMouseGadget.lock(); oldGadget != gadget) {
+                            fmt::print("Leave event: {}\n", oldGadget->mName);
+                            fmt::print("Enter event: {}\n", gadget->mName);
+                            mMouseGadget = gadget;
+                        }
+                    } else {
+                        fmt::print("Enter event: {}\n", gadget->mName);
+                        mMouseGadget = gadget;
+                    }
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        std::shared_ptr<Gadget> mouseMotionEvent(const SDL_MouseMotionEvent &e);
 
         void winStateChangeEvent(WindowEventType type, const SDL_WindowEvent &e);
 
