@@ -73,6 +73,18 @@ namespace rose {
 //        }
 
         ~Screen() override = default;
+
+        /**
+         * @brief Events don't propagate beyond a Screen.
+         * @return false
+         */
+        bool enterLeaveEvent(bool, Uint32 ) override { return false; }
+
+        /**
+         * @brief Events don't propagate beyond a Screen.
+         * @return false
+         */
+        bool mouseButtonEvent(const SDL_MouseButtonEvent &) override { return false; }
     };
 
     /**
