@@ -16,6 +16,7 @@
 #include <memory>
 #include <InputParser.h>
 #include <Window.h>
+#include <Event.h>
 
 namespace rose {
 
@@ -33,17 +34,25 @@ namespace rose {
 
         std::vector<std::shared_ptr<Window>>    mWindows{};
 
+        std::weak_ptr<Window> mMouseWindow{};
+
         InputParser mInputParser;
 
         GraphicsModel mGraphicsModel;
 
         Rectangle mWidowSizePos{};
 
+        Event event{};
+
         std::string mWindowName{};
 
         void basicEventLoop();
 
         void applicationDraw();
+
+        bool mouseMotionEvent(const SDL_MouseMotionEvent &e);
+
+        void winStateChangeEvent(WindowEventType type, const SDL_WindowEvent &e);
 
     public:
         Application() = delete;

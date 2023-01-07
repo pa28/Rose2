@@ -32,6 +32,8 @@ namespace rose {
                     mRunEventLoop = false;
                     continue;
                 }
+
+                event.onEvent(e);
             }
 
             applicationDraw();
@@ -57,6 +59,12 @@ namespace rose {
             std::filesystem::path appPath{mInputParser.programPathName};
             mWindowName = appPath.filename().string();
         }
+
+
+        event.setMouseMotion([this](const SDL_MouseMotionEvent &e) -> bool { return mouseMotionEvent(e); });
+
+        event.setWinStateChange([this](WindowEventType type, const SDL_WindowEvent &e) -> void { winStateChangeEvent(type,e); } );
+
         return mGraphicsModel.initialize();
     }
 
@@ -67,6 +75,35 @@ namespace rose {
 
     std::shared_ptr<Application> Application::createApplication(int argc, char **argv) {
         return std::make_shared<Application>(argc, argv);
+    }
+
+    bool Application::mouseMotionEvent(const SDL_MouseMotionEvent &e) {
+        fmt::print("Mouse motion {} -> {}\n", Point(e.x, e.y), Point(e.xrel, e.yrel));
+        return true;
+    }
+
+    void Application::winStateChangeEvent(WindowEventType type, const SDL_WindowEvent &e) {
+        switch (type) {
+            case Enter:
+                for (const auto &window : mWindows) {
+                    if (window->windowID() == e.windowID) {
+                        fmt::print("Window found\n");
+                        mMouseWindow.reset();
+                        mMouseWindow = window->weakPtr();
+                    }
+                }
+                break;
+            case Leave:
+                for (const auto &window : mWindows) {
+                    if (window->windowID() == e.windowID) {
+                        fmt::print("Window found\n");
+                        mMouseWindow.reset();
+                    }
+                }
+                break;
+            default:
+                break;
+        }
     }
 
 } // rose

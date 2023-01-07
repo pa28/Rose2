@@ -83,6 +83,12 @@ namespace rose {
 
         Context& context() { return mContext; }
 
+        SdlWindow& sdlWindow() { return mSdlWindow; }
+
+        auto windowID() { return SDL_GetWindowID(mSdlWindow.get()); }
+
+        auto weakPtr() { return std::weak_ptr<Window>(shared_from_this()); }
+
         /**
          * @brief Layout the contents of the window.
          * @details Layout is a two stage process.
