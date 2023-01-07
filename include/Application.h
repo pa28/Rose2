@@ -60,24 +60,14 @@ namespace rose {
          * @param e the mouse motion event.
          * @return true if handled, false if not.
          */
-        bool handleMouseMotionEvent(const SDL_MouseMotionEvent &e) {
-            if ((e.state & (SDL_BUTTON_LMASK | SDL_BUTTON_RMASK | SDL_BUTTON_MMASK)) == 0) {
-                if (auto gadget = mouseMotionEvent(e); gadget) {
-                    if (!mMouseGadget.expired()) {
-                        if (auto oldGadget = mMouseGadget.lock(); oldGadget != gadget) {
-                            oldGadget->enterLeaveEvent(false, e.timestamp);
-                            gadget->enterLeaveEvent(true, e.timestamp);
-                            mMouseGadget = gadget;
-                        }
-                    } else {
-                        gadget->enterLeaveEvent(false, e.timestamp);
-                        mMouseGadget = gadget;
-                    }
-                    return true;
-                }
-            }
-            return false;
-        }
+        bool handleMouseMotionEvent(const SDL_MouseMotionEvent &e);
+
+        /**
+         * @brief Evaluate mouse button events.
+         * @param e the mouse button event.
+         * @return true if handled, false if not.
+         */
+        bool handleMouseButtonEvent(const SDL_MouseButtonEvent &e);
 
         /**
          * @brief Find Gadget associated with a mouse motion event.
@@ -101,7 +91,7 @@ namespace rose {
 
         Application(int argc, char **argv);
 
-        std::shared_ptr<Application> createApplication(int argc, char **argv);
+        static std::shared_ptr<Application> createApplication(int argc, char **argv);
 
         Application& operator=(const Rectangle &rectangle) {
             mWidowSizePos = rectangle;

@@ -83,7 +83,7 @@ namespace rose {
         std::function<void(WindowEventType, const SDL_WindowEvent&)> windowStateChangeCallback;
         KeyboardEventCallback keyboardEventCallback;
         std::function<bool(const SDL_MouseMotionEvent&)> mouseMotionEventCallback;
-        MouseButtonEventCallback mouseButtonEventCallback;
+        std::function<bool(const SDL_MouseButtonEvent&)> mouseButtonEventCallback;
         MouseWheelEventCallback mouseWheelEventCallback;
         FingerTouchEventCallback fingerTouchEventCallback;
         TextInputEventCallback textInputEventCallback;
@@ -133,8 +133,8 @@ namespace rose {
             mouseMotionEventCallback = std::move(cb);
         }
 
-        void setMouseButton(MouseButtonEventCallback &cb) {
-            mouseButtonEventCallback = cb;
+        void setMouseButton(std::function<bool(const SDL_MouseButtonEvent&)>&& cb) {
+            mouseButtonEventCallback = std::move(cb);
         }
 
         void setMouseWheel(MouseWheelEventCallback &cb) {

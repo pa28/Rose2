@@ -94,6 +94,14 @@ namespace rose {
         }
         return false;
     }
+
+    bool Gadget::mouseButtonEvent(const SDL_MouseButtonEvent &e) {
+        if (isManaged()) {
+            return manager.lock()->mouseButtonEvent(e);
+        }
+        return false;
+    }
+
 #pragma clang diagnostic pop
 
     [[maybe_unused]] void Widget::manage(std::shared_ptr<Gadget> gadget) {

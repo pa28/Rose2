@@ -233,15 +233,24 @@ namespace rose {
 
         /**
          * @brief Receive Enter/Leave events.
-         * @details If the derived Gadget/Widget does not define an override method the event will be passed
-         * up the Gadget tree until is is accepted or a non-managed Widget (the top level for a Screen) is
-         * encountered.
+         * @details No action is implemented in the Gadget base class. If the derived Gadget/Widget does not define
+         * an override method the event will be passed up the Gadget tree until is is accepted or a non-managed
+         * Widget (the top level for a Screen) is encountered.
          * @param enter true if the mouse entered the Gadget.
          * @param timestamp the time of the event.
          * @return true if the event was processed.
          */
         virtual bool enterLeaveEvent(bool enter, Uint32 timestamp);
 
+        /**
+         * @brief Receive mouse button events.
+         * @details No action is implemented in the Gadget base class. If the derived Gadget/Widget does not define
+         * an override method the event will be passed up the Gadget tree until is is accepted or a non-managed
+         * Widget (the top level for a Screen) is encountered.
+         * @param e the SDL_MouseButtonEvent.
+         * @return true if the event was processed.
+         */
+        virtual bool mouseButtonEvent(const SDL_MouseButtonEvent &e);
     };
 
     /**

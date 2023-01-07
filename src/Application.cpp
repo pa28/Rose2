@@ -60,10 +60,11 @@ namespace rose {
             mWindowName = appPath.filename().string();
         }
 
-
         event.setMouseMotion([this](const SDL_MouseMotionEvent &e) -> bool { return handleMouseMotionEvent(e); });
 
         event.setWinStateChange([this](WindowEventType type, const SDL_WindowEvent &e) -> void { winStateChangeEvent(type,e); } );
+
+        event.setMouseButton([this](const SDL_MouseButtonEvent &e) -> bool { return handleMouseButtonEvent(e); });
 
         return mGraphicsModel.initialize();
     }
@@ -77,10 +78,10 @@ namespace rose {
         return std::make_shared<Application>(argc, argv);
     }
 
-    std::shared_ptr<Gadget> Application::mouseMotionEvent(const SDL_MouseMotionEvent &e) {
+    std::shared_ptr<Gadget> Application::mousePointerToGadget(const Point &point) {
         if (!mMouseWindow.expired())
-            return mMouseWindow.lock()->findGadget([&e](std::shared_ptr<Gadget> &gadget) -> bool {
-                auto r = gadget->containsPoint(Point{e.x, e.y});
+            return mMouseWindow.lock()->findGadget([&point](std::shared_ptr<Gadget> &gadget) -> bool {
+                auto r = gadget->containsPoint(point);
                 return r;
             });
         return std::make_shared<Gadget>();
