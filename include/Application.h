@@ -65,12 +65,12 @@ namespace rose {
                 if (auto gadget = mouseMotionEvent(e); gadget) {
                     if (!mMouseGadget.expired()) {
                         if (auto oldGadget = mMouseGadget.lock(); oldGadget != gadget) {
-                            fmt::print("Leave event: {}\n", oldGadget->mName);
-                            fmt::print("Enter event: {}\n", gadget->mName);
+                            oldGadget->enterLeaveEvent(false, e.timestamp);
+                            gadget->enterLeaveEvent(true, e.timestamp);
                             mMouseGadget = gadget;
                         }
                     } else {
-                        fmt::print("Enter event: {}\n", gadget->mName);
+                        gadget->enterLeaveEvent(false, e.timestamp);
                         mMouseGadget = gadget;
                     }
                     return true;

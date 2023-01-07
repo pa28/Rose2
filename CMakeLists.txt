@@ -3,7 +3,7 @@ project(Rose2)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_compile_options(-Wall -Wextra -pedantic -Werror -Wconversion -Wno-attributes)
+add_compile_options(-Wall -Wextra -pedantic -Werror -Wconversion -Wno-attributes -Wno-unknown-pragmas)
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules" "${CMAKE_MODULE_PATH}")
 INCLUDE(CheckCXXCompilerFlag)
 FIND_FILE(BCMHOST bcm_host.h PATHS /opt/vc/include NO_DEFAULT_PATH)

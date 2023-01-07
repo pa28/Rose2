@@ -150,7 +150,12 @@ namespace rose {
             return !(!a && !b);
         }
 
-        bool containsPoint(const Point &point) {
+        /**
+         * @brief Determine if a point is 'inside' a Gadget.
+         * @param point The point to test.
+         * @return true if point is 'inside' Gadget.
+         */
+        [[nodiscard]] bool containsPoint(const Point &point) const {
             auto r = (mVisualMetrics.borderRect + mVisualMetrics.lastDrawLocation).contains(point);
             return r;
         }
@@ -171,61 +176,7 @@ namespace rose {
          * @param mgrPadding
          * @return
          */
-        bool forceInitialGadgetLayout() {
-
-            /**
-             * The renderRect size is the Gadget desired size + the Gadget padding.
-             */
-            mVisualMetrics.renderRect.size = mVisualMetrics.desiredSize + mVisualMetrics.gadgetBorder +
-                mVisualMetrics.gadgetPadding.topLeft + mVisualMetrics.gadgetPadding.botRight;
-
-            /**
-             * The borderRect size is the renderRect size + the boarder size all the way around.
-             */
-            mVisualMetrics.borderRect.size = mVisualMetrics.renderRect.size + mVisualMetrics.gadgetPadding.topLeft +
-                    mVisualMetrics.gadgetPadding.botRight + mVisualMetrics.innerAlignmentPadding.topLeft +
-                    mVisualMetrics.innerAlignmentPadding.botRight + mVisualMetrics.gadgetBorder * 2;
-
-            /**
-             * The clipRectangle size is the borderRect size + the manager padding.
-             */
-            mVisualMetrics.clipRectangle.size = mVisualMetrics.borderRect.size +
-                    mVisualMetrics.outerAlignmentPadding.topLeft + mVisualMetrics.outerAlignmentPadding.botRight;
-
-            /**
-             * The clipRectangle point is 0,0
-             */
-            mVisualMetrics.clipRectangle.point = Point{0,0};
-
-            /**
-             * The borderRect point is the clipRectangle point + manager padding.
-             */
-            mVisualMetrics.borderRect.point = mVisualMetrics.clipRectangle.point +
-                    mVisualMetrics.outerAlignmentPadding.topLeft;
-
-            /**
-             * The renderRect point is the borderRect point + the border size.
-             */
-            mVisualMetrics.renderRect.point = mVisualMetrics.borderRect.point + mVisualMetrics.gadgetBorder +
-                    mVisualMetrics.gadgetPadding.topLeft + mVisualMetrics.innerAlignmentPadding.topLeft;
-
-            fmt::print("initialGadgetLayout: {}"
-                       "\n\tdrawLocation:    {}"
-                       "\n\touterPadding:    {}"
-                       "\n\tinnerPadding:    {}"
-                       "\n\tgadgetPadding:   {}"
-                       "\n\tgadgetBoarder:   {}"
-                       "\n\tdesiredSize:     {}"
-                       "\n\trenderRectangle: {}"
-                       "\n\tborderRectangle: {}"
-                       "\n\tclipRectangle:   {}\n\n",
-                       mName, mVisualMetrics.drawLocation, mVisualMetrics.outerAlignmentPadding, mVisualMetrics.innerAlignmentPadding,
-                       mVisualMetrics.gadgetPadding, mVisualMetrics.gadgetBorder, mVisualMetrics.desiredSize, mVisualMetrics.renderRect,
-                       mVisualMetrics.borderRect, mVisualMetrics.clipRectangle
-                       );
-
-            return false;
-        }
+        bool forceInitialGadgetLayout();
 
         /**
          * @brief Find a constrained layout for this Gadget.
@@ -262,9 +213,9 @@ namespace rose {
 
         virtual ~Gadget() = default;
 
-        void setSize(const Size &size) { mVisualMetrics.desiredSize = size; }
+        [[maybe_unused]] void setSize(const Size &size) { mVisualMetrics.desiredSize = size; }
 
-        void setDrawLocation(const Point &point) {
+        [[maybe_unused]] void setDrawLocation(const Point &point) {
             mVisualMetrics.drawLocation = point;
         }
 
@@ -279,6 +230,17 @@ namespace rose {
         template<typename String>
         requires StringLike<String>
         auto setName(String string) { mName = string; }
+
+        /**
+         * @brief Receive Enter/Leave events.
+         * @details If the derived Gadget/Widget does not define an override method the event will be passed
+         * up the Gadget tree until is is accepted or a non-managed Widget (the top level for a Screen) is
+         * encountered.
+         * @param enter true if the mouse entered the Gadget.
+         * @param timestamp the time of the event.
+         * @return true if the event was processed.
+         */
+        virtual bool enterLeaveEvent(bool enter, Uint32 timestamp);
 
     };
 

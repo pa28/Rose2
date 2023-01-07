@@ -91,8 +91,6 @@ namespace rose {
             case Enter:
                 for (const auto &window : mWindows) {
                     if (window->windowID() == e.windowID) {
-                        fmt::print("Window found\n");
-                        mMouseWindow.reset();
                         mMouseWindow = window->weakPtr();
                     }
                 }
@@ -100,10 +98,9 @@ namespace rose {
             case Leave:
                 for (const auto &window : mWindows) {
                     if (window->windowID() == e.windowID) {
-                        fmt::print("Window found\n");
                         mMouseWindow.reset();
                         if (!mMouseGadget.expired()) {
-                            fmt::print("Leave event: {}\n", mMouseGadget.lock()->mName);
+                            mMouseGadget.lock()->enterLeaveEvent(false, e.timestamp);
                             mMouseGadget.reset();
                         }
                     }
