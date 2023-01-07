@@ -79,6 +79,29 @@ namespace rose {
         }
     }
 
+    std::shared_ptr<Gadget> Window::gadgetFindLast(std::shared_ptr<Screen> &topGadget,
+                                                   const std::function<bool(std::shared_ptr<Gadget> &)> &lambda) {
+
+        std::stack<std::shared_ptr<Gadget>> stack{};
+        stack.push(topGadget);
+        std::shared_ptr<Gadget> result;
+
+        while (!stack.empty()) {
+            auto gadget = stack.top();
+            stack.pop();
+            if (lambda(gadget)) {
+                result = gadget;
+                if (auto widget = std::dynamic_pointer_cast<Widget>(gadget); widget) {
+                    std::ranges::reverse_view reverseGadgetList{widget->mGadgetList};
+                    for (auto &newGadget : reverseGadgetList) {
+                        stack.push(newGadget);
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
     void
     Window::initialize(const std::shared_ptr<Application>& applicationPtr, const std::string &title, Size initialSize,
                        const Point &initialPosition, uint32_t extraFlags) {
