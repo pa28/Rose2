@@ -97,10 +97,7 @@ namespace rose {
 #pragma clang diagnostic pop
 
     [[maybe_unused]] void Widget::manage(std::shared_ptr<Gadget> gadget) {
-        if (isManaged()) {
-            manager.lock()->unManage(gadget);
-        }
-        manager = shared_from_this();
+        gadget->managedBy(shared_from_this());
         mGadgetList.push_back(std::move(gadget));
     }
 
