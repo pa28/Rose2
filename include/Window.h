@@ -59,19 +59,6 @@ namespace rose {
             return Widget::initialGadgetLayout(context);
         }
 
-        /**
-         * @brief Draw this Widget and all managed Gadgets.
-         * @param context The graphics context to use.
-         */
-//        void draw(Context &context, Point drawLocation) override {
-//            Gadget::draw(context, drawLocation);
-//
-//            for (const auto& gadget : mGadgetList) {
-//                Point gadgetDrawLocation = drawLocation + gadget->getVisualMetrics().drawLocation;
-//                gadget->draw(context, gadgetDrawLocation);
-//            }
-//        }
-
         ~Screen() override = default;
 
         /**
