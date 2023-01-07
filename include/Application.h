@@ -79,7 +79,20 @@ namespace rose {
             return false;
         }
 
-        std::shared_ptr<Gadget> mouseMotionEvent(const SDL_MouseMotionEvent &e);
+        /**
+         * @brief Find Gadget associated with a mouse motion event.
+         * @param point the mouse motion event.
+         * @return std::shared_ptr<Gadget> pointing to the Gadget, or empty if none found.
+         */
+        std::shared_ptr<Gadget> mousePointerToGadget(const Point &point);
+
+        /**
+         * @brief Ensure the mouse gadget is up to date with mouse location.
+         * @param point The current location of the mouse.
+         * @param timestamp The timestamp of the location.
+         * @return The current mouse gadget.
+         */
+        std::shared_ptr<Gadget> validateMouseGadget(const Point &point, Uint32 timestamp);
 
         void winStateChangeEvent(WindowEventType type, const SDL_WindowEvent &e);
 

@@ -86,6 +86,38 @@ namespace rose {
         return std::make_shared<Gadget>();
     }
 
+    std::shared_ptr<Gadget> Application::validateMouseGadget(const Point &point, Uint32 timestamp) {
+        std::shared_ptr<Gadget> gadget{};
+        if (mMouseGadget.expired()) {
+            if (gadget = mousePointerToGadget(point); gadget) {
+                mMouseGadget = gadget;
+                gadget->enterLeaveEvent(true, timestamp);
+            }
+        } else if (gadget = mMouseGadget.lock(); gadget) {
+            if (!gadget->containsPoint(point)) {
+                gadget->enterLeaveEvent(false, timestamp);
+                gadget = mousePointerToGadget(point);
+                gadget->enterLeaveEvent(true, timestamp);
+            }
+        }
+        return gadget;
+    }
+
+    bool Application::handleMouseMotionEvent(const SDL_MouseMotionEvent &e) {
+        if ((e.state & (SDL_BUTTON_LMASK | SDL_BUTTON_RMASK | SDL_BUTTON_MMASK)) == 0) {
+            if (auto gadget = validateMouseGadget(Point{e.x, e.y}, e.timestamp))
+                return true;
+        }
+        return false;
+    }
+
+    bool Application::handleMouseButtonEvent(const SDL_MouseButtonEvent &e) {
+        if (auto gadget = validateMouseGadget(Point{e.x, e.y}, e.timestamp); gadget) {
+            return gadget->mouseButtonEvent(e);
+        }
+        return false;
+    }
+
     void Application::winStateChangeEvent(WindowEventType type, const SDL_WindowEvent &e) {
         switch (type) {
             case Enter:
