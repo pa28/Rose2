@@ -142,7 +142,7 @@ namespace rose {
 
 } // rose
 
-void operator >> (rose::Builder builder, std::shared_ptr<rose::Application> &application) {
+inline void operator >> (rose::Builder builder, std::shared_ptr<rose::Application> &application) {
     application->window().value()->gadget<rose::Widget>().value()->manage(builder.get<rose::Gadget>());
 }
 
