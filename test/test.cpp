@@ -58,25 +58,6 @@ std::tuple<int,int> screen_obj_compare_test(const std::vector<binomial_compare_t
 #endif
 
 int main(int argc, char **argv) {
-//    int pass{0}, total{0};
-//
-//    auto [testTotal,testPass] = screen_obj_compare_test(binomial_compare_test_1);
-//    pass += testPass;
-//    total += testTotal;
-//
-//    std::cout << "Pass: " << pass << ", Total: " << total << '\n';
-//
-//    auto gadget = std::make_shared<Gadget>();
-//    [[maybe_unused]] auto gadgetType = gadget->gadgetType();
-//
-//    auto widget = std::make_shared<Widget>();
-//    [[maybe_unused]] auto widgetType = widget->gadgetType();
-//
-//    widget->manage(std::move(gadget));
-//
-//    auto widget1 = std::make_shared<Widget>();
-//    widget1->manage(widget->front());
-
 
     auto application = std::make_shared<Application>(argc, argv);
     {
@@ -110,14 +91,6 @@ int main(int argc, char **argv) {
 
             container >> application;
         }
-
-
-//        if (GadgetBuilder g{}; g) {
-//            g.name("Map")
-//                .layout(Point(140, 150), Size(660, 330))
-//                .background(Color(0.0, 0.5, 0.0, 1.0))
-//                >> application;
-//        }
 
         application->run();
     }
