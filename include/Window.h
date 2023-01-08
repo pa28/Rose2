@@ -41,13 +41,7 @@ namespace rose {
         Screen& operator=(const Screen &) = delete;
         Screen& operator=(Screen &&) = default;
 
-        Screen(const std::shared_ptr<Window>& windowPtr, const Size& size) {
-            mWindowPtr = windowPtr;
-            mName = "Top";
-            mVisualMetrics.desiredSize = size;
-            mVisualMetrics.background = color::OpaqueBlack;
-            mDecorators.emplace_back(backgroundDecorator);
-        }
+        Screen(const std::shared_ptr<Window>& windowPtr, const Size& size);
 
         /**
          * @brief Perform initial Gadget layout.
@@ -108,6 +102,8 @@ namespace rose {
         Context& context() { return mContext; }
 
         SdlWindow& sdlWindow() { return mSdlWindow; }
+
+        Theme& getTheme();
 
         std::shared_ptr<Gadget> findGadget(const std::function< bool(std::shared_ptr<Gadget>&) >& lambda);
 

@@ -7,6 +7,7 @@
  */
 
 #include "Window.h"
+#include <Application.h>
 #include <fmt/printf.h>
 
 namespace rose {
@@ -166,5 +167,17 @@ namespace rose {
             }
             throw std::runtime_error(fmt::format("Could not create SDL_Window: {}", sdlError));
         }
+    }
+
+    Theme &Window::getTheme() {
+        return mApplicationPtr.lock()->getTheme();
+    }
+
+    Screen::Screen(const std::shared_ptr<Window> &windowPtr, const Size &size) {
+        mWindowPtr = windowPtr;
+        mName = "Top";
+        mVisualMetrics.desiredSize = size;
+        mVisualMetrics.background = windowPtr->getTheme().screenBackground;
+        mDecorators.emplace_back(backgroundDecorator);
     }
 } // rose
