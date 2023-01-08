@@ -98,47 +98,34 @@ namespace rose {
         }
 
         /**
-         * @brief A three-way comparison operator to compare two Point objects.
-         * @details The purpose of this operator is to allow us to determine if a Point is contained in a Rectangle.
-         * The return value will be std::partial_ordering::equivalent iff both x coordinates and both y coordinates
-         * are equal; td::partial_ordering::less at least one coordinate of this point is less than that of o and
-         * the other is equal; std::partial_ordering::greater iff both coordinates of this are greater than those of
-         * o. Given a Rectangle R with Point A as the top left corner and B as the bottom right corner Point P is
-         * contained in R iff A <= P && B > P
-         * @param o the other Point
-         * @return Point ordering, see Details.
+         * @brief Get a strong ordering comparison of this Point with Point p.
+         * @param p the other Point.
+         * @return A tuple with the strong ordering of the x and y coordinates respectively.
          */
-        constexpr std::partial_ordering operator <=> (const Point& o) const {
-            auto a = std::strong_order(x, o.x);
-            auto b = std::strong_order(y, o.y);
+        [[nodiscard]] constexpr std::tuple<std::strong_ordering,std::strong_ordering> comparePoints(const Point &p) const {
+            return {std::strong_order(x,p.x), std::strong_order(y, p.y)};
+        }
 
-#if 0
-            // If x == o.x
-            if (std::is_eq(a)) {
-                // and y == o.y
-                if (std::is_eq(b)) return std::partial_ordering::equivalent;
-                // and y < o.y
-                if (std::is_lt(b)) return std::partial_ordering::less;
-                // and y > o.y
-                return std::partial_ordering::unordered;
-            } else if (std::is_eq(b)) { // if y == o.y (x != o.x)
-                // and x < o.x
-                if (std::is_lt(a)) return std::partial_ordering::less;
-                // and x > o.x
-            } else if (std::is_lt(a) && std::is_lt(b)) // if x < o.x && y < o.y
-                return std::partial_ordering::less;
-            else if (std::is_gt(a) && std::is_gt(b)) // if x > o.x && y > o.y
-                return std::partial_ordering::greater;
-            return std::partial_ordering::unordered;
-#else
-            if (std::is_eq(a) && std::is_eq(b))
-                return std::partial_ordering::equivalent;
-            else if (std::is_gt(a) && std::is_gt(b))
-                return std::partial_ordering::greater;
-            else if (std::is_lteq(a) && std::is_lteq(b))
-                return std::partial_ordering::less;
-            return std::partial_ordering::unordered;
-#endif
+        /**
+         * @brief Three-way comparison of two points.
+         * @details The comparison is based on the raster position. If this->y < p.y then this < p.
+         * If this->y > p.y then this > p. Otherwise if this->x < p.x then this < p, if this-> > p.x then this > p.
+         * If none of that is true this == p.
+         * @param p The other Point.
+         * @return a strong ordering of the points.
+         */
+        [[nodiscard]] constexpr std::strong_ordering operator <=> (const rose::Point& p) const {
+            const auto [a,b] = comparePoints(p);
+
+            if (std::is_lt(b))
+                return std::strong_ordering::less;
+            if (std::is_gt(b))
+                return std::strong_ordering::greater;
+            if (std::is_lt(a))
+                return std::strong_ordering::less;
+            if (std::is_gt(a))
+                return std::strong_ordering::greater;
+            return std::strong_ordering::equal;
         }
 
         constexpr explicit operator bool () const { return set; }
@@ -240,8 +227,13 @@ namespace rose {
             return  result;
         }
 
+        /**
+         * @brief Determine if this Rectangle contains Point p.
+         * @param p The Point to test.
+         * @return true if p is contained in this Rectangle.
+         */
         [[nodiscard]] constexpr bool contains(const Point& p) const {
-            return point <= p && (point + size) > p;
+            return point <= p && p < (point + size);
         }
 
         [[nodiscard]] constexpr Rectangle intersection(const Rectangle &o) const {
@@ -265,7 +257,6 @@ namespace rose {
         }
     };
 } // rose
-
 
 inline constexpr rose::Size operator + (const rose::Size &s, const rose::Point& p) {
     return rose::Size {s.w + p.x, s.h + p.y};
