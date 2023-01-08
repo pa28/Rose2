@@ -89,28 +89,24 @@ int main(int argc, char **argv) {
                     .background(Color{0.0, 0.0, 0.9, 1.0})
                     .layout(Point(0,0), Size(10,10));
 
-            if (TextGadgetBuilder world{}; world) {
-                world.text("Morld")
-                        .pointSize(20)
-                        .foreground(color::OpaqueWhite)
-                        .background(color::OpaqueBlack)
-                        .layout(Point(0,0),Size(10,10))
-                        .name("World")
-                        .background(Color(0.5, 0.0, 0.0, 1.0))
-                        >> container;
-                std::cout << "World\n";
-            }
-
             if (TextGadgetBuilder hello{}; hello) {
-                hello.text("Helld")
+                hello.text("Hello")
                         .pointSize(20)
-                        .foreground(color::OpaqueWhite)
-                        .background(color::OpaqueBlack)
+                        .foreground(color::LightGrey)
                         .layout(Point(0,0),Size(10,10))
                         .name("Hello")
-                        .background(Color(0.5, 0.0, 0.0, 1.0))
                         >> container;
                 std::cout << "Hello\n";
+            }
+
+            if (TextGadgetBuilder world{}; world) {
+                world.text("World")
+                        .pointSize(20)
+                        .foreground(color::LightGrey)
+                        .layout(Point(0,0),Size(10,10))
+                        .name("World")
+                        >> container;
+                std::cout << "World\n";
             }
 
             container >> application;
