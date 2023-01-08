@@ -31,6 +31,7 @@ namespace rose {
  */
     class Widget;
     class LayoutManager;
+    class Screen;
 
 #ifdef DEBUG_GADGET_DRAW
     static Color ClipRectangleDebugColor{1.0, 0.0, 0.0, 1.0 };
@@ -230,6 +231,12 @@ namespace rose {
         template<typename String>
         requires StringLike<String>
         auto setName(String string) { mName = string; }
+
+        /**
+         * @brief Get the Screen which ultimately hosts this Gadget.
+         * @return std::shared_ptr<Screen> pointing to the screen, or empty.
+         */
+        std::shared_ptr<Screen> getScreen();
 
         /**
          * @brief Receive Enter/Leave events.

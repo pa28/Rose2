@@ -7,6 +7,7 @@
  */
 
 #include "Gadget.h"
+#include <Window.h>
 
 namespace rose {
     void Gadget::managedBy(const std::shared_ptr<Widget>& widget) {
@@ -103,6 +104,17 @@ namespace rose {
     }
 
 #pragma clang diagnostic pop
+
+    std::shared_ptr<Screen> Gadget::getScreen() {
+        if (isManaged()) {
+            for (auto widget = manager.lock(); widget; widget = widget->manager.lock()) {
+                if (auto screen = std::dynamic_pointer_cast<Screen>(widget); screen)
+                    return screen;
+            }
+        }
+
+        return {};
+    }
 
     [[maybe_unused]] void Widget::manage(std::shared_ptr<Gadget> gadget) {
         gadget->managedBy(shared_from_this());
