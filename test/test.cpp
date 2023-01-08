@@ -5,7 +5,6 @@
 #include <iostream>
 #include <array>
 #include <Rose.h>
-#include <Gadget.h>
 #include <RowColumn.h>
 #include <TextGadget.h>
 #include <Application.h>
