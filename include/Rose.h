@@ -10,6 +10,7 @@
 #include <compare>
 #include <iostream>
 #include <fmt/format.h>
+#include <Theme.h>
 
 namespace rose {
 
