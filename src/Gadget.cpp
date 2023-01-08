@@ -24,9 +24,9 @@ namespace rose {
         context.fillRect(mVisualMetrics.renderRect + drawLocation);
 #else
         mVisualMetrics.lastDrawLocation = drawLocation;
-        if (mVisualMetrics.background) {
-            DrawColorGuard colorGuard{context, mVisualMetrics.background};
-            context.fillRect(mVisualMetrics.borderRect + drawLocation);
+//        backgroundDecorator(context,*this);
+        for (const auto& decorator : mDecorators) {
+            decorator(context, *this);
         }
 #endif
     }
@@ -104,6 +104,14 @@ namespace rose {
     }
 
 #pragma clang diagnostic pop
+
+    void backgroundDecorator(Context& context, Gadget& gadget) {
+        auto visualMetrics = gadget.getVisualMetrics();
+        if (visualMetrics.background) {
+            DrawColorGuard colorGuard{context, visualMetrics.background};
+            context.fillRect(visualMetrics.borderRect + visualMetrics.drawLocation);
+        }
+    }
 
     std::shared_ptr<Screen> Gadget::getScreen() {
         if (isManaged()) {

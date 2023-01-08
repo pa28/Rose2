@@ -45,9 +45,13 @@ namespace rose {
         friend class Window;
         friend class LayoutManager;
 
+        using DecoratorFunction = std::function<void(Context&, Gadget &)>;
+
         constexpr static GadgetType ThisType = GadgetType::Gadget;
         [[maybe_unused]] std::string_view mName{};
         std::weak_ptr<Widget> manager{};  ///< Pointer to the current manager of this Gadget.
+
+        std::vector<DecoratorFunction> mDecorators{};
 
         struct VisualMetrics {
             /**
@@ -259,6 +263,8 @@ namespace rose {
          */
         virtual bool mouseButtonEvent(const SDL_MouseButtonEvent &e);
     };
+
+    [[maybe_unused]] void backgroundDecorator(Context& context, Gadget& gadget);
 
     /**
      * @class Builder

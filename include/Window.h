@@ -45,7 +45,8 @@ namespace rose {
             mWindowPtr = windowPtr;
             mName = "Top";
             mVisualMetrics.desiredSize = size;
-            mVisualMetrics.background = color::TransparentBlack;
+            mVisualMetrics.background = color::OpaqueBlack;
+            mDecorators.emplace_back(backgroundDecorator);
         }
 
         /**
