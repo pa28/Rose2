@@ -23,6 +23,7 @@ namespace rose {
 
     using ScreenCoordType = int;   ///< The type used to represent a screen coordinate.
 
+
     struct Size {
         ScreenCoordType w{0}, h{0};
         bool set{false};
@@ -96,7 +97,53 @@ namespace rose {
             return *this;
         }
 
-        auto operator <=> (const Point &) const = default;
+        /**
+         * @brief Using three way comparison to help determine if a point is contained in a rectangle.
+         * @param o The other point.
+         * @return equivalent if this point is <= the other point, unordered otherwise.
+         */
+        [[nodiscard]] std::partial_ordering partialOrder0(const Point &o) const {
+            auto a = std::strong_order(x, o.x);
+            auto b = std::strong_order(y, o.y);
+
+            if (std::is_lteq(a) && std::is_lteq(b))
+                return std::partial_ordering::equivalent;
+            return std::partial_ordering::unordered;
+        }
+
+        /**
+         * @brief Using three way comparison to help determine if a point is contained in a rectangle.
+         * @param o The other point.
+         * @return equivalent if this point is < the other point, unordered otherwise.
+         */
+        [[nodiscard]] std::partial_ordering partialOrder1(const Point &o) const {
+            auto a = std::strong_order(x, o.x);
+            auto b = std::strong_order(y, o.y);
+
+            if (std::is_lt(a) && std::is_lt(b))
+                return std::partial_ordering::less;
+            return std::partial_ordering::unordered;
+        }
+
+        bool operator == (const Point& other) const {
+            return x == other.x && y == other.y;
+        }
+
+        bool operator < (const Point & other) const {
+            return x < other.x && y < other.y;
+        }
+
+        bool operator <= (const Point & other) const {
+            return x <= other.x && y <= other.y;
+        }
+
+        bool operator > (const Point & other) const {
+            return x > other.x && y > other.y;
+        }
+
+        bool operator >= (const Point & other) const {
+            return x >= other.x && y >= other.y;
+        }
 
         explicit operator bool () const { return set; }
 
@@ -143,8 +190,6 @@ namespace rose {
             return *this;
         }
 
-        auto operator <=> (const Padding &) const = default;
-
         Padding operator + (const int i) {
             Padding result{};
             result.topLeft = topLeft + i;
@@ -166,6 +211,8 @@ namespace rose {
         Rectangle(Rectangle&&) = default;
         Rectangle& operator=(const Rectangle &) = default;
         Rectangle& operator=(Rectangle &&) = default;
+
+        explicit operator bool () const { return point.set && size.set; }
 
         template<typename Tx, typename Ty, typename Tw, typename Th>
         [[maybe_unused]] Rectangle(Tx X, Ty Y, Tw W, Th H) : point(X,Y), size(W,H) {
@@ -197,23 +244,15 @@ namespace rose {
             return  result;
         }
 
-        auto operator <=> (const Rectangle &) const = default;
-
-        auto operator <=> (const Point &p) const {
-            return point <=> p;
-        }
-
-        auto operator <=> (const Size &s) const {
-            return size <=> s;
-        }
-
-        explicit operator bool () const { return point.set && size.set; }
-
-        // ToDo: fix all related comparison operators. <=> not really doing what we want.
-        [[maybe_unused]] bool contains(const Point &p) {
-            auto p2 = point + size;
-            auto r = point.x <= p.x && point.y <= p.y && p.x < p2.x && p.y < p2.y;
-            return r;
+        /**
+         * @brief Using three way comparison to determine if a Point is contained in a Rectangle.
+         * @param p the Point
+         * @return true if the point is contained.
+         */
+        [[nodiscard]] bool contains(const Point &p) const {
+            if (std::is_neq(point.partialOrder0(p)))
+                return false;
+            return std::is_lt(p.partialOrder1(point+size));
         }
 
         [[nodiscard]] Rectangle intersection(const Rectangle &o) const {
@@ -363,14 +402,6 @@ namespace fmt {
 
 inline rose::Size operator - (const rose::Point &p0, const rose::Point &p1) {
     return {p0.x - p1.x, p0.y - p1.y};
-}
-
-inline auto operator <=> (const rose::Point &p, const rose::Rectangle &r) {
-    return p.operator<=>(r.point);
-}
-
-inline auto operator <=> (const rose::Size &s, const rose::Rectangle &r) {
-    return s.operator<=>(r.size);
 }
 
 inline std::ostream &operator<<(std::ostream& ostream, const rose::Point &p) {
