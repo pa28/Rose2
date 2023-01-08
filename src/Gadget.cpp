@@ -15,20 +15,10 @@ namespace rose {
     }
 
     void Gadget::draw(Context &context, Point drawLocation) {
-#ifdef DEBUG_GADGET_DRAW
-        DrawColorGuard colorGuard{context, ClipRectangleDebugColor};
-        context.fillRect(mVisualMetrics.clipRectangle + drawLocation);
-        colorGuard.setDrawColor(BorderRectangleDebugColor);
-        context.fillRect(mVisualMetrics.borderRect);
-        colorGuard.setDrawColor(RenderRectangleDebugColor);
-        context.fillRect(mVisualMetrics.renderRect + drawLocation);
-#else
         mVisualMetrics.lastDrawLocation = drawLocation;
-//        backgroundDecorator(context,*this);
         for (const auto& decorator : mDecorators) {
             decorator(context, *this);
         }
-#endif
     }
 
     bool Gadget::forceInitialGadgetLayout() {
