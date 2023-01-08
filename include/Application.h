@@ -137,7 +137,7 @@ namespace rose {
 
         [[nodiscard]] std::string applicationName() const;
 
-        Theme& getTheme() { theme; }
+        Theme& getTheme() { return theme; }
     };
 
 } // rose
