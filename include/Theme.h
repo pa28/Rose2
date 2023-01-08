@@ -26,7 +26,7 @@ namespace rose {
  * @class Theme
  */
     struct Theme {
-        Color screenBackground{color::OpaqueBlack};
+        Color screenBackground{color::DarkGrey};
     };
 
 } // rose
