@@ -73,6 +73,8 @@ namespace rose {
         [[maybe_unused]] constexpr Color TransparentBlack{0.0, 0.0, 0.0, 0.0};
         [[maybe_unused]] constexpr Color OpaqueBlack{0.0, 0.0, 0.0, 1.0};
         [[maybe_unused]] constexpr Color OpaqueWhite{1.0, 1.0, 1.0, 1.0};
+        [[maybe_unused]] constexpr Color LightGrey{ 0.7, 0.7, 0.7, 1.0 };
+        [[maybe_unused]] constexpr Color DarkGrey{ 0.2, 0.2, 0.2, 1.0 };
     }
 
 } // rose
