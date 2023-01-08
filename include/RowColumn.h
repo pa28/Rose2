@@ -58,6 +58,8 @@ namespace rose {
             mMajorAxisSize = mMinorAxisMax = 0;
         }
 
+        void setAlignment(Alignment alignment) { mAlignment = alignment; }
+
         /**
          * @brief Default layout strategy is to do nothing.
          * @param widget The widget to layout.
@@ -77,9 +79,9 @@ namespace rose {
         RowColumn& operator=(const RowColumn &) = delete;
         RowColumn& operator=(RowColumn&&) = default;
 
-//        void draw(Context &context, Point drawLocation) override {
-//            Widget::draw(context, drawLocation + getVisualMetrics().drawLocation);
-//        }
+        auto getLayoutManager() {
+            return std::dynamic_pointer_cast<LinearLayout>(mLayoutManager);
+        }
 
         ~RowColumn() override = default;
     };
@@ -94,6 +96,13 @@ namespace rose {
         RowColumnBuilder() : WidgetBuilder(std::make_shared<RowColumn>()) {}
 
         ~RowColumnBuilder() override = default;
+
+        auto setLayoutAlignment(LinearLayout::Alignment alignment) {
+            if (auto gPtr = std::dynamic_pointer_cast<RowColumn>(gadget); gPtr) {
+                gPtr->getLayoutManager()->setAlignment(alignment);
+            }
+            return *this;
+        }
     };
 
     /**

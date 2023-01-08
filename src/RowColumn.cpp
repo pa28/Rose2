@@ -14,6 +14,7 @@
  */
 
 #include "RowColumn.h"
+#include <memory>
 
 namespace rose {
     bool LinearLayout::initialWidgetLayout(Context &context, std::shared_ptr<Widget> &widget) {

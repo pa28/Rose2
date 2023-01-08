@@ -64,8 +64,9 @@ int main(int argc, char **argv) {
         application->initializeGraphics();
         application->createWindow(application->applicationName(), Size(800, 480), Point::CenterScreen(1), 0);
 
-        if (auto container = RowBuilder{}; container) {
-            container.name("container")
+        if (auto container = ColumnBuilder{}; container) {
+            container.setLayoutAlignment(LinearLayout::Alignment::BOTTOM_RIGHT)
+                    .name("container")
                     .background(Color{0.0, 0.0, 0.9, 1.0})
                     .layout(Point(0,0), Size(10,10));
 

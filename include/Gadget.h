@@ -407,7 +407,7 @@ namespace rose {
 
         std::vector<std::shared_ptr<Gadget>> mGadgetList{};  ///< The list of Gadgets managed.
 
-        std::unique_ptr<LayoutManager> mLayoutManager{};
+        std::shared_ptr<LayoutManager> mLayoutManager{};
 
     public:
         Widget() = default;
