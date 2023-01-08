@@ -59,10 +59,10 @@ std::tuple<int,int> screen_obj_compare_test(const std::vector<binomial_compare_t
 
 int main(int argc, char **argv) {
 
-    auto application = std::make_shared<Application>(argc, argv);
-    {
+    if (auto application = std::make_shared<Application>(argc, argv); application) {
         application->initializeGraphics();
-        application->createWindow(application->applicationName(), Size(800, 480), Point::CenterScreen(1), 0);
+        application->createWindow(application->applicationName(), Size(800, 480), Point::CenterScreen(1),
+                                  SDL_WINDOW_RESIZABLE);
 
         if (auto container = ColumnBuilder{}; container) {
             container.setLayoutAlignment(LinearLayout::Alignment::BOTTOM_RIGHT)
