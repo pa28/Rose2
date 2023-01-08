@@ -28,41 +28,41 @@ namespace rose {
         ScreenCoordType w{0}, h{0};
         bool set{false};
 
-        Size() = default;
-        Size(const Size&) = default;
-        Size(Size&&) = default;
-        Size& operator=(const Size &) = default;
-        Size& operator=(Size &&) = default;
+        constexpr Size() = default;
+        constexpr Size(const Size&) = default;
+        constexpr Size(Size&&) = default;
+        constexpr Size& operator=(const Size &) = default;
+        constexpr Size& operator=(Size &&) = default;
 
         template<typename Tw, typename Th>
-        Size(Tw W, Th H) : w(W), h(H), set(true) {
+        constexpr Size(Tw W, Th H) : w(W), h(H), set(true) {
             static_assert(std::is_convertible_v<Tw, ScreenCoordType> && std::is_convertible_v<Th, ScreenCoordType>,
                     "Arguments to Size() must be convertable to ScreenCoordType");
         }
 
         template<typename Ts>
         requires std::is_convertible_v<Ts, ScreenCoordType>
-        explicit Size(Ts s) : w(s), h(s), set(true) {}
+        constexpr explicit Size(Ts s) : w(s), h(s), set(true) {}
 
         ~Size() = default;
 
         template<class I>
         requires std::is_integral_v<I>
-        Size& operator=(I i) {
+        constexpr Size& operator=(I i) {
             w = i;
             h = i;
             return *this;
         }
 
-        Size operator + (int border) {
+        constexpr Size operator + (int border) {
             Size size{*this}; size.w += border; size.h += border; return size;
         }
 
-        Size operator + (const Size& size) {
+        constexpr Size operator + (const Size& size) const {
             return Size{w + size.w, h + size.h};
         }
 
-        explicit operator bool () const { return set; }
+        constexpr explicit operator bool () const { return set; }
 
         auto operator <=> (const Size &) const = default;
     };
@@ -75,14 +75,14 @@ namespace rose {
         ScreenCoordType x{0}, y{0};
         bool set{false};
 
-        Point() = default;
-        Point(const Point&) = default;
-        Point(Point &&) = default;
-        Point& operator=(const Point &) = default;
-        Point& operator=(Point&&) = default;
+        constexpr Point() = default;
+        constexpr Point(const Point&) = default;
+        constexpr Point(Point &&) = default;
+        constexpr Point& operator=(const Point &) = default;
+        constexpr Point& operator=(Point&&) = default;
 
         template<typename Tx, typename Ty>
-        Point(Tx X, Ty Y) : x(X), y(Y), set(true) {
+        constexpr Point(Tx X, Ty Y) : x(X), y(Y), set(true) {
             static_assert(std::is_convertible_v<Tx, ScreenCoordType> && std::is_convertible_v<Ty, ScreenCoordType>,
                           "Arguments to Point() must be convertable to ScreenCoordType");
         }
@@ -91,76 +91,72 @@ namespace rose {
 
         template<class I>
         requires std::is_integral_v<I>
-        Point& operator=(I i) {
+        constexpr Point& operator=(I i) {
             x = i;
             y = i;
             return *this;
         }
 
         /**
-         * @brief Using three way comparison to help determine if a point is contained in a rectangle.
-         * @param o The other point.
-         * @return equivalent if this point is <= the other point, unordered otherwise.
+         * @brief A three-way comparison operator to compare two Point objects.
+         * @details The purpose of this operator is to allow us to determine if a Point is contained in a Rectangle.
+         * The return value will be std::partial_ordering::equivalent iff both x coordinates and both y coordinates
+         * are equal; td::partial_ordering::less at least one coordinate of this point is less than that of o and
+         * the other is equal; std::partial_ordering::greater iff both coordinates of this are greater than those of
+         * o. Given a Rectangle R with Point A as the top left corner and B as the bottom right corner Point P is
+         * contained in R iff A <= P && B > P
+         * @param o the other Point
+         * @return Point ordering, see Details.
          */
-        [[nodiscard]] std::partial_ordering partialOrder0(const Point &o) const {
+        constexpr std::partial_ordering operator <=> (const Point& o) const {
             auto a = std::strong_order(x, o.x);
             auto b = std::strong_order(y, o.y);
 
-            if (std::is_lteq(a) && std::is_lteq(b))
-                return std::partial_ordering::equivalent;
+#if 0
+            // If x == o.x
+            if (std::is_eq(a)) {
+                // and y == o.y
+                if (std::is_eq(b)) return std::partial_ordering::equivalent;
+                // and y < o.y
+                if (std::is_lt(b)) return std::partial_ordering::less;
+                // and y > o.y
+                return std::partial_ordering::unordered;
+            } else if (std::is_eq(b)) { // if y == o.y (x != o.x)
+                // and x < o.x
+                if (std::is_lt(a)) return std::partial_ordering::less;
+                // and x > o.x
+            } else if (std::is_lt(a) && std::is_lt(b)) // if x < o.x && y < o.y
+                return std::partial_ordering::less;
+            else if (std::is_gt(a) && std::is_gt(b)) // if x > o.x && y > o.y
+                return std::partial_ordering::greater;
             return std::partial_ordering::unordered;
-        }
-
-        /**
-         * @brief Using three way comparison to help determine if a point is contained in a rectangle.
-         * @param o The other point.
-         * @return equivalent if this point is < the other point, unordered otherwise.
-         */
-        [[nodiscard]] std::partial_ordering partialOrder1(const Point &o) const {
-            auto a = std::strong_order(x, o.x);
-            auto b = std::strong_order(y, o.y);
-
-            if (std::is_lt(a) && std::is_lt(b))
+#else
+            if (std::is_eq(a) && std::is_eq(b))
+                return std::partial_ordering::equivalent;
+            else if (std::is_gt(a) && std::is_gt(b))
+                return std::partial_ordering::greater;
+            else if (std::is_lteq(a) && std::is_lteq(b))
                 return std::partial_ordering::less;
             return std::partial_ordering::unordered;
+#endif
         }
 
-        bool operator == (const Point& other) const {
-            return x == other.x && y == other.y;
-        }
+        constexpr explicit operator bool () const { return set; }
 
-        bool operator < (const Point & other) const {
-            return x < other.x && y < other.y;
-        }
-
-        bool operator <= (const Point & other) const {
-            return x <= other.x && y <= other.y;
-        }
-
-        bool operator > (const Point & other) const {
-            return x > other.x && y > other.y;
-        }
-
-        bool operator >= (const Point & other) const {
-            return x >= other.x && y >= other.y;
-        }
-
-        explicit operator bool () const { return set; }
-
-        static Point CenterScreen(unsigned int screen = 0) {
+        constexpr static Point CenterScreen(unsigned int screen = 0) {
             auto pos = static_cast<int>(SDL_WINDOWPOS_CENTERED_DISPLAY(screen));
             return Point{pos, pos };
         }
 
-        Point operator+(const Size& size) const {
+        constexpr Point operator+(const Size& size) const {
             Point p{*this}; p.x += size.w; p.y += size.h; return p;
         }
 
-        Point operator+(int border) const {
+        constexpr Point operator+(int border) const {
             Point p{*this}; p.x += border; p.y += border; return p;
         }
 
-        Point operator+(const Point &p) const {
+        constexpr Point operator+(const Point &p) const {
             Point r{*this}; r.x += p.x; r.y += p.y; return r;
         }
     };
@@ -169,14 +165,14 @@ namespace rose {
         Point topLeft{};
         Point botRight{};
 
-        Padding() = default;
-        Padding(const Padding&) = default;
-        Padding(Padding &&) = default;
-        Padding& operator=(const Padding &) = default;
-        Padding& operator=(Padding&&) = default;
+        constexpr Padding() = default;
+        constexpr Padding(const Padding&) = default;
+        constexpr Padding(Padding &&) = default;
+        constexpr Padding& operator=(const Padding &) = default;
+        constexpr Padding& operator=(Padding&&) = default;
 
         template<typename Tx, typename Ty, typename Tw, typename Th>
-        [[maybe_unused]] Padding(Tx X0, Ty Y0, Tw X1, Th Y1) : topLeft(X0,Y0), botRight(X1,Y1) {
+        [[maybe_unused]] constexpr Padding(Tx X0, Ty Y0, Tw X1, Th Y1) : topLeft(X0,Y0), botRight(X1,Y1) {
             static_assert(std::is_convertible_v<Tx, ScreenCoordType> && std::is_convertible_v<Ty, ScreenCoordType> &&
                           std::is_convertible_v<Tw, ScreenCoordType> && std::is_convertible_v<Th, ScreenCoordType>,
                           "Arguments to Padding() must be convertable to ScreenCoordType");
@@ -184,20 +180,20 @@ namespace rose {
 
         template<class I>
         requires std::is_integral_v<I>
-        Padding& operator=(I i) {
+        constexpr Padding& operator=(I i) {
             topLeft = i;
             botRight = i;
             return *this;
         }
 
-        Padding operator + (const int i) {
+        constexpr Padding operator + (const int i) const {
             Padding result{};
             result.topLeft = topLeft + i;
             result.botRight = botRight + i;
             return result;
         }
 
-        explicit operator bool () const { return topLeft && botRight; }
+        constexpr explicit operator bool () const { return topLeft && botRight; }
 
         ~Padding() = default;
     };
@@ -206,16 +202,16 @@ namespace rose {
         Point point{};
         Size size{};
 
-        Rectangle() = default;
-        Rectangle(const Rectangle&) = default;
-        Rectangle(Rectangle&&) = default;
-        Rectangle& operator=(const Rectangle &) = default;
-        Rectangle& operator=(Rectangle &&) = default;
+        constexpr Rectangle() = default;
+        constexpr Rectangle(const Rectangle&) = default;
+        constexpr Rectangle(Rectangle&&) = default;
+        constexpr Rectangle& operator=(const Rectangle &) = default;
+        constexpr Rectangle& operator=(Rectangle &&) = default;
 
-        explicit operator bool () const { return point.set && size.set; }
+        explicit constexpr operator bool () const { return point.set && size.set; }
 
         template<typename Tx, typename Ty, typename Tw, typename Th>
-        [[maybe_unused]] Rectangle(Tx X, Ty Y, Tw W, Th H) : point(X,Y), size(W,H) {
+        [[maybe_unused]] constexpr Rectangle(Tx X, Ty Y, Tw W, Th H) : point(X,Y), size(W,H) {
             static_assert(std::is_convertible_v<Tx, ScreenCoordType> && std::is_convertible_v<Ty, ScreenCoordType> &&
                     std::is_convertible_v<Tw, ScreenCoordType> && std::is_convertible_v<Th, ScreenCoordType>,
                     "Arguments to Size() must be convertable to ScreenCoordType");
@@ -226,36 +222,29 @@ namespace rose {
          * @param point The Point.
          * @param size The Size.
          */
-        [[maybe_unused]] Rectangle(const Point& point, const Size &size) : point(point), size(size) {}
+        [[maybe_unused]] constexpr Rectangle(const Point& point, const Size &size) : point(point), size(size) {}
 
-        Rectangle& operator=(const Point &p) {
+        constexpr Rectangle& operator=(const Point &p) {
             point = p;
             return *this;
         }
 
-        Rectangle& operator=(const Size &s) {
+        constexpr Rectangle& operator=(const Size &s) {
             size = s;
             return *this;
         }
 
-        Rectangle operator + (const Point offset) const {
+        constexpr Rectangle operator + (const Point offset) const {
             Rectangle result{*this};
             result.point = result.point + offset;
             return  result;
         }
 
-        /**
-         * @brief Using three way comparison to determine if a Point is contained in a Rectangle.
-         * @param p the Point
-         * @return true if the point is contained.
-         */
-        [[nodiscard]] bool contains(const Point &p) const {
-            if (std::is_neq(point.partialOrder0(p)))
-                return false;
-            return std::is_lt(p.partialOrder1(point+size));
+        [[nodiscard]] constexpr bool contains(const Point& p) const {
+            return point <= p && (point + size) > p;
         }
 
-        [[nodiscard]] Rectangle intersection(const Rectangle &o) const {
+        [[nodiscard]] constexpr Rectangle intersection(const Rectangle &o) const {
             // gives bottom-left point
             // of intersection rectangle
 
@@ -278,7 +267,7 @@ namespace rose {
 } // rose
 
 
-inline rose::Size operator + (const rose::Size &s, const rose::Point& p) {
+inline constexpr rose::Size operator + (const rose::Size &s, const rose::Point& p) {
     return rose::Size {s.w + p.x, s.h + p.y};
 }
 
