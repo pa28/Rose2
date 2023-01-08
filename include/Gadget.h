@@ -39,7 +39,7 @@ namespace rose {
 #endif
 
     class Gadget {
-    public:
+    protected:
         friend class GadgetBuilder;
         friend class Window;
         friend class LayoutManager;
