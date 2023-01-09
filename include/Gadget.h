@@ -389,6 +389,11 @@ namespace rose {
             gadget->mVisualMetrics.background = color;
             return *this;
         }
+
+        auto decorator(Gadget::DecoratorFunction && decoratorFunction) {
+            gadget->mDecorators.emplace_back(decoratorFunction);
+            return *this;
+        }
     };
 
     /**

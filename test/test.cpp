@@ -89,6 +89,7 @@ int main(int argc, char **argv) {
                         .background(Theme::gadgetBackground)
                         .layout(Point(0,0),Size(10,10))
                         .name("World")
+                        .decorator(backgroundDecorator)
                         >> container;
                 std::cout << "World\n";
             }
