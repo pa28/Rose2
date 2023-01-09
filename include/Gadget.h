@@ -187,7 +187,7 @@ namespace rose {
          * @brief Find a constrained layout for this Gadget.
          * @details This method is only called when there is insufficient room to render the Gadget.
          */
-        virtual void constrainedGadgetLayout(Context &, Rectangle ) {}
+        virtual void constrainedGadgetLayout(Context &, Size) {}
 
         /**
          * @brief Get access to the visual metrics of the Gadget so they may be manipulated directly.

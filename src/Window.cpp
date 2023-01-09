@@ -16,10 +16,10 @@ namespace rose {
         /**
          * Layout stage one.
          */
-        Rectangle unset{};
         bool constraintRequired = false;
-        for (const auto& screen : mScreens)
+        for (const auto& screen : mScreens) {
             constraintRequired |= screen->initialGadgetLayout(context());
+        }
 
         if (constraintRequired) {
             /**
@@ -29,7 +29,7 @@ namespace rose {
             SDL_GetWindowSize(mSdlWindow.get(), &sdlWindowSize.w, &sdlWindowSize.h);
             sdlWindowSize.set = true;
             for (const auto &screen: mScreens)
-                screen->constrainedGadgetLayout(context(), Rectangle{Point{0, 0,}, sdlWindowSize});
+                screen->constrainedGadgetLayout(context(), sdlWindowSize);
         }
     }
 
@@ -173,11 +173,21 @@ namespace rose {
         return mApplicationPtr.lock()->getTheme();
     }
 
+    void Window::changeSize(const Size &size) {
+        for (auto& screen : mScreens) {
+            screen->changeSize(size);
+        }
+    }
+
     Screen::Screen(const std::shared_ptr<Window> &windowPtr, const Size &size) {
         mWindowPtr = windowPtr;
         mName = "Top";
         mVisualMetrics.desiredSize = size;
         mVisualMetrics.background = windowPtr->getTheme().screenBackground;
         mDecorators.emplace_back(backgroundDecorator);
+    }
+
+    void Screen::changeSize(const Size &size) {
+        mVisualMetrics.desiredSize = size;
     }
 } // rose

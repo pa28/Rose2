@@ -87,6 +87,8 @@ namespace rose {
 
         void winStateChangeEvent(WindowEventType type, const SDL_WindowEvent &e);
 
+        void winSizeChange(WindowEventType type, const SDL_WindowEvent &e);
+
         Theme theme{};
 
     public:
