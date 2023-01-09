@@ -26,7 +26,9 @@ namespace rose {
  * @class Theme
  */
     struct Theme {
-        Color screenBackground{color::DarkGrey};
+        static constexpr Color screenBackground{color::DarkGrey};
+        static constexpr Color gadgetBackground{color::MediumGrey};
+        static constexpr Color textForeground{color::LightGrey};
     };
 
 } // rose

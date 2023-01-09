@@ -9,6 +9,7 @@
 #include <TextGadget.h>
 #include <Application.h>
 #include <Color.h>
+#include <Theme.h>
 
 using namespace rose;
 
@@ -67,15 +68,16 @@ int main(int argc, char **argv) {
         if (auto container = ColumnBuilder{}; container) {
             container.setLayoutAlignment(LinearLayout::Alignment::BOTTOM_RIGHT)
                     .name("container")
-                    .background(Color{0.0, 0.0, 0.9, 1.0})
                     .layout(Point(0,0), Size(10,10));
 
             if (TextGadgetBuilder hello{}; hello) {
                 hello.text("Hello")
                         .pointSize(20)
-                        .foreground(color::LightGrey)
+                        .foreground(Theme::textForeground)
+                        .background(Theme::gadgetBackground)
                         .layout(Point(0,0),Size(10,10))
                         .name("Hello")
+                        .decorator(backgroundDecorator)
                         >> container;
                 std::cout << "Hello\n";
             }
@@ -83,7 +85,8 @@ int main(int argc, char **argv) {
             if (TextGadgetBuilder world{}; world) {
                 world.text("World")
                         .pointSize(20)
-                        .foreground(color::LightGrey)
+                        .foreground(Theme::textForeground)
+                        .background(Theme::gadgetBackground)
                         .layout(Point(0,0),Size(10,10))
                         .name("World")
                         >> container;
