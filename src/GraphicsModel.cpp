@@ -76,7 +76,7 @@ namespace rose {
             throw ContextException(fmt::format("{}: {}", __FUNCTION__, SDL_GetError()));
     }
 
-    void Context::setDrawColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a) const {
+    [[maybe_unused]] void Context::setDrawColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a) const {
         if (SDL_SetRenderDrawColor(get(), r, g, b, a))
             throw ContextException(fmt::format("{}: {}", __FUNCTION__, SDL_GetError()));
     }
@@ -163,8 +163,12 @@ namespace rose {
         SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
         SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
         SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-        SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+//        SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 32);
+        SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+        SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 2);
         SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+        SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+
         return true;
     }
 
