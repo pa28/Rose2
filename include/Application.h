@@ -119,6 +119,8 @@ namespace rose {
 
         bool initializeGraphics();
 
+        const Theme& getTheme() const { return theme; }
+
         auto begin() { return mWindows.begin(); }
 
         auto end() { return mWindows.end(); }

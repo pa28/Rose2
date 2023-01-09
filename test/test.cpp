@@ -62,6 +62,8 @@ int main(int argc, char **argv) {
 
     if (auto application = std::make_shared<Application>(argc, argv); application) {
         application->initializeGraphics();
+        Theme &theme{application->getTheme()};
+
         application->createWindow(application->applicationName(), Size(800, 480), Point::CenterScreen(1),
                                   SDL_WINDOW_RESIZABLE);
 
@@ -73,8 +75,8 @@ int main(int argc, char **argv) {
             if (TextGadgetBuilder hello{}; hello) {
                 hello.text("Hello")
                         .pointSize(20)
-                        .foreground(Theme::textForeground)
-                        .background(Theme::gadgetBackground)
+                        .foreground(theme.textForeground)
+                        .background(theme.gadgetBackground)
                         .layout(Point(0,0),Size(10,10))
                         .name("Hello")
                         .decorator(backgroundDecorator)
@@ -85,8 +87,8 @@ int main(int argc, char **argv) {
             if (TextGadgetBuilder world{}; world) {
                 world.text("World")
                         .pointSize(20)
-                        .foreground(Theme::textForeground)
-                        .background(Theme::gadgetBackground)
+                        .foreground(theme.textForeground)
+                        .background(theme.gadgetBackground)
                         .layout(Point(0,0),Size(10,10))
                         .name("World")
                         .decorator(backgroundDecorator)
