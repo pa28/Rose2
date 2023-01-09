@@ -187,7 +187,7 @@ namespace rose {
          * @brief Find a constrained layout for this Gadget.
          * @details This method is only called when there is insufficient room to render the Gadget.
          */
-        virtual void constrainedGadgetLayout(Context &, Rectangle ) {}
+        virtual void constrainedGadgetLayout(Context &, Size) {}
 
         /**
          * @brief Get access to the visual metrics of the Gadget so they may be manipulated directly.
@@ -387,6 +387,11 @@ namespace rose {
 
         [[maybe_unused]] auto background(const Color& color) {
             gadget->mVisualMetrics.background = color;
+            return *this;
+        }
+
+        auto decorator(Gadget::DecoratorFunction && decoratorFunction) {
+            gadget->mDecorators.emplace_back(decoratorFunction);
             return *this;
         }
     };

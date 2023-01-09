@@ -69,7 +69,7 @@ namespace rose {
                 windowPositionChange(Moved, Point{e.data1, e.data2});
                 break;
             case SDL_WINDOWEVENT_RESIZED:
-                windowSizeChange(Resized, Size{e.data1, e.data2});
+                windowSizeChange(Resized, e);
                 break;
             case SDL_WINDOWEVENT_SIZE_CHANGED:
                 windowStateChange(SizeChanged, e);

@@ -66,6 +66,9 @@ namespace rose {
 
         event.setMouseButton([this](const SDL_MouseButtonEvent &e) -> bool { return handleMouseButtonEvent(e); });
 
+        event.setWinSizeChange([this](WindowEventType windowEventType, const SDL_WindowEvent &e) -> void {
+            winSizeChange(windowEventType, e); });
+
         return mGraphicsModel.initialize();
     }
 
@@ -141,6 +144,14 @@ namespace rose {
                 break;
             default:
                 break;
+        }
+    }
+
+    void Application::winSizeChange(WindowEventType, const SDL_WindowEvent &e) {
+        auto winId = [e](std::shared_ptr<Window> w) { return w->windowID() == e.windowID; };
+        if (auto window = std::ranges::find_if(mWindows,winId); window != mWindows.end()) {
+            (*window)->changeSize(Size{e.data1, e.data2});
+            (*window)->layout();
         }
     }
 

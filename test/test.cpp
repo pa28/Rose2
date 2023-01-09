@@ -9,6 +9,7 @@
 #include <TextGadget.h>
 #include <Application.h>
 #include <Color.h>
+#include <Theme.h>
 
 using namespace rose;
 
@@ -59,23 +60,24 @@ std::tuple<int,int> screen_obj_compare_test(const std::vector<binomial_compare_t
 
 int main(int argc, char **argv) {
 
-    auto application = std::make_shared<Application>(argc, argv);
-    {
+    if (auto application = std::make_shared<Application>(argc, argv); application) {
         application->initializeGraphics();
-        application->createWindow(application->applicationName(), Size(800, 480), Point::CenterScreen(1), 0);
+        application->createWindow(application->applicationName(), Size(800, 480), Point::CenterScreen(1),
+                                  SDL_WINDOW_RESIZABLE);
 
         if (auto container = ColumnBuilder{}; container) {
             container.setLayoutAlignment(LinearLayout::Alignment::BOTTOM_RIGHT)
                     .name("container")
-                    .background(Color{0.0, 0.0, 0.9, 1.0})
                     .layout(Point(0,0), Size(10,10));
 
             if (TextGadgetBuilder hello{}; hello) {
                 hello.text("Hello")
                         .pointSize(20)
-                        .foreground(color::LightGrey)
+                        .foreground(Theme::textForeground)
+                        .background(Theme::gadgetBackground)
                         .layout(Point(0,0),Size(10,10))
                         .name("Hello")
+                        .decorator(backgroundDecorator)
                         >> container;
                 std::cout << "Hello\n";
             }
@@ -83,9 +85,11 @@ int main(int argc, char **argv) {
             if (TextGadgetBuilder world{}; world) {
                 world.text("World")
                         .pointSize(20)
-                        .foreground(color::LightGrey)
+                        .foreground(Theme::textForeground)
+                        .background(Theme::gadgetBackground)
                         .layout(Point(0,0),Size(10,10))
                         .name("World")
+                        .decorator(backgroundDecorator)
                         >> container;
                 std::cout << "World\n";
             }

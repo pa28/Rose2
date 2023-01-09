@@ -59,6 +59,7 @@ namespace rose {
         mVisualMetrics.renderRect.point = mVisualMetrics.borderRect.point + mVisualMetrics.gadgetBorder +
                                           mVisualMetrics.gadgetPadding.topLeft + mVisualMetrics.innerAlignmentPadding.topLeft;
 
+#if 0
         fmt::print("initialGadgetLayout: {}"
                    "\n\tdrawLocation:    {}"
                    "\n\touterPadding:    {}"
@@ -73,6 +74,7 @@ namespace rose {
                    mVisualMetrics.gadgetPadding, mVisualMetrics.gadgetBorder, mVisualMetrics.desiredSize, mVisualMetrics.renderRect,
                    mVisualMetrics.borderRect, mVisualMetrics.clipRectangle
         );
+#endif
 
         return false;
     }

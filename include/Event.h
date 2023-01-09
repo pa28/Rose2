@@ -66,9 +66,9 @@ namespace rose {
                 windowStateChangeCallback(type, event);
         }
 
-        void windowSizeChange(WindowEventType type, Size size) {
+        void windowSizeChange(WindowEventType type, const SDL_WindowEvent &event) {
             if (windowSizeChangeCallback)
-                windowSizeChangeCallback(type, size);
+                windowSizeChangeCallback(type, event);
         }
 
         void windowPositionChange(WindowEventType type, Point position) {
@@ -78,12 +78,12 @@ namespace rose {
 
     protected:
         /// The Application the EventSemantics are processed for.
-        WindowSizeChangeCallback windowSizeChangeCallback;
+        WindowStateChangeCallback windowSizeChangeCallback;
         WindowPositionChangeCallback windowPositionChangeCallback;
-        std::function<void(WindowEventType, const SDL_WindowEvent&)> windowStateChangeCallback;
+        WindowStateChangeCallback windowStateChangeCallback;
         KeyboardEventCallback keyboardEventCallback;
-        std::function<bool(const SDL_MouseMotionEvent&)> mouseMotionEventCallback;
-        std::function<bool(const SDL_MouseButtonEvent&)> mouseButtonEventCallback;
+        MouseMotionEventCallback mouseMotionEventCallback;
+        MouseButtonEventCallback mouseButtonEventCallback;
         MouseWheelEventCallback mouseWheelEventCallback;
         FingerTouchEventCallback fingerTouchEventCallback;
         TextInputEventCallback textInputEventCallback;
@@ -113,39 +113,39 @@ namespace rose {
 
         void textInputEvent(SDL_TextInputEvent &e);
 
-        void setWinSizeChange(WindowSizeChangeCallback &cb) {
+        void setWinSizeChange(WindowStateChangeCallback &&cb) {
             windowSizeChangeCallback = cb;
         }
 
-        void setWinMove(WindowPositionChangeCallback &cb) {
+        void setWinMove(WindowPositionChangeCallback &&cb) {
             windowPositionChangeCallback = cb;
         }
 
-        void setWinStateChange(std::function<void(WindowEventType, const SDL_WindowEvent&)>&& cb) {
+        void setWinStateChange(WindowStateChangeCallback &&cb) {
             windowStateChangeCallback = std::move(cb);
         }
 
-        void setKeEvent(KeyboardEventCallback &cb) {
+        void setKeEvent(KeyboardEventCallback &&cb) {
             keyboardEventCallback = cb;
         }
 
-        void setMouseMotion(std::function<bool(const SDL_MouseMotionEvent&)>&& cb) {
+        void setMouseMotion(MouseMotionEventCallback&& cb) {
             mouseMotionEventCallback = std::move(cb);
         }
 
-        void setMouseButton(std::function<bool(const SDL_MouseButtonEvent&)>&& cb) {
+        void setMouseButton(MouseButtonEventCallback&& cb) {
             mouseButtonEventCallback = std::move(cb);
         }
 
-        void setMouseWheel(MouseWheelEventCallback &cb) {
+        void setMouseWheel(MouseWheelEventCallback &&cb) {
             mouseWheelEventCallback = cb;
         }
 
-        void setFingerTouch(FingerTouchEventCallback &cb) {
+        void setFingerTouch(FingerTouchEventCallback &&cb) {
             fingerTouchEventCallback = cb;
         }
 
-        void setTextInput(TextInputEventCallback &cb) {
+        void setTextInput(TextInputEventCallback &&cb) {
             textInputEventCallback = cb;
         }
     };

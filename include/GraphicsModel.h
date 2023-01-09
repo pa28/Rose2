@@ -298,7 +298,7 @@ namespace rose {
          * @param a alpha channel
          * @return Status code returned by the API.
          */
-        void setDrawColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a) const;
+        [[maybe_unused]] void setDrawColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a) const;
 
         /**
          * @brief Set the drawing color used for drawing Rectangles, lines and clearing.
@@ -612,7 +612,7 @@ namespace rose {
     public:
         RoseErrorCode ErrorCode{RoseErrorCode::OK};
 
-        bool initialize();
+        static bool initialize();
 
 //        void eventLoop(std::shared_ptr<Screen> &screen);
 

@@ -67,6 +67,12 @@ namespace rose {
          * @return false
          */
         bool mouseButtonEvent(const SDL_MouseButtonEvent &) override { return false; }
+
+        /**
+         * @brief Change the screen size.
+         * @param size The new Size.
+         */
+        void changeSize(const Size& size);
     };
 
     /**
@@ -110,6 +116,10 @@ namespace rose {
         auto windowID() { return SDL_GetWindowID(mSdlWindow.get()); }
 
         auto weakPtr() { return std::weak_ptr<Window>(shared_from_this()); }
+
+        void setResizeable(bool resizeable) {
+            SDL_SetWindowResizable(mSdlWindow.get(), resizeable ? SDL_TRUE : SDL_FALSE);
+        }
 
         /**
          * @brief Layout the contents of the window.
@@ -179,6 +189,8 @@ namespace rose {
 
         void initialize(const std::shared_ptr<Application>& applicationPtr, const std::string &title, Size initialSize,
                         const Point &initialPosition, uint32_t extraFlags);
+
+        void changeSize(const Size& size);
     };
 
 } // rose
