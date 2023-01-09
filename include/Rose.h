@@ -6,6 +6,7 @@
 #define ROSE2_ROSE_H
 
 #include <SDL.h>
+#include <RoseTypes.h>
 #include <type_traits>
 #include <compare>
 #include <iostream>
@@ -21,8 +22,6 @@ namespace rose {
         Gadget,
         Widget,
     };
-
-    using ScreenCoordType = int;   ///< The type used to represent a screen coordinate.
 
 
     struct Size {
