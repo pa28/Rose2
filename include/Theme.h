@@ -19,16 +19,29 @@
 #define ROSE2_THEME_H
 
 #include <Color.h>
+#include <RoseTypes.h>
 
 namespace rose {
 
-/**
- * @class Theme
- */
+    /**
+     * @struct Theme
+     */
     struct Theme {
-        static constexpr Color screenBackground{color::DarkGrey};
-        static constexpr Color gadgetBackground{color::MediumGrey};
-        static constexpr Color textForeground{color::LightGrey};
+        ScreenCoordType borderSize{6};
+
+        Color screenBackground{color::DarkGrey};
+        Color gadgetBackground{color::MediumGrey};
+        Color textForeground{color::LightGrey};
+
+        Corners corners{Corners::SQUARE};
+
+        Theme() = default;
+        Theme(const Theme&) = default;
+        Theme(Theme&&) = default;
+        Theme& operator = (const Theme&) = default;
+        Theme& operator = (Theme&&) = default;
+
+        ~Theme() = default;
     };
 
 } // rose
