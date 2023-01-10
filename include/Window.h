@@ -121,6 +121,12 @@ namespace rose {
             SDL_SetWindowResizable(mSdlWindow.get(), resizeable ? SDL_TRUE : SDL_FALSE);
         }
 
+        void setBackgroundColor(const Color &background) {
+            for (auto &screen : mScreens) {
+                screen->setBackground(background);
+            }
+        }
+
         /**
          * @brief Layout the contents of the window.
          * @details Layout is a two stage process.

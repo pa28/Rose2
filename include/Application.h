@@ -121,6 +121,11 @@ namespace rose {
 
         const Theme& getTheme() const { return theme; }
 
+        void setBackgroundColor(const Color& background) {
+            for (auto &window : mWindows)
+                window->setBackgroundColor(background);
+        }
+
         auto begin() { return mWindows.begin(); }
 
         auto end() { return mWindows.end(); }
