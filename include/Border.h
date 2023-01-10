@@ -18,13 +18,46 @@
 #ifndef ROSE2_BORDER_H
 #define ROSE2_BORDER_H
 
+#include <RoseTypes.h>
+#include <GraphicsModel.h>
 
-/**
- * @class Border
- */
-class Border {
+namespace rose {
+    /**
+     * @class Border
+     */
+    class Border : public Texture {
+    protected:
+        Corners mCorners{Corners::SQUARE};
+        Color mBackground{color::OpaqueBlack};
+        Visual mVisual{Visual::FLAT};
 
-};
+    public:
+        Border() = default;
+        Border(const Border &) = delete;
+        Border(Border &&) = default;
+        Border& operator = (const Border&) = delete;
+        Border& operator = (Border &&) = default;
+
+        /**
+         * @brief Create a Border
+         * @details Builds a Texture compatible with building up textures within Rose . The pixel format is
+         * SDL_PIXELFORMAT_RGBA8888, the texture access is SDL_TEXTUREACCESS_TARGET.
+         * @param context The renderer to use.
+         * @param size The size of the texture.
+         */
+        [[maybe_unused]] Border(Context &context, Size size, const Theme& theme) : Texture(context, size) {
+            createThemedBorder(context, theme);
+        }
+
+        void createThemedBorder(Context &context, const Theme& theme);
+
+        void layout(Context &context);
+
+        void draw(Context &context, const Point &drawLocation);
+
+        ~Border() = default;
+    };
+}
 
 
 #endif //ROSE2_BORDER_H

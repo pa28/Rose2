@@ -14,3 +14,17 @@
  */
 
 #include "Border.h"
+
+void rose::Border::createThemedBorder(rose::Context &, const rose::Theme &theme) {
+    mCorners = theme.corners;
+    mBackground = theme.gadgetBackground;
+    mVisual = theme.visual;
+}
+
+void rose::Border::layout(rose::Context &) {
+
+}
+
+void rose::Border::draw(rose::Context &, const rose::Point &) {
+
+}
