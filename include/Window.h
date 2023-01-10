@@ -12,7 +12,7 @@
 #include <Rose.h>
 #include <SDL.h>
 #include <GraphicsModel.h>
-#include <Gadget.h>
+#include <Widget.h>
 #include <exception>
 #include <functional>
 #include <stack>

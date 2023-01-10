@@ -18,7 +18,7 @@
 #ifndef ROSE2_ROWCOLUMN_H
 #define ROSE2_ROWCOLUMN_H
 
-#include <Gadget.h>
+#include <Widget.h>
 
 namespace rose {
 

@@ -7,6 +7,7 @@
  */
 
 #include "Gadget.h"
+#include "Widget.h"
 #include <Window.h>
 
 namespace rose {
@@ -119,29 +120,6 @@ namespace rose {
         }
 
         return {};
-    }
-
-    [[maybe_unused]] void Widget::manage(std::shared_ptr<Gadget> gadget) {
-        gadget->managedBy(shared_from_this());
-        mGadgetList.push_back(std::move(gadget));
-    }
-
-    void Widget::manage(Builder &builder) {
-        builder.gadget->managedBy(shared_from_this());
-        mGadgetList.push_back(std::move(builder.gadget));
-    }
-
-    [[maybe_unused]] void Widget::unManage(const std::shared_ptr<Gadget> &gadget) {
-        mGadgetList.erase(std::remove(mGadgetList.begin(), mGadgetList.end(), gadget), mGadgetList.end());
-    }
-
-    void Widget::draw(Context &context, Point drawLocation) {
-        Gadget::draw(context, drawLocation);
-
-        for (const auto& gadget : mGadgetList) {
-            Point gadgetDrawLocation = drawLocation + gadget->getVisualMetrics().drawLocation;
-            gadget->draw(context, gadgetDrawLocation);
-        }
     }
 
     void Builder::operator>>(Widget &widget) {
