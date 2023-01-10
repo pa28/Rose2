@@ -12,6 +12,8 @@
 #include <SDL.h>
 #include <array>
 #include <algorithm>
+#include <fmt/format.h>
+
 
 namespace rose {
 /**
@@ -82,5 +84,39 @@ namespace rose {
 
 } // rose
 
+namespace fmt {
+    template<>
+    class formatter<rose::Color> {
+        char presentation_ = 'f';
+    public:
+        // parse format and store it
+        constexpr auto parse(format_parse_context &ctx) {
+            auto i = ctx.begin(), end = ctx.end();
+            if (i != end && (*i == 'f' || *i == 'e')) {
+                presentation_ = *i++;
+            }
+            if (i != end && *i != '}') {
+                throw format_error("Invalid Color format.");
+            }
+            return i;
+        }
+
+        // format a value using stored specification:
+        template<class FmtContext>
+        constexpr auto format(const rose::Color &p, FmtContext &ctx) const {
+            // note: we can't use ternary operator '?:' in a constexpr
+            switch (presentation_) {
+                default:
+                    // 'ctx.out()' is an output iterator
+                case 'f':
+                    return format_to(ctx.out(), "[{:f},{:f},{:f},{:f}]",
+                                     p.channels[0], p.channels[1], p.channels[2], p.channels[3]);
+                case 'e':
+                    return format_to(ctx.out(), "[{:e},{:e},{:e},{:e}]",
+                                     p.channels[0], p.channels[1], p.channels[2], p.channels[3]);
+            }
+        }
+    };
+}
 
 #endif //ROSE2_COLOR_H

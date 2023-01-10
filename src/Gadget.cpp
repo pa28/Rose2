@@ -61,6 +61,7 @@ namespace rose {
 
 #if 0
         fmt::print("initialGadgetLayout: {}"
+                   "\n\tbackgroundColor: {}"
                    "\n\tdrawLocation:    {}"
                    "\n\touterPadding:    {}"
                    "\n\tinnerPadding:    {}"
@@ -70,7 +71,7 @@ namespace rose {
                    "\n\trenderRectangle: {}"
                    "\n\tborderRectangle: {}"
                    "\n\tclipRectangle:   {}\n\n",
-                   mName, mVisualMetrics.drawLocation, mVisualMetrics.outerAlignmentPadding, mVisualMetrics.innerAlignmentPadding,
+                   mName, mVisualMetrics.background, mVisualMetrics.drawLocation, mVisualMetrics.outerAlignmentPadding, mVisualMetrics.innerAlignmentPadding,
                    mVisualMetrics.gadgetPadding, mVisualMetrics.gadgetBorder, mVisualMetrics.desiredSize, mVisualMetrics.renderRect,
                    mVisualMetrics.borderRect, mVisualMetrics.clipRectangle
         );
