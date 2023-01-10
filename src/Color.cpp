@@ -10,4 +10,13 @@
 
 namespace rose {
 
+    Color Color::attenuate(float intensity) const {
+        Color result{};
+        for (auto idx = RED; idx < ALPHA; ++idx)
+            result.channels[idx] = channels[idx] * intensity;
+        result.channels[ALPHA] = channels[ALPHA];
+        result.set = true;
+        return result;
+    }
+
 } // rose

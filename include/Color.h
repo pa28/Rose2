@@ -67,6 +67,8 @@ namespace rose {
         }
 
         auto operator <=> (const Color &) const = default;
+
+        Color attenuate(float intensity) const;
     };
 
     namespace color {

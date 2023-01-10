@@ -63,6 +63,10 @@ int main(int argc, char **argv) {
     if (auto application = std::make_shared<Application>(argc, argv); application) {
         application->initializeGraphics();
         Theme &theme{application->getTheme()};
+        theme.setThemeShade(Color{ 0.2, 0.7, 0.7, 1.0});
+        theme.textForeground = theme.shades[Theme::IMPRINT];
+        theme.screenBackground = theme.shades[Theme::DN_BG];
+        theme.gadgetBackground = theme.shades[Theme::UP_BG];
 
         application->createWindow(application->applicationName(), Size(800, 480), Point::CenterScreen(1),
                                   SDL_WINDOW_RESIZABLE);
@@ -70,6 +74,7 @@ int main(int argc, char **argv) {
         if (auto container = ColumnBuilder{}; container) {
             container.setLayoutAlignment(LinearLayout::Alignment::BOTTOM_RIGHT)
                     .name("container")
+                    .background(theme.gadgetBackground)
                     .layout(Point(0,0), Size(10,10));
 
             if (TextGadgetBuilder hello{}; hello) {

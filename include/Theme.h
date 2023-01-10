@@ -27,13 +27,27 @@ namespace rose {
      * @struct Theme
      */
     struct Theme {
+        constexpr static size_t IMPRINT = 0;
+        constexpr static size_t UP_BG = 1;
+        constexpr static size_t DN_BG = 2;
+        constexpr static size_t UP_SDW = 3;
+        constexpr static size_t DN_SDW = 4;
+        constexpr static size_t SHADE_COUNT = 5;
+
+        constexpr static std::array<float, SHADE_COUNT> intensities = { 1.0f, 0.393f, 0.286f, 0.571f, 0.214f };
+
+        std::array<Color, SHADE_COUNT> shades{};
+
         ScreenCoordType borderSize{6};
 
         Color screenBackground{color::DarkGrey};
-        Color gadgetBackground{color::MediumGrey};
+        Color gadgetBackground{color::DarkGrey};
+        Color activeBackground{color::MediumGrey};
+        Color enterBackground{color::DarkGrey};
         Color textForeground{color::LightGrey};
 
         Corners corners{Corners::SQUARE};
+        Visual visual{Visual::SHAPED};
 
         Theme() = default;
         Theme(const Theme&) = default;
@@ -42,6 +56,8 @@ namespace rose {
         Theme& operator = (Theme&&) = default;
 
         ~Theme() = default;
+
+        [[maybe_unused]] void setThemeShade(const Color& shade);
     };
 
 } // rose

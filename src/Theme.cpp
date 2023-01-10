@@ -16,4 +16,9 @@
 #include "Theme.h"
 
 namespace rose {
+    [[maybe_unused]] void Theme::setThemeShade(const Color &shade) {
+        for (auto idx = 0u; idx < SHADE_COUNT; ++idx) {
+            shades[idx] = shade.attenuate(intensities[idx]);
+        }
+    }
 } // rose
