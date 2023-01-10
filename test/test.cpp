@@ -75,16 +75,15 @@ int main(int argc, char **argv) {
             container.setLayoutAlignment(LinearLayout::Alignment::BOTTOM_RIGHT)
                     .name("container")
                     .background(theme.gadgetBackground)
-                    .layout(Point(0,0), Size(10,10));
+                    .layout(Point(0, 0), Size(800, 640));
 
             if (TextGadgetBuilder hello{}; hello) {
                 hello.text("Hello")
                         .pointSize(20)
                         .foreground(theme.textForeground)
-                        .background(theme.gadgetBackground)
-                        .layout(Point(0,0),Size(10,10))
+//                        .background(theme.gadgetBackground)
                         .name("Hello")
-                        .decorator(backgroundDecorator)
+//                        .decorator(backgroundDecorator)
                         >> container;
                 std::cout << "Hello\n";
             }
@@ -93,10 +92,9 @@ int main(int argc, char **argv) {
                 world.text("World")
                         .pointSize(20)
                         .foreground(theme.textForeground)
-                        .background(theme.gadgetBackground)
-                        .layout(Point(0,0),Size(10,10))
+//                        .background(theme.gadgetBackground)
                         .name("World")
-                        .decorator(backgroundDecorator)
+//                        .decorator(backgroundDecorator)
                         >> container;
                 std::cout << "World\n";
             }

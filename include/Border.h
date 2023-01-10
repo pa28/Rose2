@@ -22,11 +22,14 @@
 #include <GraphicsModel.h>
 
 namespace rose {
+    class Gadget;
+
     /**
      * @class Border
      */
     class Border : public Texture {
     protected:
+        bool mRendered{false};
         Corners mCorners{Corners::SQUARE};
         Color mBackground{color::OpaqueBlack};
         Visual mVisual{Visual::FLAT};
@@ -45,15 +48,17 @@ namespace rose {
          * @param context The renderer to use.
          * @param size The size of the texture.
          */
-        [[maybe_unused]] Border(Context &context, Size size, const Theme& theme) : Texture(context, size) {
+        [[maybe_unused]] Border(Context &context, const Size& size, const Theme& theme) : Texture(context, size) {
             createThemedBorder(context, theme);
         }
 
         void createThemedBorder(Context &context, const Theme& theme);
 
-        void layout(Context &context);
+        void layout(rose::Context &context, Gadget &gadget);
 
-        void draw(Context &context, const Point &drawLocation);
+        void renderBorder(Context &context, Gadget &gadget);
+
+        void draw(rose::Context &context, const rose::Point &drawLocation, Gadget &gadget);
 
         ~Border() = default;
     };

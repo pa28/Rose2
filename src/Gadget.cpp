@@ -19,6 +19,10 @@ namespace rose {
         for (const auto& decorator : mDecorators) {
             decorator(context, *this);
         }
+
+        if (mBorder) {
+            mBorder->draw(context, drawLocation, *this);
+        }
     }
 
     bool Gadget::forceInitialGadgetLayout() {

@@ -14,6 +14,7 @@
  */
 
 #include "TextGadget.h"
+#include <Window.h>
 
 namespace rose {
     void TextGadget::createTexture(Context &context) {
@@ -73,7 +74,12 @@ namespace rose {
                 fmt::print("{}\n", e.what());
             }
         }
-        return Gadget::initialGadgetLayout(context);
+        auto result = Gadget::initialGadgetLayout(context);
+
+        if (mBorder)
+            mBorder->layout(context, *this);
+
+        return result;
     }
 
     void TextGadget::draw(Context &context, Point drawLocation) {

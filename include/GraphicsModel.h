@@ -159,6 +159,7 @@ namespace rose {
         [[maybe_unused]] [[nodiscard]] Size getSize() const {
             Size size{};
             SDL_QueryTexture(get(), nullptr, nullptr, &size.w, &size.h);
+            size.set = true;
             return size;
         }
 
@@ -310,11 +311,17 @@ namespace rose {
 //        }
 
         /**
-         * @brief Render a filled Rectangle.
+         * @brief Render a filled Rectangle with the specified drawing color.
          * @param rect The Rectangle
-         * @return The status return from the SDL API.
+         * @param color The Color
          */
-        [[nodiscard]] void fillRect(Rectangle rect) const;
+        void fillRect(const Rectangle& rect, const Color& color);
+
+        /**
+         * @brief Render a filled Rectangle with the current drawing color.
+         * @param rect The Rectangle
+         */
+        void fillRect(const Rectangle &rect) const;
 
         /**
          * @brief Render a pixel.
@@ -441,7 +448,7 @@ namespace rose {
          * @param renderer The renderer to set the color on.
          * @param color The rose::Color.
          */
-        [[maybe_unused]] DrawColorGuard(Context &context, Color& color) : DrawColorGuard(context, color.sdlColor()) {}
+        [[maybe_unused]] DrawColorGuard(Context &context, const Color& color) : DrawColorGuard(context, color.sdlColor()) {}
 
         /**
          * @brief Test the validity of the DrawColorGuard.
@@ -463,7 +470,7 @@ namespace rose {
          * @param color The Color to set.
          * @return The SDL2 API return status code.
          */
-        [[maybe_unused]] void setDrawColor(Color& color) {
+        [[maybe_unused]] void setDrawColor(const Color& color) {
             if (setDrawColor(color.sdlColor()))
                 throw DrawColorGuardException(fmt::format("DrawColorGuard exception {}: {}",
                                                           __FUNCTION__, SDL_GetError()));

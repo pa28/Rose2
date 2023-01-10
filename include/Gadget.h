@@ -19,6 +19,7 @@
 #include <Rose.h>
 #include <Color.h>
 #include <GraphicsModel.h>
+#include <Border.h>
 #include <fmt/format.h>
 
 //#define DEBUG_GADGET_DRAW
@@ -141,6 +142,8 @@ namespace rose {
             bool mHasFocus{};
         } mVisualMetrics;
 
+        std::unique_ptr<Border> mBorder{};
+
     public:
         Gadget() = default;
         Gadget(const Gadget&) = delete;
@@ -171,8 +174,11 @@ namespace rose {
          * @param drawLocation
          * @param mgrPadding
          */
-        virtual bool initialGadgetLayout(Context &) {
+        virtual bool initialGadgetLayout(Context &context) {
             return forceInitialGadgetLayout();
+            if (mBorder) {
+                mBorder->layout(context, *this);
+            }
         }
 
         /**
@@ -234,7 +240,9 @@ namespace rose {
          */
         template<typename String>
         requires StringLike<String>
-        auto setName(String string) { mName = string; }
+        void setName(String string) { mName = string; }
+
+        [[maybe_unused]] [[nodiscard]] auto getName() const { return mName; }
 
         /**
          * @brief Get the Screen which ultimately hosts this Gadget.

@@ -89,7 +89,7 @@ namespace rose {
 
         void winSizeChange(WindowEventType type, const SDL_WindowEvent &e);
 
-        Theme theme{};
+        Theme mTheme{};
 
     public:
 
@@ -119,7 +119,7 @@ namespace rose {
 
         bool initializeGraphics();
 
-        const Theme& getTheme() const { return theme; }
+        const Theme& getTheme() const { return mTheme; }
 
         void setBackgroundColor(const Color& background) {
             for (auto &window : mWindows)
@@ -146,7 +146,7 @@ namespace rose {
 
         [[nodiscard]] std::string applicationName() const;
 
-        Theme& getTheme() { return theme; }
+        Theme& getTheme() { return mTheme; }
     };
 
 } // rose

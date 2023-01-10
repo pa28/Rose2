@@ -73,6 +73,8 @@ namespace rose {
          * @param size The new Size.
          */
         void changeSize(const Size& size);
+
+        Theme& getTheme() const;
     };
 
     /**
@@ -197,6 +199,8 @@ namespace rose {
                         const Point &initialPosition, uint32_t extraFlags);
 
         void changeSize(const Size& size);
+
+        [[maybe_unused]] Theme& getTheme() const;
     };
 
 } // rose

@@ -86,7 +86,13 @@ namespace rose {
             throw ContextException(fmt::format("{}: {}", __FUNCTION__, SDL_GetError()));
     }
 
-    void Context::fillRect(Rectangle rect) const {
+
+    void Context::fillRect(const Rectangle &rect, const Color &color) {
+        DrawColorGuard drawColorGuard{*this, color};
+        fillRect(rect);
+    }
+
+    void Context::fillRect(const Rectangle &rect) const {
         SDL_Rect sdlRect;
         sdlRect.h = rect.size.h;
         sdlRect.w = rect.size.w;
