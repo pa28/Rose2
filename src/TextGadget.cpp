@@ -63,7 +63,7 @@ namespace rose {
         mTexture.reset();
     }
 
-    bool TextGadget::initialGadgetLayout(Context &context) {
+    bool TextGadget::initialLayout(Context &context) {
         if (!mVisualMetrics.gadgetPadding)
             mVisualMetrics.gadgetPadding = 5;
         if (!mText.empty()) {
@@ -74,10 +74,7 @@ namespace rose {
                 fmt::print("{}\n", e.what());
             }
         }
-        auto result = Gadget::initialGadgetLayout(context);
-
-        if (mBorder)
-            mBorder->layout(context, *this);
+        auto result = Gadget::initialLayout(context);
 
         return result;
     }

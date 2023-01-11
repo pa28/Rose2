@@ -9,20 +9,22 @@
 #include "Gadget.h"
 #include "Widget.h"
 #include <Window.h>
+#include <exception>
 
 namespace rose {
-    void Gadget::managedBy(const std::shared_ptr<Widget>& widget) {
-        manager = widget;
+    void Gadget::managedBy(const std::shared_ptr<Gadget> &gadget) {
+        if (std::dynamic_pointer_cast<Singlet>(gadget))
+            manager = gadget;
+        else if (std::dynamic_pointer_cast<Widget>(gadget))
+            manager = gadget;
+        else
+            throw SceneTreeError{"Manager is not derived from rose::Singlet."};
     }
 
     void Gadget::draw(Context &context, Point drawLocation) {
-        mVisualMetrics.lastDrawLocation = drawLocation;
+        mVisualMetrics.drawLocation = drawLocation;
         for (const auto& decorator : mDecorators) {
             decorator(context, *this);
-        }
-
-        if (mBorder) {
-            mBorder->draw(context, drawLocation, *this);
         }
     }
 
@@ -31,21 +33,13 @@ namespace rose {
         /**
          * The renderRect size is the Gadget desired size + the Gadget padding.
          */
-        mVisualMetrics.renderRect.size = mVisualMetrics.desiredSize + mVisualMetrics.gadgetBorder +
+        mVisualMetrics.renderRect.size = mVisualMetrics.desiredSize +
                                          mVisualMetrics.gadgetPadding.topLeft + mVisualMetrics.gadgetPadding.botRight;
-
-        /**
-         * The borderRect size is the renderRect size + the boarder size all the way around.
-         */
-        mVisualMetrics.borderRect.size = mVisualMetrics.renderRect.size + mVisualMetrics.gadgetPadding.topLeft +
-                                         mVisualMetrics.gadgetPadding.botRight + mVisualMetrics.innerAlignmentPadding.topLeft +
-                                         mVisualMetrics.innerAlignmentPadding.botRight + mVisualMetrics.gadgetBorder * 2;
 
         /**
          * The clipRectangle size is the borderRect size + the manager padding.
          */
-        mVisualMetrics.clipRectangle.size = mVisualMetrics.borderRect.size +
-                                            mVisualMetrics.outerAlignmentPadding.topLeft + mVisualMetrics.outerAlignmentPadding.botRight;
+        mVisualMetrics.clipRectangle.size = mVisualMetrics.renderRect.size;
 
         /**
          * The clipRectangle point is 0,0
@@ -53,16 +47,9 @@ namespace rose {
         mVisualMetrics.clipRectangle.point = Point{0,0};
 
         /**
-         * The borderRect point is the clipRectangle point + manager padding.
-         */
-        mVisualMetrics.borderRect.point = mVisualMetrics.clipRectangle.point +
-                                          mVisualMetrics.outerAlignmentPadding.topLeft;
-
-        /**
          * The renderRect point is the borderRect point + the border size.
          */
-        mVisualMetrics.renderRect.point = mVisualMetrics.borderRect.point + mVisualMetrics.gadgetBorder +
-                                          mVisualMetrics.gadgetPadding.topLeft + mVisualMetrics.innerAlignmentPadding.topLeft;
+        mVisualMetrics.renderRect.point = mVisualMetrics.gadgetPadding.topLeft + mVisualMetrics.innerAlignmentPadding.topLeft;
 
 #if 0
         fmt::print("initialGadgetLayout: {}"
@@ -103,14 +90,6 @@ namespace rose {
 
 #pragma clang diagnostic pop
 
-    void backgroundDecorator(Context& context, Gadget& gadget) {
-        auto visualMetrics = gadget.getVisualMetrics();
-        if (visualMetrics.background) {
-            DrawColorGuard colorGuard{context, visualMetrics.background};
-            context.fillRect(visualMetrics.borderRect + visualMetrics.drawLocation);
-        }
-    }
-
     std::shared_ptr<Screen> Gadget::getScreen() {
         if (isManaged()) {
             for (auto widget = manager.lock(); widget; widget = widget->manager.lock()) {
@@ -136,26 +115,16 @@ namespace rose {
         }
     }
 
-    bool Widget::initialGadgetLayout(Context &context) {
-        if (mLayoutManager) {
-            auto widget = shared_from_this();
-            return mLayoutManager->initialWidgetLayout(context, widget);
-        } else {
-            bool constraintRequired = false;
-            for (auto &gadget: mGadgetList) {
-                constraintRequired |= gadget->initialGadgetLayout(context);
+    bool LayoutManager::initialWidgetLayout(Context &context, std::shared_ptr<Gadget> &gadget) {
+        bool result = false;
+        if (auto widget = std::dynamic_pointer_cast<Widget>(gadget)) {
+            for (auto &managed: getGadgetList(widget)) {
+                result |= managed->initialLayout(context);
             }
-
-            return constraintRequired;
-        }
-    }
-
-    bool LayoutManager::initialWidgetLayout(Context &context, std::shared_ptr<Widget> &widget) {
-        bool constraintRequired = false;
-        for (auto &gadget: getGadgetList(widget)) {
-            constraintRequired |= gadget->initialGadgetLayout(context);
+        } else if (auto singlet = std::dynamic_pointer_cast<Singlet>(gadget)) {
+            auto managed = getGadget(singlet);
         }
 
-        return constraintRequired;
+        return result;
     }
 } // rose

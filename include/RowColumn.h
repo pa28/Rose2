@@ -62,10 +62,10 @@ namespace rose {
 
         /**
          * @brief Default layout strategy is to do nothing.
-         * @param widget The widget to layout.
+         * @param gadget The widget to layout.
          * @return true on success, false on fail.
          */
-        bool initialWidgetLayout(Context &context, std::shared_ptr<Widget> &widget) override;
+        bool initialWidgetLayout(Context &context, std::shared_ptr<Gadget> &gadget) override;
     };
 
     /**

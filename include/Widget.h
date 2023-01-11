@@ -30,12 +30,12 @@ namespace rose {
      * std::vector methods are exposed allowing colling programs to utilize
      * these methods and range based algorithms.
      */
-    class Widget: public std::enable_shared_from_this<Widget>, public Gadget {
+    class Widget: public Gadget {
         friend class LayoutManager;
         friend class Window;
 
     protected:
-        constexpr static GadgetType ThisType = GadgetType::Widget;
+        constexpr static std::string_view ClassName = "Widget";
 
         std::vector<std::shared_ptr<Gadget>> mGadgetList{};  ///< The list of Gadgets managed.
 
@@ -48,9 +48,7 @@ namespace rose {
         Widget& operator = (const Widget &) = delete;
         Widget& operator = (Widget &&) = default;
 
-        [[nodiscard]] GadgetType gadgetType() const override { return Widget::ThisType; }
-
-        bool initialGadgetLayout(Context &context) override;
+        bool initialLayout(Context &context) override;
 
         template<class Layout>
         requires std::derived_from<LayoutManager,Layout>
@@ -150,6 +148,10 @@ namespace rose {
             return widget->mGadgetList;
         }
 
+        static auto getGadget(std::shared_ptr<Singlet> &singlet) {
+            return singlet->mGadget;
+        }
+
     public:
         LayoutManager() = default;
         LayoutManager(const LayoutManager&) = delete;
@@ -161,10 +163,10 @@ namespace rose {
 
         /**
          * @brief Default layout strategy is to do nothing.
-         * @param widget The widget to layout.
+         * @param gadget The widget to layout.
          * @return true on success, false on fail.
          */
-        virtual bool initialWidgetLayout(Context &context, std::shared_ptr<Widget> &widget);
+        virtual bool initialWidgetLayout(Context &context, std::shared_ptr<Gadget> &gadget);
     };
 
 } // rose

@@ -16,6 +16,7 @@
 #include <utility>
 #include <algorithm>
 #include <concepts>
+#include <exception>
 #include <Rose.h>
 #include <Color.h>
 #include <GraphicsModel.h>
@@ -26,10 +27,19 @@
 
 namespace rose {
 
-/**
- * @class Gadget
- * @brief A Gadget is a visual UI element that does not manage any other elements.
- */
+    /**
+     * @class SceneTreeError
+     * @brief Thrown when there is an un-recoverable error with the scene tree or the manipulation of it.
+     */
+    class SceneTreeError : public std::runtime_error {
+    public:
+        explicit SceneTreeError(const std::string &whatArg) : std::runtime_error(whatArg) {}
+    };
+
+    /**
+     * @class Gadget
+     * @brief A Gadget is a visual UI element that does not manage any other elements.
+     */
     class Widget;
 
     class LayoutManager;
@@ -42,31 +52,27 @@ namespace rose {
     static Color RenderRectangleDebugColor{0.0, 1.0, 0.0, 1.0};
 #endif
 
-    class Gadget {
+    /**
+     * @class Gadget
+     * @brief The simplest UI element. A Gadget renders a graphical representation of its state. It does not
+     * manage any other scene tree elements.
+     */
+    class Gadget : public std::enable_shared_from_this<Gadget> {
     protected:
         friend class GadgetBuilder;
-
         friend class Window;
-
-        friend class LayoutManager;
 
         using DecoratorFunction = std::function<void(Context &, Gadget &)>;
 
-        constexpr static GadgetType ThisType = GadgetType::Gadget;
-        [[maybe_unused]] std::string_view mName{};
-        std::weak_ptr<Widget> manager{};  ///< Pointer to the current manager of this Gadget.
-
         std::vector<DecoratorFunction> mDecorators{};
 
-        struct VisualMetrics {
-            /**
-             * @brief Set to true when the Gadget layout is constrained.
-             * @details Gadgets are constrained when there is insufficient room to render them fully. The application
-             * designer may wish to use a more flexible solutions such as a ScrollWidget. The Gadget may modify its
-             * rendering to provide a visual cue of the constraint.
-             */
-            bool constrained{false};
+        constexpr static GadgetType ThisType = GadgetType::Gadget;
 
+        [[maybe_unused]] std::string_view mName{};
+
+        std::weak_ptr<Gadget> manager{};  ///< Pointer to the current manager of this Gadget.
+
+        struct VisualMetrics {
             /**
              * @brief The drawing location provided by the manager.
              * @details This is applied as a Point offset to the render rectangles as the Gadget is drawn.
@@ -74,30 +80,9 @@ namespace rose {
             Point drawLocation{};
 
             /**
-             * @brief The las position provided to Gadget::Draw.
-             * @details This position, along with the remainder of the VisualMetrics, is used to provide aspects
-             * of functionality. If a Gadget does not call the base class draw function it should set this value
-             * correctly itself to maintain this functionality.
-             */
-            Point lastDrawLocation{};
-
-            /**
              * @brief The content drawing size requested by the Gadget.
              */
             Size desiredSize{};
-
-            /**
-             * @brief The size of the boarder the Gadget is rendering.
-             * @details This is included in the clip rectangle.
-             */
-            int gadgetBorder{};
-
-            /**
-             * @brief Padding used by the layout manager to position the Gadget.
-             * @details This is not included in the Gadget clip rectangle. The gadget retains its original
-             * size and is just pushed around. @see innerAlignmentPadding.
-             */
-            Padding outerAlignmentPadding{};
 
             /**
              * @brief Padding used by the layout manager to position the Gadget.
@@ -116,21 +101,15 @@ namespace rose {
             /**
              * @brief The Gadget content rendering rectangle.
              * @details May be used to render Textures directly, or used to derive rectangles for rendering
-             * peaces.
+             * peaces. Offset by drawLocation before use.
              */
             Rectangle renderRect{};
 
             /**
-             * @brief The Gadget border rendering rectangle.
-             * @details This rectangle is used to render a border around the Gadget visual.
-             */
-            Rectangle borderRect{};
-
-            /**
              * @brief The clipping rectangle for the Gadget.
              * @details The Gadget must not draw outside this rectangle. This is the location and size
-             * that all other UI objects will expect the Gadget to manage. Gadget borders, padding and
-             * graphics are all rendered inside this rectangle.
+             * that all other UI objects will expect the Gadget to manage. Gadget padding and
+             * graphics are all rendered inside this rectangle. Offset by drawLocation before use.
              */
             Rectangle clipRectangle{};
 
@@ -146,8 +125,6 @@ namespace rose {
             bool mHasFocus{};
         } mVisualMetrics;
 
-        std::unique_ptr<Border> mBorder{};
-
     public:
         Gadget() = default;
 
@@ -158,6 +135,8 @@ namespace rose {
         Gadget &operator=(const Gadget &) = delete;
 
         Gadget &operator=(Gadget &&) = default;
+
+        virtual ~Gadget() = default;
 
         [[nodiscard]] bool isManaged() const {
             using wt = std::weak_ptr<Widget>;
@@ -172,30 +151,32 @@ namespace rose {
          * @return true if point is 'inside' Gadget.
          */
         [[nodiscard]] bool containsPoint(const Point &point) const {
-            auto r = (mVisualMetrics.borderRect + mVisualMetrics.lastDrawLocation).contains(point);
+            auto r = (mVisualMetrics.clipRectangle + mVisualMetrics.drawLocation).contains(point);
             return r;
-        }
-
-        /**
-         * @brief Perform initial Gadget layout.
-         * @details The Gadget has an opportunity to specify its own desiredSize by overriding this method.
-         * @param drawLocation
-         * @param mgrPadding
-         */
-        virtual bool initialGadgetLayout(Context &context) {
-            return forceInitialGadgetLayout();
-            if (mBorder) {
-                mBorder->layout(context, *this);
-            }
         }
 
         /**
          * @brief Force initial gadget layout avoiding virtual method.
          * @details This may be required for Widgets to call after they have configured their Gadgets.
-         * @param mgrPadding
          * @return
          */
         bool forceInitialGadgetLayout();
+
+        /**
+         * @brief Generate content, determine size and set the initial values of layout rectangles.
+         * @param context Graphics context
+         * @return true if successful.
+         */
+        virtual bool initialLayout(Context &) { return forceInitialGadgetLayout(); }
+
+        /**
+         * @brief Adjust size, if necessary to fit into the constrained size. Finalize layout and visuals.
+         * @details Called by managers (derived from Singlet or Widget) when they are called to be constrained.
+         * @param context Graphics context
+         * @param constraint If set, the Gadget must render itself within the constrained size.
+         * @return true if successful.
+         */
+        virtual bool finalLayout(Context &, const Size &) { return false; }
 
         /**
          * @brief Find a constrained layout for this Gadget.
@@ -214,9 +195,9 @@ namespace rose {
 
         /**
          * @brief Set the pointer to the current manager of this Gadget.
-         * @param widget
+         * @param gadget
          */
-        void managedBy(const std::shared_ptr<Widget> &widget);
+        void managedBy(const std::shared_ptr<Gadget> &gadget);
 
         /**
          * @brief Get the current manager of this Gadget if any.
@@ -229,8 +210,6 @@ namespace rose {
          * @param context The graphics context to use.
          */
         virtual void draw(Context &context, Point drawLocation);
-
-        virtual ~Gadget() = default;
 
         [[maybe_unused]] void setSize(const Size &size) { mVisualMetrics.desiredSize = size; }
 
@@ -279,8 +258,6 @@ namespace rose {
          */
         virtual bool mouseButtonEvent(const SDL_MouseButtonEvent &e);
     };
-
-    [[maybe_unused]] void backgroundDecorator(Context &context, Gadget &gadget);
 
     /**
      * @class Builder
@@ -406,12 +383,8 @@ namespace rose {
             gadget->mVisualMetrics.background = color;
             return *this;
         }
-
-        auto decorator(Gadget::DecoratorFunction &&decoratorFunction) {
-            gadget->mDecorators.emplace_back(decoratorFunction);
-            return *this;
-        }
     };
+
 } // rose
 
 /**

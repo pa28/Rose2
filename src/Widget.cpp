@@ -19,12 +19,12 @@
 namespace rose {
 
     [[maybe_unused]] void Widget::manage(std::shared_ptr<Gadget> gadget) {
-        gadget->managedBy(shared_from_this());
+        gadget->managedBy(std::dynamic_pointer_cast<Widget>(shared_from_this()));
         mGadgetList.push_back(std::move(gadget));
     }
 
     void Widget::manage(Builder &builder) {
-        builder.gadget->managedBy(shared_from_this());
+        builder.gadget->managedBy(std::dynamic_pointer_cast<Widget>(shared_from_this()));
         mGadgetList.push_back(std::move(builder.gadget));
     }
 
@@ -40,5 +40,20 @@ namespace rose {
             gadget->draw(context, gadgetDrawLocation);
         }
     }
+
+    bool Widget::initialLayout(Context &context) {
+        if (mLayoutManager) {
+            auto widget = shared_from_this();
+            return mLayoutManager->initialWidgetLayout(context, widget);
+        } else {
+            bool constraintRequired = false;
+            for (auto &gadget: mGadgetList) {
+                constraintRequired |= gadget->initialLayout(context);
+            }
+
+            return constraintRequired;
+        }
+    }
+
 
 } // Rose

@@ -16,4 +16,15 @@
 #include "Singlet.h"
 
 namespace rose {
+    bool Singlet::initialLayout(Context &context) {
+        if (mGadget) {
+            return mGadget->initialLayout(context);
+        }
+        return false;
+    }
+
+    void Singlet::manage(std::shared_ptr<Gadget> gadget) {
+        gadget->managedBy(shared_from_this());
+        mGadget = std::move(gadget);
+    }
 } // rose

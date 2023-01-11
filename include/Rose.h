@@ -146,6 +146,12 @@ namespace rose {
         constexpr Point operator+(const Point &p) const {
             Point r{*this}; r.x += p.x; r.y += p.y; return r;
         }
+
+        Point& operator += (const Point &p) {
+            x += p.x;
+            y += p.y;
+            return *this;
+        }
     };
 
     struct Padding {

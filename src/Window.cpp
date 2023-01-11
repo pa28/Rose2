@@ -18,7 +18,7 @@ namespace rose {
          */
         bool constraintRequired = false;
         for (const auto& screen : mScreens) {
-            constraintRequired |= screen->initialGadgetLayout(context());
+            constraintRequired |= screen->initialLayout(context());
         }
 
         if (constraintRequired) {
@@ -188,7 +188,6 @@ namespace rose {
         mName = "Top";
         mVisualMetrics.desiredSize = size;
         mVisualMetrics.background = windowPtr->getTheme().screenBackground;
-        mDecorators.emplace_back(backgroundDecorator);
     }
 
     void Screen::changeSize(const Size &size) {

@@ -49,9 +49,9 @@ namespace rose {
          * @param drawLocation
          * @param mgrPadding
          */
-        bool initialGadgetLayout(Context &context) override {
+        bool initialLayout(Context &context) override {
             forceInitialGadgetLayout();
-            return Widget::initialGadgetLayout(context);
+            return Widget::initialLayout(context);
         }
 
         ~Screen() override = default;
