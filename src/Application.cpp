@@ -69,7 +69,7 @@ namespace rose {
         event.setWinSizeChange([this](WindowEventType windowEventType, const SDL_WindowEvent &e) -> void {
             winSizeChange(windowEventType, e); });
 
-        return mGraphicsModel.initialize();
+        return rose::GraphicsModel::initialize();
     }
 
     std::string Application::applicationName() const {
