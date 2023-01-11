@@ -26,6 +26,10 @@ namespace rose {
         for (const auto& decorator : mDecorators) {
             decorator(context, *this);
         }
+
+        if (mVisualMetrics.background) {
+            context.fillRect(mVisualMetrics.renderRect + drawLocation, mVisualMetrics.background);
+        }
     }
 
     bool Gadget::forceInitialGadgetLayout() {
@@ -39,7 +43,8 @@ namespace rose {
         /**
          * The clipRectangle size is the borderRect size + the manager padding.
          */
-        mVisualMetrics.clipRectangle.size = mVisualMetrics.renderRect.size;
+        mVisualMetrics.clipRectangle.size = mVisualMetrics.renderRect.size + mVisualMetrics.gadgetPadding.botRight +
+                mVisualMetrics.gadgetPadding.topLeft;
 
         /**
          * The clipRectangle point is 0,0
@@ -55,17 +60,14 @@ namespace rose {
         fmt::print("initialGadgetLayout: {}"
                    "\n\tbackgroundColor: {}"
                    "\n\tdrawLocation:    {}"
-                   "\n\touterPadding:    {}"
                    "\n\tinnerPadding:    {}"
                    "\n\tgadgetPadding:   {}"
-                   "\n\tgadgetBoarder:   {}"
                    "\n\tdesiredSize:     {}"
                    "\n\trenderRectangle: {}"
-                   "\n\tborderRectangle: {}"
                    "\n\tclipRectangle:   {}\n\n",
-                   mName, mVisualMetrics.background, mVisualMetrics.drawLocation, mVisualMetrics.outerAlignmentPadding, mVisualMetrics.innerAlignmentPadding,
-                   mVisualMetrics.gadgetPadding, mVisualMetrics.gadgetBorder, mVisualMetrics.desiredSize, mVisualMetrics.renderRect,
-                   mVisualMetrics.borderRect, mVisualMetrics.clipRectangle
+                   mName, mVisualMetrics.background, mVisualMetrics.drawLocation, mVisualMetrics.innerAlignmentPadding,
+                   mVisualMetrics.gadgetPadding, mVisualMetrics.desiredSize, mVisualMetrics.renderRect,
+                   mVisualMetrics.clipRectangle
         );
 #endif
 
