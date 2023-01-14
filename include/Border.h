@@ -18,12 +18,24 @@
 #ifndef ROSE2_BORDER_H
 #define ROSE2_BORDER_H
 
+#include <Rose.h>
 #include <RoseTypes.h>
 #include <GraphicsModel.h>
+#include <Singlet.h>
 
 namespace rose {
-    class Gadget;
+    class Border : public Singlet {
+    public:
+        Border() = default;
+        Border(const Border&) = delete;
+        Border(Border&&) = default;
+        Border& operator=(const Border&) = delete;
+        Border& operator=(Border&&) = default;
 
+        ~Border() override = default;
+    };
+
+#if 0
     /**
      * @class Border
      */
@@ -62,6 +74,7 @@ namespace rose {
 
         ~Border() = default;
     };
+#endif
 }
 
 

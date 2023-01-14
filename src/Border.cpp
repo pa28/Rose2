@@ -19,6 +19,7 @@
 #include <Window.h>
 #include <GraphicsModel.h>
 
+#if 0
 void rose::Border::createThemedBorder(rose::Context &, const rose::Theme &theme) {
     mCorners = theme.corners;
     mBackground = theme.gadgetBackground;
@@ -59,3 +60,4 @@ void rose::Border::renderBorder(rose::Context &context, Gadget &gadget) {
     this->setBlendMode(SDL_BLENDMODE_BLEND);
     mRendered = true;
 }
+#endif
