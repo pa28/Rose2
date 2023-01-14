@@ -22,9 +22,9 @@
 
 namespace rose {
 
-/**
- * @class Singlet
- */
+    /**
+     * @class Singlet
+     */
     class Singlet : public Gadget {
         friend class LayoutManager;
         friend class Window;
@@ -51,6 +51,31 @@ namespace rose {
          * @param gadget The Gadget to manage.
          */
         virtual void manage(std::shared_ptr<Gadget> gadget);
+
+        /**
+         * @brief Add a Gadget from a builder to the management field of this Singlet
+         * @param builder The Builder holding the new Gadget.
+         */
+        [[maybe_unused]] void manage(Builder &builder);
+
+        /**
+         * @brief Draw this Widget and all managed Gadgets.
+         * @param context The graphics context to use.
+         */
+        void draw(Context &context, Point drawLocation) override;
+
+    };
+
+    /**
+     * @class SingletBuilder.
+     */
+    class SingletBuilder : public GadgetBuilder {
+    public:
+        explicit SingletBuilder(std::shared_ptr<Gadget> g) : GadgetBuilder(std::move(g)) {}
+
+        SingletBuilder() : GadgetBuilder(std::make_shared<Singlet>()) {}
+
+        ~SingletBuilder() override = default;
     };
 
 } // rose

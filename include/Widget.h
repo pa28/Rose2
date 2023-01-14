@@ -171,5 +171,9 @@ namespace rose {
 
 } // rose
 
+inline void operator >> (rose::Builder builder, std::shared_ptr<rose::Widget> &widget) {
+    widget->manage(builder.get<rose::Gadget>());
+}
+
 
 #endif //ROSE2_WIDGET_H

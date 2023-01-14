@@ -18,7 +18,9 @@
 namespace rose {
     bool Singlet::initialLayout(Context &context) {
         if (mGadget) {
-            return mGadget->initialLayout(context);
+            mGadget->initialLayout(context);
+            mVisualMetrics.desiredSize = mGadget->getVisualMetrics().clipRectangle.size;
+            Gadget::initialLayout(context);
         }
         return false;
     }
@@ -27,4 +29,15 @@ namespace rose {
         gadget->managedBy(shared_from_this());
         mGadget = std::move(gadget);
     }
+
+    void Singlet::manage(Builder &builder) {
+        builder.gadget->managedBy(std::dynamic_pointer_cast<Singlet>(shared_from_this()));
+        mGadget = std::move(builder.gadget);
+    }
+
+    void Singlet::draw(Context &context, Point drawLocation) {
+        if (mGadget)
+            mGadget->draw(context, drawLocation);
+    }
+
 } // rose

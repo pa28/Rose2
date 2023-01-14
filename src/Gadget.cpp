@@ -8,15 +8,15 @@
 
 #include "Gadget.h"
 #include "Widget.h"
+#include "Singlet.h"
 #include <Window.h>
-#include <exception>
 
 namespace rose {
     void Gadget::managedBy(const std::shared_ptr<Gadget> &gadget) {
-        if (std::dynamic_pointer_cast<Singlet>(gadget))
-            manager = gadget;
-        else if (std::dynamic_pointer_cast<Widget>(gadget))
-            manager = gadget;
+        if (auto singlet = std::dynamic_pointer_cast<Singlet>(gadget); singlet)
+            manager = singlet;
+        else if (auto widget = std::dynamic_pointer_cast<Widget>(gadget); widget)
+            manager = widget;
         else
             throw SceneTreeError{"Manager is not derived from rose::Singlet."};
     }
@@ -107,13 +107,23 @@ namespace rose {
         widget.manage(*this);
     }
 
+    void Builder::operator>>(Singlet &singlet) {
+        singlet.manage(*this);
+    }
+
     void Builder::operator>>(const std::shared_ptr<Widget>& widget) {
         widget->manage(*this);
     }
 
+    void Builder::operator>>(const std::shared_ptr<Singlet> &singlet) {
+        singlet->manage(*this);
+    }
+
     void Builder::operator>>(Builder &builder) {
-        if (auto ptr = std::dynamic_pointer_cast<Widget>(builder.gadget); ptr) {
-            ptr->manage(*this);
+        if (auto widget = std::dynamic_pointer_cast<Widget>(builder.gadget); widget) {
+            widget->manage(*this);
+        } else if (auto singlet = std::dynamic_pointer_cast<Singlet>(builder.gadget); singlet) {
+            singlet->manage(*this);
         }
     }
 
@@ -124,7 +134,8 @@ namespace rose {
                 result |= managed->initialLayout(context);
             }
         } else if (auto singlet = std::dynamic_pointer_cast<Singlet>(gadget)) {
-            auto managed = getGadget(singlet);
+            if (auto managed = getGadget(singlet))
+                result |= managed->initialLayout(context);
         }
 
         return result;

@@ -20,7 +20,6 @@
 #include <Rose.h>
 #include <Color.h>
 #include <GraphicsModel.h>
-#include <Border.h>
 #include <fmt/format.h>
 
 //#define DEBUG_GADGET_DRAW
@@ -259,6 +258,7 @@ namespace rose {
         virtual bool mouseButtonEvent(const SDL_MouseButtonEvent &e);
     };
 
+    class Singlet;
     /**
      * @class Builder
      * @brief Base class for object builders for specializations of Gadgets. Once complete
@@ -266,6 +266,7 @@ namespace rose {
      */
     class Builder {
         friend class Widget;
+        friend class Singlet;
 
     protected:
         std::shared_ptr<Gadget> gadget;     ///< Where the Gadget is built.
@@ -287,10 +288,22 @@ namespace rose {
         void operator>>(Widget &widget);
 
         /**
+         * @brief Manage the built Gadget by the specified Singlet.
+         * @param singlet the manager.
+         */
+        void operator>>(Singlet &singlet);
+
+        /**
          * @brief Manage the built Gadget by the specified Widget.
          * @param widget a std::shared_ptr to the manager.
          */
         void operator>>(const std::shared_ptr<Widget> &widget);
+
+        /**
+         * @brief Manage the built Gadget by the specified Singlet.
+         * @param singlet a std::shared_ptr to the manager.
+         */
+        void operator>>(const std::shared_ptr<Singlet> &singlet);
 
         /**
          * @brief Manage the contents of this Builder by the contents of another Builder (presumably a WidgetBuilder.

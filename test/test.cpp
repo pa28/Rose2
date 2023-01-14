@@ -88,15 +88,18 @@ int main(int argc, char **argv) {
                 std::cout << "Hello\n";
             }
 
-            if (TextGadgetBuilder world{}; world) {
-                world.text("World")
-                        .pointSize(20)
-                        .foreground(theme.textForeground)
+            if (SingletBuilder singlet{}; singlet) {
+                if (TextGadgetBuilder world{}; world) {
+                    world.text("World")
+                            .pointSize(20)
+                            .foreground(theme.textForeground)
 //                        .background(theme.gadgetBackground)
-                        .name("World")
+                            .name("World")
 //                        .decorator(backgroundDecorator)
-                        >> container;
-                std::cout << "World\n";
+                            >> singlet;
+                    std::cout << "World\n";
+                }
+                singlet >> container;
             }
 
             container >> application;
