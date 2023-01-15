@@ -63,10 +63,13 @@ int main(int argc, char **argv) {
     if (auto application = std::make_shared<Application>(argc, argv); application) {
         application->initializeGraphics();
         Theme &theme{application->getTheme()};
-        theme.setThemeShade(Color{ 0.2, 0.7, 0.7, 1.0});
-        theme.textForeground = theme.shades[Theme::IMPRINT];
-        theme.screenBackground = theme.shades[Theme::DN_BG];
-        theme.gadgetBackground = theme.shades[Theme::UP_BG];
+        theme.setThemeShade(HSVA(200.f, .5f, 1.f, 1.f));
+        theme.setThemeColors( color::DarkRed, color::DarkGreen, color::DarkYellow);
+        theme.setThemeTextColors( color::DarkRed, color::DarkGreen, color::DarkYellow);
+        theme.updateThemeColors();
+//        theme.textForeground = theme.colorShades[ThemeColor::Text];
+//        theme.screenBackground = theme.colorShades[ThemeColor::Base];
+//        theme.gadgetBackground = theme.colorShades[ThemeColor::Invert];
 
         application->createWindow(application->applicationName(), Size(800, 480), Point::CenterScreen(1),
                                   SDL_WINDOW_RESIZABLE);
@@ -80,7 +83,7 @@ int main(int argc, char **argv) {
             if (TextGadgetBuilder hello{}; hello) {
                 hello.text("Hello")
                         .pointSize(20)
-                        .foreground(theme.textForeground)
+                        .foreground(theme.colorShades[ThemeColor::Text])
 //                        .background(theme.gadgetBackground)
                         .name("Hello")
 //                        .decorator(backgroundDecorator)
@@ -92,7 +95,7 @@ int main(int argc, char **argv) {
                 if (TextGadgetBuilder world{}; world) {
                     world.text("World")
                             .pointSize(20)
-                            .foreground(theme.textForeground)
+                            .foreground(theme.colorShades[ThemeColor::Text])
 //                        .background(theme.gadgetBackground)
                             .name("World")
 //                        .decorator(backgroundDecorator)

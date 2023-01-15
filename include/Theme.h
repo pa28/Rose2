@@ -23,20 +23,45 @@
 
 namespace rose {
 
+    enum class ThemeColor : size_t {
+        Base,
+        Top,
+        Bottom,
+        Left,
+        Right,
+        Invert,
+        Text,
+        Red,
+        Green,
+        Yellow,
+        RedText,
+        GreenText,
+        YellowText,
+        ShadeCount,
+    };
+
+    template<typename T>
+    struct ThemeColorArray : public std::array<T,static_cast<size_t>(ThemeColor::ShadeCount)> {
+        using ArrayType = std::array<T,static_cast<size_t>(ThemeColor::ShadeCount)>;
+
+        ThemeColorArray() : ArrayType() {}
+
+        T& operator[](ThemeColor idx) {
+            return ArrayType::operator[](static_cast<size_t>(idx));
+        }
+
+        constexpr const T& operator[](ThemeColor idx) const {
+            return ArrayType::operator[](static_cast<size_t>(idx));
+        }
+    };
+
     /**
      * @struct Theme
      */
     struct Theme {
-        constexpr static size_t IMPRINT = 0;
-        constexpr static size_t UP_BG = 1;
-        constexpr static size_t DN_BG = 2;
-        constexpr static size_t UP_SDW = 3;
-        constexpr static size_t DN_SDW = 4;
-        constexpr static size_t SHADE_COUNT = 5;
 
-        constexpr static std::array<float, SHADE_COUNT> intensities = { 1.0f, 0.393f, 0.286f, 0.571f, 0.214f };
-
-        std::array<Color, SHADE_COUNT> shades{};
+        ThemeColorArray<HSVA> hsvaShades{};
+        ThemeColorArray<Color> colorShades{};
 
         ScreenCoordType borderSize{6};
 
@@ -57,7 +82,13 @@ namespace rose {
 
         ~Theme() = default;
 
-        [[maybe_unused]] void setThemeShade(const Color& shade);
+        [[maybe_unused]] void setThemeShade(const HSVA& shade);
+
+        [[maybe_unused]] void setThemeColors(const HSVA& red, const HSVA& green, const HSVA& yellow);
+
+        [[maybe_unused]] void setThemeTextColors(const HSVA& red, const HSVA& green, const HSVA& yellow);
+
+        [[maybe_unused]] void updateThemeColors();
     };
 
 } // rose
