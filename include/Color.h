@@ -18,43 +18,58 @@
 
 namespace rose {
 
-    class ColorArray : public std::array<float,4> {
-    public:
+    /**
+     * @brief The base class for all four component color values stored as floats.
+     */
+    struct ColorArray : public std::array<float,4> {
+        bool set{false};
+        explicit operator bool () const noexcept { return set; }
+
         constexpr ColorArray() : std::array<float,4>() {}
 
         template<class Ta, class Tb, class Tc, class Td>
         requires std::is_floating_point_v<Ta> && std::is_floating_point_v<Tb> && std::is_floating_point_v<Tc> && std::is_floating_point_v<Td>
         [[maybe_unused]] constexpr ColorArray(Ta a, Tb b, Tc c, Td d) : std::array<float, 4>({a,b,c,d}) {}
 
+        auto operator <=> (const ColorArray &) const = default;
+
     };
 
+    /**
+     * @brief A free function to be able to compute modulus in constexpr context.
+     * @tparam T The type of the parameters, must be the same type.
+     * @param x The value.
+     * @param y The modulus
+     * @return The remainder of x / y
+     */
     template<typename T>
     static constexpr T mod(T x, T y) noexcept {
-        if (y == 0)
-            return 0;
-        if constexpr (std::is_integral_v<T>) {
-            return x % y;
+        if (y != 0) {
+            if constexpr (std::is_integral_v<T>) {
+                return x % y;
+            } else {
+                auto trunc = (float) ((int) (x / y));
+                auto r = x - trunc * y;
+                return r;
+            }
         } else {
-            auto trunc = (float) ((int) (x / y));
-            auto r = x - trunc * y;
-            return r;
+            return 0;
         }
     }
 
     class Color;
     class HSLA;
 
+    /**
+     * @class HSVA
+     * @brief Representation of a Hue, Saturation, Value color with an Alpha channel.
+     */
     class HSVA : public ColorArray {
     private:
         constexpr static size_t HUE = 0;
         constexpr static size_t SATURATION = 1;
         constexpr static size_t VALUE = 2;
         constexpr static size_t ALPHA = 3;
-
-        /**
-         * Hue, Saturation, Value and Alpha channels as floats
-         */
-        bool set{false};                        ///< Indicates if the color should be used or not
 
     public:
         HSVA() = default;
@@ -65,17 +80,28 @@ namespace rose {
 
         ~HSVA() = default;
 
-        explicit operator bool () const noexcept { return set; }
-
+        /**
+         * @brief Construct a Hue, Saturation, Value color.
+         * @tparam T The type of the parameters, required to be floating point type.
+         * @param h Hue value [0..360]
+         * @param s Saturation [0..1]
+         * @param v Value [0..1]
+         * @param a Alpha [0..1]
+         */
         template<class T>
         requires std::is_floating_point_v<T>
-        constexpr HSVA(T h, T s, T v, T a) :
-                ColorArray({h,s,v,a}) {
+        constexpr HSVA(T h, T s, T v, T a) : ColorArray({h,s,v,a}) {
             set = true;
         }
 
-        auto operator <=> (const HSVA &) const = default;
-
+        /**
+         * @brief Construct a Hue, Saturation Value color.
+         * @tparam T he type of the parameters, required to be integral type.
+         * @param h Hue [0..360]
+         * @param s Saturation [0..100]
+         * @param v Value [0..100]
+         * @param a Alpha [0..255]
+         */
         template<class T>
         requires std::is_integral_v<T>
         constexpr HSVA(T h, T s, T v, T a) : ColorArray() {
@@ -83,7 +109,7 @@ namespace rose {
             (*this)[HUE] = static_cast<float>(h);
             (*this)[SATURATION] = static_cast<float>(s) / 100.0f;
             (*this)[VALUE] = static_cast<float>(v) / 100.0f;
-            (*this)[ALPHA] = static_cast<float>(a);
+            (*this)[ALPHA] = static_cast<float>(a) / 255.0f;
         }
 
         /**
@@ -118,6 +144,10 @@ namespace rose {
         }
     };
 
+    /**
+     * @class HSLA
+     * @brief Representation of a Hue, Saturation, Lightness color with an Alpha channel.
+     */
     class HSLA : public ColorArray {
     private:
         constexpr static size_t HUE = 0;
@@ -125,38 +155,41 @@ namespace rose {
         constexpr static size_t LIGHTNESS = 2;
         constexpr static size_t ALPHA = 3;
 
-        /**
-         * Hue, Saturation, Value and Alpha channels as floats
-         */
-        bool set{false};                        ///< Indicates if the color should be used or not
-
     protected:
 
         [[maybe_unused]] explicit constexpr HSLA(const ColorArray& array) : ColorArray(array) {}
 
     public:
         constexpr HSLA() = default;
-
         constexpr HSLA(const HSLA &) = default;
-
         constexpr HSLA(HSLA &&) = default;
-
         HSLA &operator=(const HSLA &) = default;
-
         HSLA &operator=(HSLA &&) = default;
 
         ~HSLA() = default;
 
-        explicit operator bool() const noexcept { return set; }
-
+        /**
+         * @brief Construct a Hue, Saturation, Lightness color.
+         * @tparam T The type of the parameters, required to be floating point type.
+         * @param h Hue value [0..360]
+         * @param s Saturation [0..1]
+         * @param v Lightness [0..1]
+         * @param a Alpha [0..1]
+         */
         template<class T>
         requires std::is_floating_point_v<T>
         constexpr HSLA(T h, T s, T l, T a) : ColorArray({h, s, l, a}) {
             set = true;
         }
 
-        auto operator<=>(const HSLA &) const = default;
-
+        /**
+         * @brief Construct a Hue, Saturation, Lightness color.
+         * @tparam T The type of the parameters, required to be integral type.
+         * @param h Hue value [0..360]
+         * @param s Saturation [0..100]
+         * @param l Lightness [0..100]
+         * @param a Alpha [0..255]
+         */
         template<class T>
         requires std::is_integral_v<T>
         constexpr HSLA(T h, T s, T l, T a) : ColorArray() {
@@ -164,7 +197,7 @@ namespace rose {
             (*this)[HUE] = static_cast<float>(h);
             (*this)[SATURATION] = static_cast<float>(s) / 100.0f;
             (*this)[LIGHTNESS] = static_cast<float>(l) / 100.0f;
-            (*this)[ALPHA] = static_cast<float>(a);
+            (*this)[ALPHA] = static_cast<float>(a) / 255.0f;
         }
 
         /**
@@ -187,7 +220,8 @@ namespace rose {
     };
 
     /**
-     * @struct Color
+     * @class Color
+     * Representation of a Red, Green, Blue color with an Alpha channel.
      */
     class Color : public ColorArray {
     private:
@@ -195,11 +229,6 @@ namespace rose {
         constexpr static size_t GREEN = 1;
         constexpr static size_t BLUE = 2;
         constexpr static size_t ALPHA = 3;
-
-        /**
-         * Red, Green, Blue and Alpha channels as floats
-         */
-        bool set{false};                        ///< Indicates if the color should be used or not
 
     public:
         Color() = default;
@@ -209,8 +238,14 @@ namespace rose {
         Color& operator=(Color&&) = default;
         ~Color() = default;
 
-        explicit operator bool () const noexcept { return set; }
-
+        /**
+         * @brief Construct a Red, Green, Blue color.
+         * @tparam T The type of the parameters, required to be floating point type.
+         * @param r Red [0..1]
+         * @param g Green [0..1]
+         * @param b Blue [0..1]
+         * @param a Alpha [0..1]
+         */
         template<class T>
         requires std::is_floating_point_v<T>
         constexpr Color(T r, T g, T b, T a) : ColorArray() {
@@ -223,6 +258,14 @@ namespace rose {
                                     [] (auto chan) { return fmin(1.0, fabs(chan)); });
         }
 
+        /**
+         * @brief Construct a Hue, Saturation, Lightness color.
+         * @tparam T The type of the parameters, required to be integral type.
+         * @param r Red [0..255]
+         * @param g Green [0..255]
+         * @param b Blue [0..255]
+         * @param a Alpha [0..255]
+         */
         template<class T>
         requires std::is_integral_v<T>
         constexpr Color(T r, T g, T b, T a) : ColorArray() {
@@ -233,6 +276,10 @@ namespace rose {
             (*this)[ALPHA] = static_cast<float>(a) / 255.0f;
         }
 
+        /**
+         * @brief Convert an RGB color to an SDL_Color.
+         * @return SDL_Color.
+         */
         [[maybe_unused]] [[nodiscard]] constexpr SDL_Color sdlColor() const {
             std::array<Uint8,4> sdlChan{};
             std::ranges::transform(begin(), end(), sdlChan.begin(),
@@ -244,10 +291,23 @@ namespace rose {
 
         auto operator <=> (const Color &) const = default;
 
+        /**
+         * @brief Attenuate the intensity by multiplying Red, Green and Blue by intensity.
+         * @param intensity The intensity modulation value.
+         * @return The generated Color.
+         */
         [[maybe_unused]] [[nodiscard]] Color attenuate(float intensity) const;
 
+        /**
+         * @brief Convert to HSVA
+         * @return The generated HSVA
+         */
         [[maybe_unused]] [[nodiscard]] constexpr HSVA hsva() const;
 
+        /**
+         * @brief Convert to HSLA
+         * @return The generated HSLA
+         */
         [[maybe_unused]] [[nodiscard]] constexpr HSLA hsla() const;
     };
 
@@ -371,12 +431,26 @@ namespace rose {
 } // rose
 
 namespace fmt {
-    template<>
-    class formatter<rose::Color> {
+    /**
+     * @brief A format library formatter for the ColorArray type.
+     */
+    template<class C>
+    requires std::derived_from<C,rose::ColorArray>
+    class formatter<C> {
         char presentation_ = 'f';
+        std::string_view prefix_{};
+
     public:
         // parse format and store it
         constexpr auto parse(format_parse_context &ctx) {
+            if constexpr (std::is_same_v<C,rose::Color>)
+                prefix_ = "RGBA";
+            else if constexpr (std::is_same_v<C,rose::HSVA>)
+                prefix_ = "HSVA";
+            else if constexpr (std::is_same_v<C,rose::HSLA>)
+                prefix_ = "HSLA";
+            else
+                prefix_ = "UNKN";
             auto i = ctx.begin(), end = ctx.end();
             if (i != end && (*i == 'f' || *i == 'e')) {
                 presentation_ = *i++;
@@ -389,17 +463,17 @@ namespace fmt {
 
         // format a value using stored specification:
         template<class FmtContext>
-        constexpr auto format(const rose::Color &p, FmtContext &ctx) const {
+        constexpr auto format(const rose::ColorArray &p, FmtContext &ctx) const {
             // note: we can't use ternary operator '?:' in a constexpr
             switch (presentation_) {
                 default:
                     // 'ctx.out()' is an output iterator
                 case 'f':
-                    return format_to(ctx.out(), "[{:f},{:f},{:f},{:f}]",
-                                     p[0], p[1], p[2], p[3]);
+                    return format_to(ctx.out(), "{}[{:f},{:f},{:f},{:f}]",
+                                     prefix_, p[0], p[1], p[2], p[3]);
                 case 'e':
-                    return format_to(ctx.out(), "[{:e},{:e},{:e},{:e}]",
-                                     p[0], p[1], p[2], p[3]);
+                    return format_to(ctx.out(), "{}[{:e},{:e},{:e},{:e}]",
+                                     prefix_, p[0], p[1], p[2], p[3]);
             }
         }
     };
