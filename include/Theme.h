@@ -31,12 +31,12 @@ namespace rose {
         Right,
         Invert,
         Text,
-        Red,
-        Green,
-        Yellow,
-        RedText,
-        GreenText,
-        YellowText,
+        Alert,
+        Ok,
+        Warning,
+        AlertText,
+        OkText,
+        WaningText,
         ShadeCount,
     };
 
