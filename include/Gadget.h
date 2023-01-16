@@ -117,7 +117,7 @@ namespace rose {
             /**
              * True if the Gadget has focus.
              */
-            bool mHasFocus{};
+            [[maybe_unused]] bool mHasFocus{};
         } mVisualMetrics;
 
     public:
@@ -164,7 +164,7 @@ namespace rose {
          * be used as it allows managers to place the padding in an appropriate location.
          * @param padding the padding.
          */
-        virtual void setInternalAlignmentPadding(const Padding& padding) {
+        [[maybe_unused]] virtual void setInternalAlignmentPadding(const Padding& padding) {
             mVisualMetrics.innerAlignmentPadding = padding;
         }
 
@@ -182,7 +182,7 @@ namespace rose {
          * @param constraint If set, the Gadget must render itself within the constrained size.
          * @return true if successful.
          */
-        virtual bool finalLayout(Context &, const Size &) { return false; }
+        [[maybe_unused]] virtual bool finalLayout(Context &, const Size &) { return false; }
 
         /**
          * @brief Find a constrained layout for this Gadget.
@@ -209,7 +209,7 @@ namespace rose {
          * @brief Get the current manager of this Gadget if any.
          * @return A pointer (possibly empty) to the Gadget's manager.
          */
-        [[nodiscard]] auto getManager() const { return manager; }
+        [[maybe_unused]] [[nodiscard]] auto getManager() const { return manager; }
 
         /**
          * @brief Draw this Gadget.
@@ -245,7 +245,7 @@ namespace rose {
          */
         template<typename String>
         requires StringLike<String>
-        void setName(String string) { mName = string; }
+        [[maybe_unused]] void setName(String string) { mName = string; }
 
         [[maybe_unused]] [[nodiscard]] auto getName() const { return mName; }
 
@@ -292,7 +292,7 @@ namespace rose {
      * @param context The graphics context to draw with.
      * @param gadget The Gadget to background.
      */
-    [[maybe_unused]] void ThemeBackgroundDecorator(Context& context, Gadget& gadget);
+    [[maybe_unused]] [[maybe_unused]] void ThemeBackgroundDecorator(Context& context, Gadget& gadget);
 
     class Singlet;
     /**

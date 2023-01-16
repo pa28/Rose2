@@ -145,7 +145,7 @@ namespace rose {
         return result;
     }
 
-    void ThemeBackgroundDecorator(Context &context, Gadget &gadget) {
+    [[maybe_unused]] void ThemeBackgroundDecorator(Context &context, Gadget &gadget) {
         auto visualMetrics = gadget.getVisualMetrics();
         auto theme = gadget.getTheme();
         context.fillRect(visualMetrics.renderRect + visualMetrics.drawLocation,
