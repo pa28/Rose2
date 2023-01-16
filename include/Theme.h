@@ -63,12 +63,6 @@ namespace rose {
 
         ScreenCoordType borderSize{6};
 
-        Color screenBackground{color::DarkGrey};
-        Color gadgetBackground{color::DarkGrey};
-        Color activeBackground{color::MediumGrey};
-        Color enterBackground{color::DarkGrey};
-        Color textForeground{color::LightGrey};
-
         Corners corners{Corners::SQUARE};
         Visual visual{Visual::SHAPED};
 

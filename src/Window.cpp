@@ -187,7 +187,7 @@ namespace rose {
         mWindowPtr = windowPtr;
         mName = "Top";
         mVisualMetrics.desiredSize = size;
-        mVisualMetrics.background = windowPtr->getTheme().screenBackground;
+        mVisualMetrics.background = windowPtr->getTheme().colorShades[ThemeColor::Base];
     }
 
     void Screen::changeSize(const Size &size) {
