@@ -22,8 +22,6 @@
 #include <GraphicsModel.h>
 #include <fmt/format.h>
 
-//#define DEBUG_GADGET_DRAW
-
 namespace rose {
 
     /**
@@ -44,12 +42,6 @@ namespace rose {
     class LayoutManager;
 
     class Screen;
-
-#ifdef DEBUG_GADGET_DRAW
-    static Color ClipRectangleDebugColor{1.0, 0.0, 0.0, 1.0 };
-    static Color BorderRectangleDebugColor{ 0.0, 0.0, 1.0, 1.0 };
-    static Color RenderRectangleDebugColor{0.0, 1.0, 0.0, 1.0};
-#endif
 
     /**
      * @brief A DecoratorFunction can be attached to a Gadget to be called when Gadget::Draw is called.

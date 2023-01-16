@@ -67,9 +67,6 @@ int main(int argc, char **argv) {
         theme.setThemeColors( color::DarkRed, color::DarkGreen, color::DarkYellow);
         theme.setThemeTextColors( color::DarkRed, color::DarkGreen, color::DarkYellow);
         theme.updateThemeColors();
-//        theme.textForeground = theme.colorShades[ThemeColor::Text];
-//        theme.screenBackground = theme.colorShades[ThemeColor::Base];
-//        theme.gadgetBackground = theme.colorShades[ThemeColor::Invert];
 
         application->createWindow(application->applicationName(), Size(800, 480), Point::CenterScreen(1),
                                   SDL_WINDOW_RESIZABLE);
