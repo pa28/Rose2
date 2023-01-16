@@ -23,16 +23,16 @@ namespace rose {
         hsvaShades[ThemeColor::Text] = shade.contrasting();
     }
 
-    void Theme::setThemeColors(const HSVA &red, const HSVA &green, const HSVA &yellow) {
-        hsvaShades[ThemeColor::Alert] = red;
-        hsvaShades[ThemeColor::Ok] = green;
-        hsvaShades[ThemeColor::Warning] = yellow;
+    void Theme::setThemeColors(const HSVA &alert, const HSVA &ok, const HSVA &warning) {
+        hsvaShades[ThemeColor::Alert] = alert;
+        hsvaShades[ThemeColor::Ok] = ok;
+        hsvaShades[ThemeColor::Warning] = warning;
     }
 
-    void Theme::setThemeTextColors(const HSVA &red, const HSVA &green, const HSVA &yellow) {
-        hsvaShades[ThemeColor::AlertText] = red;
-        hsvaShades[ThemeColor::OkText] = green;
-        hsvaShades[ThemeColor::WaningText] = yellow;
+    void Theme::setThemeTextColors(const HSVA &alertText, const HSVA &okText, const HSVA &warningText) {
+        hsvaShades[ThemeColor::AlertText] = alertText;
+        hsvaShades[ThemeColor::OkText] = okText;
+        hsvaShades[ThemeColor::WaningText] = warningText;
     }
 
     void Theme::updateThemeColors() {
