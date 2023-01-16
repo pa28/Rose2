@@ -52,6 +52,12 @@ namespace rose {
 #endif
 
     /**
+     * @brief A DecoratorFunction can be attached to a Gadget to be called when Gadget::Draw is called.
+     */
+    class Gadget;
+    using DecoratorFunction = std::function<void(Context &, Gadget &)>;
+
+    /**
      * @class Gadget
      * @brief The simplest UI element. A Gadget renders a graphical representation of its state. It does not
      * manage any other scene tree elements.
@@ -60,8 +66,6 @@ namespace rose {
     protected:
         friend class GadgetBuilder;
         friend class Window;
-
-        using DecoratorFunction = std::function<void(Context &, Gadget &)>;
 
         std::vector<DecoratorFunction> mDecorators{};
 
@@ -210,13 +214,25 @@ namespace rose {
          */
         virtual void draw(Context &context, Point drawLocation);
 
+        /**
+         * @brief Set the desired size of the Gadget
+         * @param size the Size.
+         */
         [[maybe_unused]] void setSize(const Size &size) { mVisualMetrics.desiredSize = size; }
 
+        /**
+         * @brief Save the draw location for later use.
+         * @param point the draw location.
+         */
         [[maybe_unused]] void setDrawLocation(const Point &point) {
             mVisualMetrics.drawLocation = point;
         }
 
-        void setBackground(const Color &color) { mVisualMetrics.background = color; }
+        /**
+         * @brief Set the Gadget background backgroundColor.
+         * @param backgroundColor
+         */
+        void setBackground(const Color &backgroundColor) { mVisualMetrics.background = backgroundColor; }
 
         /**
          * @brief Set the Gadget name.
@@ -235,6 +251,12 @@ namespace rose {
          * @return std::shared_ptr<Screen> pointing to the screen, or empty.
          */
         std::shared_ptr<Screen> getScreen();
+
+        /**
+         * @brief Get the Theme object from the Application.
+         * @return A Theme&
+         */
+        Theme& getTheme();
 
         /**
          * @brief Receive Enter/Leave events.
@@ -256,7 +278,18 @@ namespace rose {
          * @return true if the event was processed.
          */
         virtual bool mouseButtonEvent(const SDL_MouseButtonEvent &e);
+
+        void setDecorator(DecoratorFunction&& decoratorFunction) {
+            mDecorators.emplace_back(decoratorFunction);
+        }
     };
+
+    /**
+     * @brief A DecoratorFunction to draw the Gadget background in the Theme background color.
+     * @param context The graphics context to draw with.
+     * @param gadget The Gadget to background.
+     */
+    [[maybe_unused]] void ThemeBackgroundDecorator(Context& context, Gadget& gadget);
 
     class Singlet;
     /**
@@ -392,8 +425,23 @@ namespace rose {
             return *this;
         }
 
-        [[maybe_unused]] auto background(const Color &color) {
-            gadget->mVisualMetrics.background = color;
+        /**
+         * @brief Set the background backgroundColor of the Gadget
+         * @param backgroundColor
+         * @return this Builder
+         */
+        [[maybe_unused]] auto background(const Color &backgroundColor) {
+            gadget->mVisualMetrics.background = backgroundColor;
+            return *this;
+        }
+
+        /**
+         * @brief Set DecoratorFunction on the Gadget
+         * @param decoratorFunction
+         * @return this Builder
+         */
+        [[maybe_unused]] auto decorator(DecoratorFunction&& decoratorFunction) {
+            gadget->setDecorator(std::move(decoratorFunction));
             return *this;
         }
     };

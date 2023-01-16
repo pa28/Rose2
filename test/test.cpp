@@ -63,7 +63,7 @@ int main(int argc, char **argv) {
     if (auto application = std::make_shared<Application>(argc, argv); application) {
         application->initializeGraphics();
         Theme &theme{application->getTheme()};
-        theme.setThemeShade(HSVA(200.f, .5f, 1.f, 1.f));
+        theme.setThemeShade(HSVA(200.f, .5f, 0.5f, 1.f));
         theme.setThemeColors( color::DarkRed, color::DarkGreen, color::DarkYellow);
         theme.setThemeTextColors( color::DarkRed, color::DarkGreen, color::DarkYellow);
         theme.updateThemeColors();
@@ -77,16 +77,15 @@ int main(int argc, char **argv) {
         if (auto container = ColumnBuilder{}; container) {
             container.setLayoutAlignment(LinearLayout::Alignment::BOTTOM_RIGHT)
                     .name("container")
-                    .background(theme.gadgetBackground)
+                    .background(theme.colorShades[ThemeColor::Base])
                     .layout(Point(0, 0), Size(800, 640));
 
             if (TextGadgetBuilder hello{}; hello) {
                 hello.text("Hello")
                         .pointSize(20)
                         .foreground(theme.colorShades[ThemeColor::Text])
-//                        .background(theme.gadgetBackground)
+                        .background(theme.colorShades[ThemeColor::Base])
                         .name("Hello")
-//                        .decorator(backgroundDecorator)
                         >> container;
                 std::cout << "Hello\n";
             }
@@ -96,9 +95,8 @@ int main(int argc, char **argv) {
                     world.text("World")
                             .pointSize(20)
                             .foreground(theme.colorShades[ThemeColor::Text])
-//                        .background(theme.gadgetBackground)
+                            .background(theme.colorShades[ThemeColor::Base])
                             .name("World")
-//                        .decorator(backgroundDecorator)
                             >> singlet;
                     std::cout << "World\n";
                 }

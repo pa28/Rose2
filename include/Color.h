@@ -137,9 +137,9 @@ namespace rose {
         [[nodiscard]] constexpr HSVA contrasting() const {
             float value;
             if ((*this)[VALUE] < 0.5f)
-                value = (*this)[VALUE] + 0.4f;
+                value = (*this)[VALUE] + 0.5f;
             else
-                value = (*this)[VALUE] - 0.4f;
+                value = (*this)[VALUE] - 0.5f;
             return HSVA{(*this)[HUE], (*this)[SATURATION], value, (*this)[ALPHA]};
         }
     };

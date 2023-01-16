@@ -23,11 +23,11 @@ namespace rose {
 
     void Gadget::draw(Context &context, Point drawLocation) {
         mVisualMetrics.drawLocation = drawLocation;
-        for (const auto& decorator : mDecorators) {
-            decorator(context, *this);
-        }
-
-        if (mVisualMetrics.background) {
+        if (!mDecorators.empty()) {
+            for (const auto &decorator: mDecorators) {
+                decorator(context, *this);
+            }
+        } else if (mVisualMetrics.background) {
             context.fillRect(mVisualMetrics.renderRect + drawLocation, mVisualMetrics.background);
         }
     }
@@ -103,6 +103,10 @@ namespace rose {
         return {};
     }
 
+    Theme &Gadget::getTheme() {
+        return getScreen()->getTheme();
+    }
+
     void Builder::operator>>(Widget &widget) {
         widget.manage(*this);
     }
@@ -139,5 +143,12 @@ namespace rose {
         }
 
         return result;
+    }
+
+    void ThemeBackgroundDecorator(Context &context, Gadget &gadget) {
+        auto visualMetrics = gadget.getVisualMetrics();
+        auto theme = gadget.getTheme();
+        context.fillRect(visualMetrics.renderRect + visualMetrics.drawLocation,
+                         theme.colorShades[ThemeColor::Base]);
     }
 } // rose
