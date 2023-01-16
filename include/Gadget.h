@@ -147,6 +147,8 @@ namespace rose {
 
         virtual ~Gadget() = default;
 
+        [[nodiscard]] [[maybe_unused]] const std::string_view& name() { return mName; }
+
         [[nodiscard]] bool isManaged() const {
             using wt = std::weak_ptr<Widget>;
             bool a = manager.owner_before(wt{});
@@ -169,7 +171,7 @@ namespace rose {
          * @details This may be required for Widgets to call after they have configured their Gadgets.
          * @return
          */
-        bool forceInitialGadgetLayout();
+        virtual bool forceInitialGadgetLayout();
 
         /**
          * @brief Set internal alignment padding.

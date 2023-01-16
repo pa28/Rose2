@@ -44,6 +44,25 @@ namespace rose {
         bool initialLayout(Context &context) override;
 
         /**
+         * @brief Set internal alignment padding.
+         * @details Internal alignment padding is used to align Gadgets inside of managers. Internal alignment
+         * may be set directly by using the getVisualMetrics() accessor function; however this method should
+         * be used as it allows managers to place the padding in an appropriate location.
+         * @param padding the padding.
+         */
+        [[maybe_unused]] void setInternalAlignmentPadding(const Padding& padding) override {
+            if (mGadget)
+                mGadget->setInternalAlignmentPadding(padding);
+        }
+
+        /**
+         * @brief Force initial gadget layout avoiding virtual method.
+         * @details This may be required for Widgets to call after they have configured their Gadgets.
+         * @return
+         */
+        bool forceInitialGadgetLayout() override;
+
+        /**
          * @brief Add a Gadget to the management list of this Singlet.
          * @details This will include setting this Singlet as the manager of
          * the Gadget, which will remove the gadget from the management list
