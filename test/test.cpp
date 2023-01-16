@@ -77,14 +77,17 @@ int main(int argc, char **argv) {
                     .background(theme.colorShades[ThemeColor::Base])
                     .layout(Point(0, 0), Size(800, 640));
 
-            if (TextGadgetBuilder hello{}; hello) {
-                hello.text("Hello")
-                        .pointSize(20)
-                        .foreground(theme.colorShades[ThemeColor::Text])
-                        .background(theme.colorShades[ThemeColor::Base])
-                        .name("Hello")
-                        >> container;
-                std::cout << "Hello\n";
+            if (SingletBuilder singlet{}; singlet) {
+                if (TextGadgetBuilder hello{}; hello) {
+                    hello.text("Hello")
+                            .pointSize(20)
+                            .foreground(theme.colorShades[ThemeColor::Text])
+                            .background(theme.colorShades[ThemeColor::Base])
+                            .name("Hello")
+                            >> singlet;
+                    std::cout << "Hello\n";
+                }
+                singlet >> container;
             }
 
             if (SingletBuilder singlet{}; singlet) {
