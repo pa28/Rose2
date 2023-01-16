@@ -30,11 +30,11 @@ namespace rose {
         friend class Window;
 
     protected:
-        constexpr static std::string_view ClassName = "Singlet";
+        [[maybe_unused]] constexpr static std::string_view ClassName = "Singlet";
 
         std::shared_ptr<Gadget> mGadget{};      ///< The single managed Gadget.
 
-        void debugLayout(const char *func);
+        [[maybe_unused]] void debugLayout(const char *func);
 
     public:
         Singlet() = default;
@@ -71,7 +71,7 @@ namespace rose {
          * of its current manager, if any.
          * @param gadget The Gadget to manage.
          */
-        virtual void manage(std::shared_ptr<Gadget> gadget);
+        [[maybe_unused]] virtual void manage(std::shared_ptr<Gadget> gadget);
 
         /**
          * @brief Add a Gadget from a builder to the management field of this Singlet

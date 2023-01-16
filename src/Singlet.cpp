@@ -27,7 +27,7 @@ namespace rose {
         return false;
     }
 
-    void Singlet::manage(std::shared_ptr<Gadget> gadget) {
+    [[maybe_unused]] void Singlet::manage(std::shared_ptr<Gadget> gadget) {
         gadget->managedBy(shared_from_this());
         mGadget = std::move(gadget);
     }
@@ -50,7 +50,7 @@ namespace rose {
         return false;
     }
 
-    void Singlet::debugLayout(const char *func) {
+    [[maybe_unused]] void Singlet::debugLayout(const char *func) {
         auto vm = mGadget->getVisualMetrics();
         fmt::print("{} {}\n", func, mGadget->name());
         fmt::print("\tdrawLocation: {}\n", mVisualMetrics.drawLocation);
