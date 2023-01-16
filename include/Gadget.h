@@ -166,6 +166,17 @@ namespace rose {
         bool forceInitialGadgetLayout();
 
         /**
+         * @brief Set internal alignment padding.
+         * @details Internal alignment padding is used to align Gadgets inside of managers. Internal alignment
+         * may be set directly by using the getVisualMetrics() accessor function; however this method should
+         * be used as it allows managers to place the padding in an appropriate location.
+         * @param padding the padding.
+         */
+        virtual void setInternalAlignmentPadding(const Padding& padding) {
+            mVisualMetrics.innerAlignmentPadding = padding;
+        }
+
+        /**
          * @brief Generate content, determine size and set the initial values of layout rectangles.
          * @param context Graphics context
          * @return true if successful.
