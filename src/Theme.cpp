@@ -1,6 +1,3 @@
-//
-// Created by richard on 08/01/23.
-//
 
 /*
  * Theme.cpp Created by Richard Buckley (C) 08/01/23
@@ -27,15 +24,15 @@ namespace rose {
     }
 
     void Theme::setThemeColors(const HSVA &red, const HSVA &green, const HSVA &yellow) {
-        hsvaShades[ThemeColor::Red] = red;
-        hsvaShades[ThemeColor::Green] = green;
-        hsvaShades[ThemeColor::Yellow] = yellow;
+        hsvaShades[ThemeColor::Alert] = red;
+        hsvaShades[ThemeColor::Ok] = green;
+        hsvaShades[ThemeColor::Warning] = yellow;
     }
 
     void Theme::setThemeTextColors(const HSVA &red, const HSVA &green, const HSVA &yellow) {
-        hsvaShades[ThemeColor::RedText] = red;
-        hsvaShades[ThemeColor::GreenText] = green;
-        hsvaShades[ThemeColor::YellowText] = yellow;
+        hsvaShades[ThemeColor::AlertText] = red;
+        hsvaShades[ThemeColor::OkText] = green;
+        hsvaShades[ThemeColor::WaningText] = yellow;
     }
 
     void Theme::updateThemeColors() {

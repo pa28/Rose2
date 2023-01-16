@@ -6,6 +6,20 @@
  * Gadget.h Created by Richard Buckley (C) 31/12/22
  */
 
+/**
+ * @file Gadget.h
+ * @author Richard Buckley <richard.buckley@ieee.org>
+ * @version 1.0
+ * @date 31/12/22
+ * @brief Header file for the Gadget, Builder and GadgetBuilder classes.
+ * @details A Gadget is the simplest visual UI element managing an area of an application window display. A Gadget
+ * does not manage any other Gadgets.<br/>
+ * Builder is an abstract factory class for Gadgets. Each Gadget class has (or should have) a corresponding Builder
+ * class. The Builder is used to properly create a Gadget, set parameters appropriate for the application, and
+ * insert the Gadget in the scene tree of the application.<br/>
+ * GadgetBuilder is the Builder class for Gadgets.
+ */
+
 #ifndef ROSE2_GADGET_H
 #define ROSE2_GADGET_H
 

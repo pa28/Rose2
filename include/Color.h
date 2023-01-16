@@ -1,9 +1,22 @@
-//
-// Created by richard on 02/01/23.
-//
 
 /*
  * Color.h Created by Richard Buckley (C) 02/01/23
+ */
+
+/**
+ * @file Theme.h
+ * @author Richard Buckley <richard.buckley@ieee.org>
+ * @version 1.0
+ * @date 02/01/23
+ * @brief Color management classes and functions.
+ * @details Colors are managed by using ColorArray, Color, HSLA, and HSVA.<br/>
+ * ColorArray is the base of the other three. Derived from std::array it provides the storage for the four channels
+ * required to specify a color to draw: three to specify the color and one for the alpha (transparency) channel.<br/>
+ * Color provides basic RGBA color specification as wells as conversion to HSLA, HSVA and ultimately SDL library
+ * colors.<br/>
+ * HSLA is a Hue, Saturation, Lightness color implementation.</br>
+ * HSVA is a Hue, Saturation, Value color implementations. HSVA is used within the library for high level color
+ * manipulation within a set of colors designed to provide a unified visual appearance.<br/>
  */
 
 #ifndef ROSE2_COLOR_H
@@ -32,7 +45,6 @@ namespace rose {
         [[maybe_unused]] constexpr ColorArray(Ta a, Tb b, Tc c, Td d) : std::array<float, 4>({a,b,c,d}) {}
 
         auto operator <=> (const ColorArray &) const = default;
-
     };
 
     /**

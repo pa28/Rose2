@@ -1,6 +1,3 @@
-//
-// Created by richard on 08/01/23.
-//
 
 /*
  * Theme.h Created by Richard Buckley (C) 08/01/23
@@ -11,7 +8,8 @@
  * @author Richard Buckley <richard.buckley@ieee.org>
  * @version 1.0
  * @date 08/01/23
- * @brief 
+ * @brief The Theme class holds data used in visual presentation of the scene. By using data from a theme in all
+ * Gadgets an application can present a unified visual experience.
  * @details
  */
 
