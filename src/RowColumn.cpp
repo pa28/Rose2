@@ -52,13 +52,13 @@ namespace rose {
                                 case Alignment::TOP_LEFT:
                                     padding.botRight.y = residue;
                                     if (mAlignmentLoc == AlignmentLoc::INNER) {
-                                        gadget->getVisualMetrics().innerAlignmentPadding = padding;
+                                        gadget->setInternalAlignmentPadding(padding);
                                     }
                                     break;
                                 case Alignment::BOTTOM_RIGHT:
                                     padding.topLeft.y = residue;
                                     if (mAlignmentLoc == AlignmentLoc::INNER) {
-                                        gadget->getVisualMetrics().innerAlignmentPadding = padding;
+                                        gadget->setInternalAlignmentPadding(padding);
                                     } else {
                                         gadget->getVisualMetrics().renderRect.point += padding.topLeft;
                                     }
@@ -67,7 +67,7 @@ namespace rose {
                                     padding.topLeft.y = residue / 2;
                                     padding.botRight.y = residue / 2 + (residue % 2 ? 1 : 0);
                                     if (mAlignmentLoc == AlignmentLoc::INNER) {
-                                        gadget->getVisualMetrics().innerAlignmentPadding = padding;
+                                        gadget->setInternalAlignmentPadding(padding);
                                     } else {
                                         gadget->getVisualMetrics().renderRect.point += padding.topLeft;
                                     }
@@ -85,13 +85,13 @@ namespace rose {
                                 case Alignment::TOP_LEFT:
                                     padding.botRight.x = residue;
                                     if (mAlignmentLoc == AlignmentLoc::INNER) {
-                                        gadget->getVisualMetrics().innerAlignmentPadding = padding;
+                                        gadget->setInternalAlignmentPadding(padding);
                                     }
                                     break;
                                 case Alignment::BOTTOM_RIGHT:
                                     padding.topLeft.x = residue;
                                     if (mAlignmentLoc == AlignmentLoc::INNER) {
-                                        gadget->getVisualMetrics().innerAlignmentPadding = padding;
+                                        gadget->setInternalAlignmentPadding(padding);
                                     } else {
                                         gadget->getVisualMetrics().renderRect.point += padding.botRight;
                                     }
@@ -100,7 +100,7 @@ namespace rose {
                                     padding.topLeft.x = residue / 2;
                                     padding.botRight.x = residue / 2 + (residue % 2 ? 1 : 0);
                                     if (mAlignmentLoc == AlignmentLoc::INNER) {
-                                        gadget->getVisualMetrics().innerAlignmentPadding = padding;
+                                        gadget->setInternalAlignmentPadding(padding);
                                     } else {
                                         gadget->getVisualMetrics().renderRect.point += padding.botRight;
                                     }
