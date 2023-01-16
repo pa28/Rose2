@@ -34,6 +34,8 @@ namespace rose {
 
         std::shared_ptr<Gadget> mGadget{};      ///< The single managed Gadget.
 
+        void debugLayout(const char *func);
+
     public:
         Singlet() = default;
         Singlet(const Singlet&) = delete;
@@ -82,7 +84,6 @@ namespace rose {
          * @param context The graphics context to use.
          */
         void draw(Context &context, Point drawLocation) override;
-
     };
 
     /**

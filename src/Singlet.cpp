@@ -22,6 +22,8 @@ namespace rose {
             mVisualMetrics.desiredSize = mGadget->getVisualMetrics().clipRectangle.size;
             Gadget::initialLayout(context);
         }
+
+//        debugLayout(__PRETTY_FUNCTION__ );
         return false;
     }
 
@@ -38,6 +40,31 @@ namespace rose {
     void Singlet::draw(Context &context, Point drawLocation) {
         if (mGadget)
             mGadget->draw(context, drawLocation);
+    }
+
+    bool Singlet::forceInitialGadgetLayout() {
+//        debugLayout(__PRETTY_FUNCTION__ );
+        mGadget->forceInitialGadgetLayout();
+        Gadget::forceInitialGadgetLayout();
+//        debugLayout(__PRETTY_FUNCTION__ );
+        return false;
+    }
+
+    void Singlet::debugLayout(const char *func) {
+        auto vm = mGadget->getVisualMetrics();
+        fmt::print("{} {}\n", func, mGadget->name());
+        fmt::print("\tdrawLocation: {}\n", mVisualMetrics.drawLocation);
+        fmt::print("\tdesiredSize: {}\n", mVisualMetrics.desiredSize);
+        fmt::print("\tinnerAlignment: {}\n", mVisualMetrics.innerAlignmentPadding);
+        fmt::print("\tgadgetPadding: {}\n", mVisualMetrics.gadgetPadding);
+        fmt::print("\trenderRect: {}\n", mVisualMetrics.renderRect);
+        fmt::print("\tclipRectangle: {}\n", mVisualMetrics.clipRectangle);
+        fmt::print("\t\tdrawLocation: {}\n", vm.drawLocation);
+        fmt::print("\t\tdesiredSize: {}\n", vm.desiredSize);
+        fmt::print("\t\tinnerAlignment: {}\n", vm.innerAlignmentPadding);
+        fmt::print("\t\tgadgetPadding: {}\n", vm.gadgetPadding);
+        fmt::print("\t\trenderRect: {}\n", vm.renderRect);
+        fmt::print("\t\tclipRectangle: {}\n", vm.clipRectangle);
     }
 
 } // rose
