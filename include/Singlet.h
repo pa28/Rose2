@@ -52,10 +52,7 @@ namespace rose {
          * be used as it allows managers to place the padding in an appropriate location.
          * @param padding the padding.
          */
-        [[maybe_unused]] void setInternalAlignmentPadding(const Padding& padding) override {
-            if (mGadget)
-                mGadget->setInternalAlignmentPadding(padding);
-        }
+        [[maybe_unused]] void setInternalAlignmentPadding(const Padding& padding) override;
 
         /**
          * @brief Force initial gadget layout avoiding virtual method.
@@ -96,6 +93,11 @@ namespace rose {
         SingletBuilder() : GadgetBuilder(std::make_shared<Singlet>()) {}
 
         ~SingletBuilder() override = default;
+
+        auto border(ScreenCoordType borderSize) {
+            gadget->getVisualMetrics().gadgetPadding = borderSize;
+            return *this;
+        }
     };
 
 } // rose

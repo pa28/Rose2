@@ -32,7 +32,7 @@ namespace rose {
                 decorator(context, *this);
             }
         } else if (mVisualMetrics.background) {
-            context.fillRect(mVisualMetrics.renderRect + drawLocation, mVisualMetrics.background);
+            context.fillRect(mVisualMetrics.clipRectangle + drawLocation, mVisualMetrics.background);
         }
     }
 
@@ -41,14 +41,13 @@ namespace rose {
         /**
          * The renderRect size is the Gadget desired size + the Gadget padding.
          */
-        mVisualMetrics.renderRect.size = mVisualMetrics.desiredSize +
-                                         mVisualMetrics.gadgetPadding.topLeft + mVisualMetrics.gadgetPadding.botRight;
-
+        mVisualMetrics.renderRect.size = mVisualMetrics.desiredSize;
         /**
          * The clipRectangle size is the borderRect size + the manager padding.
          */
-        mVisualMetrics.clipRectangle.size = mVisualMetrics.renderRect.size + mVisualMetrics.gadgetPadding.botRight +
-                mVisualMetrics.gadgetPadding.topLeft;
+        mVisualMetrics.clipRectangle.size = mVisualMetrics.renderRect.size +
+                mVisualMetrics.gadgetPadding.topLeft + mVisualMetrics.gadgetPadding.botRight +
+                mVisualMetrics.innerAlignmentPadding.topLeft + mVisualMetrics.innerAlignmentPadding.botRight;
 
         /**
          * The clipRectangle point is 0,0

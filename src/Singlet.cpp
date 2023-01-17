@@ -27,6 +27,16 @@ namespace rose {
         return false;
     }
 
+    void Singlet::setInternalAlignmentPadding(const Padding &padding) {
+        if (mGadget) {
+            mGadget->setInternalAlignmentPadding(padding);
+            mGadget->forceInitialGadgetLayout();
+            mVisualMetrics.desiredSize = mGadget->getVisualMetrics().clipRectangle.size;
+            Gadget::forceInitialGadgetLayout();
+//            debugLayout(__PRETTY_FUNCTION__ );
+        }
+    }
+
     [[maybe_unused]] void Singlet::manage(std::shared_ptr<Gadget> gadget) {
         gadget->managedBy(shared_from_this());
         mGadget = std::move(gadget);
@@ -38,8 +48,11 @@ namespace rose {
     }
 
     void Singlet::draw(Context &context, Point drawLocation) {
-        if (mGadget)
-            mGadget->draw(context, drawLocation);
+        Gadget::draw(context, drawLocation);
+        if (mGadget) {
+//            debugLayout(__FUNCTION__ );
+            mGadget->draw(context, drawLocation + mVisualMetrics.renderRect.point);
+        }
     }
 
     bool Singlet::forceInitialGadgetLayout() {

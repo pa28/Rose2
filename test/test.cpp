@@ -74,10 +74,11 @@ int main(int argc, char **argv) {
         if (auto container = ColumnBuilder{}; container) {
             container.setLayoutAlignment(LinearLayout::Alignment::BOTTOM_RIGHT)
                     .name("container")
-                    .background(theme.colorShades[ThemeColor::Base])
+//                    .background(theme.colorShades[ThemeColor::Ok])
                     .layout(Point(0, 0), Size(800, 640));
 
             if (SingletBuilder singlet{}; singlet) {
+//                singlet.border(2);
                 if (TextGadgetBuilder hello{}; hello) {
                     hello.text("Hello")
                             .pointSize(20)
@@ -91,6 +92,7 @@ int main(int argc, char **argv) {
             }
 
             if (SingletBuilder singlet{}; singlet) {
+//                singlet.border(2);
                 if (TextGadgetBuilder world{}; world) {
                     world.text("World")
                             .pointSize(20)
