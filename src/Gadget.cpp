@@ -30,7 +30,7 @@ namespace rose {
     }
 
     void Gadget::draw(Context &context, Point drawLocation) {
-        mVisualMetrics.drawLocation = drawLocation;
+        mVisualMetrics.lastDrawLocation = drawLocation;
         if (!mDecorators.empty()) {
             for (const auto &decorator: mDecorators) {
                 decorator(context, *this);

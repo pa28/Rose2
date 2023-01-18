@@ -97,6 +97,8 @@ namespace rose {
              */
             Point drawLocation{};
 
+            Point lastDrawLocation{};
+
             /**
              * @brief The content drawing size requested by the Gadget.
              */
