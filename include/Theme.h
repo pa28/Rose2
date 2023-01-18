@@ -72,7 +72,7 @@ namespace rose {
         ScreenCoordType borderSize{6};                      ///< The default border size for the Theme.
 
         Corners corners{Corners::SQUARE};                   ///< The type of corners used.
-        Visual visual{Visual::SHAPED};                      ///< The type of visual used.
+        Visual visual{Visual::SHADOW};                      ///< The type of visual used.
 
         Theme() = default;
         Theme(const Theme&) = default;

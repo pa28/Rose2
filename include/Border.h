@@ -68,7 +68,11 @@ namespace rose {
 
         void layout(rose::Context &context, Gadget &gadget);
 
-        void renderBorder(Context &context, Gadget &gadget);
+        auto border(ScreenCoordType borderSize) {
+            gadget->getVisualMetrics().gadgetPadding = borderSize;
+            return *this;
+        }
+    };
 
         void draw(rose::Context &context, const rose::Point &drawLocation, Gadget &gadget);
 

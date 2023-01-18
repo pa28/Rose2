@@ -93,11 +93,6 @@ namespace rose {
         SingletBuilder() : GadgetBuilder(std::make_shared<Singlet>()) {}
 
         ~SingletBuilder() override = default;
-
-        auto border(ScreenCoordType borderSize) {
-            gadget->getVisualMetrics().gadgetPadding = borderSize;
-            return *this;
-        }
     };
 
 } // rose
