@@ -239,7 +239,10 @@ namespace rose {
          * @return true if p is contained in this Rectangle.
          */
         [[nodiscard]] constexpr bool contains(const Point& p) const {
-            return point <= p && p < (point + size);
+            auto [a,b] = point.comparePoints(p);
+            auto [c,d] = p.comparePoints(point+size);
+            return std::is_lteq(a) && std::is_lteq(b) && std::is_lt(c) && std::is_lt(d);
+//            return point <= p && p < (point + size);
         }
 
         [[nodiscard]] constexpr Rectangle intersection(const Rectangle &o) const {
