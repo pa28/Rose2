@@ -17,6 +17,9 @@
 #include <Application.h>
 
 namespace rose {
+
+    std::weak_ptr<Application> Gadget::mApplicationPtr;
+
     void Gadget::managedBy(const std::shared_ptr<Gadget> &gadget) {
         if (auto singlet = std::dynamic_pointer_cast<Singlet>(gadget); singlet)
             manager = singlet;

@@ -75,6 +75,8 @@ namespace rose {
         friend class GadgetBuilder;
         friend class Window;
 
+        static std::weak_ptr<Application> mApplicationPtr;
+
         std::vector<DecoratorFunction> mDecorators{};
 
         constexpr static GadgetType ThisType = GadgetType::Gadget;
