@@ -72,41 +72,44 @@ int main(int argc, char **argv) {
         application->createWindow(application->applicationName(), Size(800, 480), Point::CenterScreen(1),
                                   SDL_WINDOW_RESIZABLE);
 
-        if (auto container = ColumnBuilder{}; container) {
-            container.setLayoutAlignment(LinearLayout::Alignment::BOTTOM_RIGHT)
-                    .name("container")
+        if (BorderBuilder containerBorder{}; containerBorder) {
+            if (auto container = ColumnBuilder{}; container) {
+                container.setLayoutAlignment(LinearLayout::Alignment::BOTTOM_RIGHT)
+                        .name("container")
 //                    .background(theme.colorShades[ThemeColor::Ok])
-                    .layout(Point(0, 0), Size(800, 640));
+                        .layout(Point(0, 0), Size(800, 640));
 
-            if (BorderBuilder border{}; border) {
+                if (BorderBuilder border{}; border) {
 //                border.background(theme.colorShades[ThemeColor::Alert]);
-                if (TextGadgetBuilder hello{}; hello) {
-                    hello.text("Hello")
-                            .pointSize(20)
-                            .foreground(theme.colorShades[ThemeColor::Text])
-                            .background(theme.colorShades[ThemeColor::Base])
-                            .name("Hello")
-                            >> border;
-                    std::cout << "Hello\n";
+                    if (TextGadgetBuilder hello{}; hello) {
+                        hello.text("Hello")
+                                .pointSize(20)
+                                .foreground(theme.colorShades[ThemeColor::Text])
+                                .background(theme.colorShades[ThemeColor::Base])
+                                .name("Hello")
+                                >> border;
+                        std::cout << "Hello\n";
+                    }
+                    border >> container;
                 }
-                border >> container;
-            }
 
-            if (BorderBuilder border{}; border) {
+                if (BorderBuilder border{}; border) {
 //                border.background(theme.colorShades[ThemeColor::Base]);
-                if (TextGadgetBuilder world{}; world) {
-                    world.text("World")
-                            .pointSize(20)
-                            .foreground(theme.colorShades[ThemeColor::Text])
-                            .background(theme.colorShades[ThemeColor::Base])
-                            .name("World")
-                            >> border;
-                    std::cout << "World\n";
+                    if (TextGadgetBuilder world{}; world) {
+                        world.text("World")
+                                .pointSize(20)
+                                .foreground(theme.colorShades[ThemeColor::Text])
+                                .background(theme.colorShades[ThemeColor::Base])
+                                .name("World")
+                                >> border;
+                        std::cout << "World\n";
+                    }
+                    border >> container;
                 }
-                border >> container;
-            }
 
-            container >> application;
+                container >> containerBorder;
+            }
+            containerBorder >> application;
         }
 
         application->run();
