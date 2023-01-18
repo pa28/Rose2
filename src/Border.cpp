@@ -73,6 +73,23 @@ void rose::Border::draw(rose::Context &context, rose::Point drawLocation) {
                     break;
             }
             break;
+        case Visual::NOTCH:
+        case Visual::RIDGE: {
+            bool choice = mVisual == Visual::NOTCH;
+            auto p0 = borderRect.point;
+            auto p3 = p0 + borderRect.size + -1;
+            Point p1{p3.x, p0.y};
+            Point p2{p0.x, p3.y};
+            for (ScreenCoordType idx = 0; idx < borderSize; ++idx) {
+                auto flip = ((idx < borderSize / 2) == choice) | mActive;
+                context.drawLine(p0, p1, (flip ? bottom : top));
+                context.drawLine(p0, p2, (flip ? right : left));
+                context.drawLine(p2, p3, (flip ? top : bottom));
+                context.drawLine(p1, p3, (flip ? left : right));
+                ++p0.x; ++p0.y; --p3.x; --p3.y; ++p2.x; --p2.y; --p1.x; ++p1.y;
+            }
+        }
+            break;
         default:
             break;
     }

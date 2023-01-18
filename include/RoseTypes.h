@@ -20,7 +20,9 @@ namespace rose {
     enum class Visual {
         UNSET,              ///< Not set, use Theme value.
         FLAT,               ///< Flat, no 3D simulation. Actions implemented by changing background color.
-        SHADOW,             ///< Simulated 3D. Actions implemented by flipping Texture horizontally and vertically.
+        SHADOW,             ///< Simulated 3D Shadow box. Actions implemented by flipping Texture horizontally and vertically.
+        NOTCH,              ///< Simulated 3D Notch.
+        RIDGE,              ///< Simulated 3D Ridge.
     };
 
     enum class Actions {

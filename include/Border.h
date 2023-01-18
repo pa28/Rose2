@@ -35,7 +35,7 @@ namespace rose {
     protected:
         [[maybe_unused]] constexpr static std::string_view ClassName = "Border";
         Corners mCorners{Corners::UNSET};
-        Visual mVisual{Visual::UNSET};
+        Visual mVisual{Visual::FLAT};
         bool mActive{false};
 
     public:
