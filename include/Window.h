@@ -31,6 +31,8 @@ namespace rose {
      */
     class Screen : public Widget {
     protected:
+        constexpr static std::string_view ClassName = "Screen";
+
         std::weak_ptr<Window> mWindowPtr{};
 
     public:

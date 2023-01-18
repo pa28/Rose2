@@ -48,6 +48,8 @@ namespace rose {
         };
 
     protected:
+        constexpr static std::string_view ClassName = "TextGadget";
+
         bool mTextRenderRequired{true};      ///< True when re-rendering of text is required
         std::string mText{};                 ///< The string to render.
         Color mTextFgColor{};                ///< The foreground color to use.

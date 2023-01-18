@@ -75,6 +75,8 @@ namespace rose {
         friend class GadgetBuilder;
         friend class Window;
 
+        constexpr static std::string_view ClassName = "Gadget";
+
         bool mNeedsLayout{true};            ///< True if application or a contained Gadget needs layout.
         bool mNeedsDrawing{true};           ///< True if application or a contained Gadget needs drawing.
 
