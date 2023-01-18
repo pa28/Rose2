@@ -6,6 +6,7 @@
 #include <array>
 #include <Rose.h>
 #include <RowColumn.h>
+#include <Border.h>
 #include <TextGadget.h>
 #include <Application.h>
 #include <Color.h>
@@ -77,32 +78,32 @@ int main(int argc, char **argv) {
 //                    .background(theme.colorShades[ThemeColor::Ok])
                     .layout(Point(0, 0), Size(800, 640));
 
-            if (SingletBuilder singlet{}; singlet) {
-//                singlet.border(2);
+            if (BorderBuilder border{}; border) {
+//                border.background(theme.colorShades[ThemeColor::Alert]);
                 if (TextGadgetBuilder hello{}; hello) {
                     hello.text("Hello")
                             .pointSize(20)
                             .foreground(theme.colorShades[ThemeColor::Text])
                             .background(theme.colorShades[ThemeColor::Base])
                             .name("Hello")
-                            >> singlet;
+                            >> border;
                     std::cout << "Hello\n";
                 }
-                singlet >> container;
+                border >> container;
             }
 
-            if (SingletBuilder singlet{}; singlet) {
-//                singlet.border(2);
+            if (BorderBuilder border{}; border) {
+//                border.background(theme.colorShades[ThemeColor::Base]);
                 if (TextGadgetBuilder world{}; world) {
                     world.text("World")
                             .pointSize(20)
                             .foreground(theme.colorShades[ThemeColor::Text])
                             .background(theme.colorShades[ThemeColor::Base])
                             .name("World")
-                            >> singlet;
+                            >> border;
                     std::cout << "World\n";
                 }
-                singlet >> container;
+                border >> container;
             }
 
             container >> application;
