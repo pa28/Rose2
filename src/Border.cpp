@@ -109,3 +109,11 @@ bool rose::Border::mouseButtonEvent(const SDL_MouseButtonEvent &e) {
     }
     return Gadget::mouseButtonEvent(e);
 }
+
+bool rose::Border::enterLeaveEvent(bool enter, Uint32 ) {
+    if (!enter && mActive) {
+        mActive = false;
+        setNeedsDrawing();
+    }
+    return true;
+}
