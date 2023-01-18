@@ -86,6 +86,11 @@ namespace rose {
             throw ContextException(fmt::format("{}: {}", __FUNCTION__, SDL_GetError()));
     }
 
+    void Context::drawLine(const Point &p0, const Point &p1, const Color &color) {
+        DrawColorGuard drawColorGuard{*this, color};
+        drawLine(p0, p1);
+    }
+
 
     void Context::fillRect(const Rectangle &rect, const Color &color) {
         DrawColorGuard drawColorGuard{*this, color};

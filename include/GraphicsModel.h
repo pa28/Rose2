@@ -332,11 +332,22 @@ namespace rose {
 
         /**
          * @brief Render a line.
+         * @details The line is drawn in the current draw color.
+         * @throws ContextException on SDL library error.
          * @param p0 Start of the line.
-         * @param p1 End of the line
-         * @return The status return from the SDL API.
+         * @param p1 End of the line.
          */
-        [[maybe_unused]] [[maybe_unused]] void drawLine(const Point &p0, const Point &p1) const;
+        [[maybe_unused]] void drawLine(const Point &p0, const Point &p1) const;
+
+        /**
+         * @brief Draw a line in the specified color.
+         * @details The color is set with a ColorGuard which returns the previous color when done.
+         * @throws ContextException on SDL library error.
+         * @param p0 Start of the line.
+         * @param p1 End of the line.
+         * @param color The color to draw the line.
+         */
+        [[maybe_unused]] void drawLine(const Point &p0, const Point &p1, const Color& color);
     };
 
     /**
