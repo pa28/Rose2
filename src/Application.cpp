@@ -77,10 +77,6 @@ namespace rose {
         return appPath.filename().string();
     }
 
-    std::shared_ptr<Application> Application::createApplication(int argc, char **argv) {
-        return std::make_shared<Application>(argc, argv);
-    }
-
     std::shared_ptr<Gadget> Application::mousePointerToGadget(const Point &point) {
         if (!mMouseWindow.expired())
             return mMouseWindow.lock()->findGadget([&point](std::shared_ptr<Gadget> &gadget) -> bool {

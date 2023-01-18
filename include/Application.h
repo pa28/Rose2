@@ -97,8 +97,6 @@ namespace rose {
 
         Application(int argc, char **argv);
 
-        static std::shared_ptr<Application> createApplication(int argc, char **argv);
-
         Application& operator=(const Rectangle &rectangle) {
             mWidowSizePos = rectangle;
             return *this;
@@ -118,13 +116,6 @@ namespace rose {
         }
 
         bool initializeGraphics();
-
-        const Theme& getTheme() const { return mTheme; }
-
-        void setBackgroundColor(const Color& background) {
-            for (auto &window : mWindows)
-                window->setBackgroundColor(background);
-        }
 
         auto begin() { return mWindows.begin(); }
 
