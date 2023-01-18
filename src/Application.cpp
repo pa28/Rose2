@@ -89,20 +89,24 @@ namespace rose {
     }
 
     std::shared_ptr<Gadget> Application::validateMouseGadget(const Point &point, Uint32 timestamp) {
-        std::shared_ptr<Gadget> gadget{};
         if (mMouseGadget.expired()) {
-            if (gadget = mousePointerToGadget(point); gadget) {
+            if (auto gadget = mousePointerToGadget(point); gadget) {
                 mMouseGadget = gadget;
                 gadget->enterLeaveEvent(true, timestamp);
+                return gadget;
             }
-        } else if (gadget = mMouseGadget.lock(); gadget) {
-            if (!gadget->containsPoint(point)) {
-                gadget->enterLeaveEvent(false, timestamp);
-                gadget = mousePointerToGadget(point);
-                gadget->enterLeaveEvent(true, timestamp);
+        } else if (auto oldGadget = mMouseGadget.lock(); oldGadget) {
+            if (auto currentGadget = mousePointerToGadget(point); currentGadget) {
+                if (oldGadget != currentGadget) {
+                    oldGadget->enterLeaveEvent(false, timestamp);
+                    mMouseGadget = currentGadget;
+                    currentGadget->enterLeaveEvent(true, timestamp);
+                    return currentGadget;
+                }
+                return oldGadget;
             }
         }
-        return gadget;
+        return nullptr;
     }
 
     bool Application::handleMouseMotionEvent(const SDL_MouseMotionEvent &e) {
