@@ -107,8 +107,16 @@ namespace rose {
 
     bool Application::handleMouseMotionEvent(const SDL_MouseMotionEvent &e) {
         if ((e.state & (SDL_BUTTON_LMASK | SDL_BUTTON_RMASK | SDL_BUTTON_MMASK)) == 0) {
-            if (auto gadget = validateMouseGadget(Point{e.x, e.y}, e.timestamp))
+            // Process enter and leave events.
+            if (auto gadget = validateMouseGadget(Point{e.x, e.y}, e.timestamp)) {
                 return true;
+            }
+        } else {
+            // Process drag events which may generate enter and leave events when drag is not supported.
+            if (auto gadget = validateMouseGadget(Point{e.x, e.y}, e.timestamp)) {
+                // ToDo: Implement drag event.
+                return true;
+            }
         }
         return false;
     }
