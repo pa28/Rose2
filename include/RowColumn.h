@@ -72,6 +72,9 @@ namespace rose {
      * @class RowColumn
      */
     class RowColumn : public Widget {
+    protected:
+        constexpr static std::string_view ClassName = "RowColumn";
+
     public:
         RowColumn() : Widget() { mLayoutManager = std::make_unique<LinearLayout>(); }
         RowColumn(const RowColumn&) = delete;
@@ -84,6 +87,8 @@ namespace rose {
         }
 
         ~RowColumn() override = default;
+
+        const std::string_view& className() const override { return RowColumn::ClassName; }
     };
 
     /**
@@ -109,6 +114,9 @@ namespace rose {
      * @class Row
      */
     class Row : public RowColumn {
+    protected:
+        constexpr static std::string_view ClassName = "Row";
+
     public:
         Row() : RowColumn() { mLayoutManager = std::make_unique<LinearLayout>(); }
         Row(const Row&) = delete;
@@ -117,6 +125,8 @@ namespace rose {
         Row& operator=(Row&&) = default;
 
         ~Row() override = default;
+
+        const std::string_view& className() const override { return Row::ClassName; }
     };
 
     /**
@@ -135,6 +145,9 @@ namespace rose {
      * @class Column
      */
     class Column : public RowColumn {
+    protected:
+        constexpr static std::string_view ClassName = "Column";
+
     public:
         Column() : RowColumn() { mLayoutManager = std::make_unique<LinearLayout>(LinearLayout::MajorAxis::VERTICAL); }
         Column(const Column&) = delete;
@@ -143,6 +156,8 @@ namespace rose {
         Column& operator=(Column&&) = default;
 
         ~Column() override = default;
+
+        const std::string_view& className() const override { return Column::ClassName; }
     };
 
     /**

@@ -56,6 +56,8 @@ namespace rose {
             mLayoutManager = std::move(layout);
         }
 
+        const std::string_view& className() const override { return Widget::ClassName; }
+
         /**
          * @brief Add a Gadget to the management list of this Widget.
          * @details This will include setting this Widget as the manager of the Gadget, which will remove the

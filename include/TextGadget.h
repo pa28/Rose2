@@ -68,6 +68,8 @@ namespace rose {
         TextGadget& operator = (TextGadget&&) = default;
         ~TextGadget() override = default;
 
+        const std::string_view& className() const override { return TextGadget::ClassName; }
+
         bool initialLayout(Context &context) override;
 
         void draw(Context &context, Point drawLocation) override;

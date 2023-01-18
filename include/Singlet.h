@@ -30,7 +30,7 @@ namespace rose {
         friend class Window;
 
     protected:
-        [[maybe_unused]] constexpr static std::string_view ClassName = "Singlet";
+        constexpr static std::string_view ClassName = "Singlet";
 
         std::shared_ptr<Gadget> mGadget{};      ///< The single managed Gadget.
 
@@ -42,6 +42,8 @@ namespace rose {
         Singlet(Singlet&&) = default;
         Singlet& operator = (const Singlet&) = delete;
         Singlet& operator = (Singlet&&) = default;
+
+        const std::string_view& className() const override { return Singlet::ClassName; }
 
         bool initialLayout(Context &context) override;
 

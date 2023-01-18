@@ -34,6 +34,7 @@ namespace rose {
     class Border : public Singlet {
     protected:
         [[maybe_unused]] constexpr static std::string_view ClassName = "Border";
+
         Corners mCorners{Corners::UNSET};
         Visual mVisual{Visual::UNSET};
         bool mActive{false};
@@ -46,6 +47,8 @@ namespace rose {
         Border& operator=(Border&&) = default;
 
         ~Border() override = default;
+
+        const std::string_view& className() const override { return Border::ClassName; }
 
         bool initialLayout(Context &context) override;
 
