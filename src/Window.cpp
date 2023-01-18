@@ -179,10 +179,6 @@ namespace rose {
         }
     }
 
-    Theme &Window::getTheme() const {
-        return mApplicationPtr.lock()->getTheme();
-    }
-
     std::weak_ptr<Application> Window::getApplication() {
         return mApplicationPtr.lock()->getApplicationPtr();
     }
@@ -196,10 +192,6 @@ namespace rose {
 
     void Screen::changeSize(const Size &size) {
         mVisualMetrics.desiredSize = size;
-    }
-
-    Theme &Screen::getTheme() const {
-        return mWindowPtr.lock()->getTheme();
     }
 
     std::weak_ptr<Application> Screen::getApplication() {

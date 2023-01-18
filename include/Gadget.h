@@ -337,8 +337,6 @@ namespace rose {
 
         explicit operator bool() { return true; }
 
-        void reset() { gadget.reset(); }
-
         /**
          * @brief Manage the built Gadget by the specified Widget.
          * @param widget the manager.
