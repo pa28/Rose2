@@ -95,3 +95,17 @@ void rose::Border::draw(rose::Context &context, rose::Point drawLocation) {
     }
     Singlet::draw(context, drawLocation);
 }
+
+bool rose::Border::mouseButtonEvent(const SDL_MouseButtonEvent &e) {
+    if (e.button == SDL_BUTTON_LMASK) {
+        if (e.state == SDL_PRESSED && !mActive) {
+            mActive = true;
+            setNeedsDrawing();
+        } else if (e.state == SDL_RELEASED && mActive) {
+            mActive = false;
+            setNeedsDrawing();
+        }
+        return true;
+    }
+    return Gadget::mouseButtonEvent(e);
+}

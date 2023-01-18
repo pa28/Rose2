@@ -52,6 +52,8 @@ namespace rose {
         bool immediateGadgetLayout() override;
 
         void draw(Context &context, Point drawLocation) override;
+
+        bool mouseButtonEvent(const SDL_MouseButtonEvent &e) override;
     };
 
     /**
