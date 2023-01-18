@@ -116,6 +116,13 @@ namespace rose {
         }
     }
 
+    Theme &Gadget::getTheme() {
+        if (mApplicationPtr.expired()) {
+            getApplicationPtr();
+        }
+        return mApplicationPtr.lock()->getTheme();
+    }
+
     void Builder::operator>>(Widget &widget) {
         widget.manage(*this);
     }
