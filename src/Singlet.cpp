@@ -50,16 +50,13 @@ namespace rose {
     void Singlet::draw(Context &context, Point drawLocation) {
         Gadget::draw(context, drawLocation);
         if (mGadget) {
-//            debugLayout(__FUNCTION__ );
             mGadget->draw(context, drawLocation + mVisualMetrics.renderRect.point);
         }
     }
 
     bool Singlet::immediateGadgetLayout() {
-//        debugLayout(__PRETTY_FUNCTION__ );
         mGadget->immediateGadgetLayout();
         Gadget::immediateGadgetLayout();
-//        debugLayout(__PRETTY_FUNCTION__ );
         return false;
     }
 
