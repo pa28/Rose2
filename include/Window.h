@@ -109,7 +109,7 @@ namespace rose {
 
         Context& context() { return mContext; }
 
-        SdlWindow& sdlWindow() { return mSdlWindow; }
+        [[maybe_unused]] SdlWindow& sdlWindow() { return mSdlWindow; }
 
         Theme& getTheme();
 
@@ -121,7 +121,7 @@ namespace rose {
 
         auto weakPtr() { return std::weak_ptr<Window>(shared_from_this()); }
 
-        void setResizeable(bool resizeable) {
+        [[maybe_unused]] void setResizeable(bool resizeable) {
             SDL_SetWindowResizable(mSdlWindow.get(), resizeable ? SDL_TRUE : SDL_FALSE);
         }
 
