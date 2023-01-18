@@ -75,6 +75,8 @@ namespace rose {
         void changeSize(const Size& size);
 
         Theme& getTheme() const;
+
+        std::weak_ptr<Application> getApplication();
     };
 
     /**
@@ -112,6 +114,8 @@ namespace rose {
         SdlWindow& sdlWindow() { return mSdlWindow; }
 
         Theme& getTheme();
+
+        std::weak_ptr<Application> getApplication();
 
         std::shared_ptr<Gadget> findGadget(const std::function< bool(std::shared_ptr<Gadget>&) >& lambda);
 

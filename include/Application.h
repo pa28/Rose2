@@ -147,6 +147,10 @@ namespace rose {
         [[nodiscard]] std::string applicationName() const;
 
         Theme& getTheme() { return mTheme; }
+
+        std::weak_ptr<Application> getApplicationPtr() {
+            return shared_from_this();
+        }
     };
 
 } // rose

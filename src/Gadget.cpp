@@ -14,6 +14,7 @@
 #include "Widget.h"
 #include "Singlet.h"
 #include <Window.h>
+#include <Application.h>
 
 namespace rose {
     void Gadget::managedBy(const std::shared_ptr<Gadget> &gadget) {
@@ -106,8 +107,10 @@ namespace rose {
         return {};
     }
 
-    Theme &Gadget::getTheme() {
-        return getScreen()->getTheme();
+    void Gadget::getApplicationPtr() {
+        if (mApplicationPtr.expired()) {
+            mApplicationPtr = getScreen()->getApplication();
+        }
     }
 
     void Builder::operator>>(Widget &widget) {

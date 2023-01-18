@@ -57,6 +57,8 @@ namespace rose {
 
     class Screen;
 
+    class Application;
+
     /**
      * @brief A DecoratorFunction can be attached to a Gadget to be called when Gadget::Draw is called.
      */
@@ -276,6 +278,8 @@ namespace rose {
          * @return A Theme&
          */
         Theme& getTheme();
+
+        void getApplicationPtr();
 
         /**
          * @brief Receive Enter/Leave events.

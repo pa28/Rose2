@@ -183,6 +183,10 @@ namespace rose {
         return mApplicationPtr.lock()->getTheme();
     }
 
+    std::weak_ptr<Application> Window::getApplication() {
+        return mApplicationPtr.lock()->getApplicationPtr();
+    }
+
     Screen::Screen(const std::shared_ptr<Window> &windowPtr, const Size &size) {
         mWindowPtr = windowPtr;
         mName = "Top";
@@ -196,5 +200,9 @@ namespace rose {
 
     Theme &Screen::getTheme() const {
         return mWindowPtr.lock()->getTheme();
+    }
+
+    std::weak_ptr<Application> Screen::getApplication() {
+        return mWindowPtr.lock()->getApplication();
     }
 } // rose
