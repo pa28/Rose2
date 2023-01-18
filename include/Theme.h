@@ -69,7 +69,7 @@ namespace rose {
         ThemeColorArray<HSVA> hsvaShades{};                 ///< HSV shades, used to manipulate colors.
         ThemeColorArray<Color> colorShades{};               ///< RGV shades, used to generate SDL_Colors for drawing.
 
-        ScreenCoordType borderSize{6};                      ///< The default border size for the Theme.
+        ScreenCoordType borderSize{2};                      ///< The default border size for the Theme.
 
         Corners corners{Corners::SQUARE};                   ///< The type of corners used.
         Visual visual{Visual::SHADOW};                      ///< The type of visual used.
