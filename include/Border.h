@@ -11,7 +11,7 @@
  * @author Richard Buckley <richard.buckley@ieee.org>
  * @version 1.0
  * @date 09/01/23
- * @brief 
+ * @brief A Boarder places a frame around a single Gadget.
  * @details
  */
 
@@ -24,7 +24,20 @@
 #include <Singlet.h>
 
 namespace rose {
+
+    /**
+     * @class Border
+     * @details Border uses existing fields for special purposes:
+     *      - gadgetPadding: to manage the border size, and assumes that all elements of gadgetPadding are the same value.
+     *      - background: to draw a flat border.
+     */
     class Border : public Singlet {
+    protected:
+        [[maybe_unused]] constexpr static std::string_view ClassName = "Border";
+        Corners mCorners{Corners::UNSET};
+        Visual mVisual{Visual::UNSET};
+        bool mActive{false};
+
     public:
         Border() = default;
         Border(const Border&) = delete;
@@ -33,40 +46,24 @@ namespace rose {
         Border& operator=(Border&&) = default;
 
         ~Border() override = default;
+
+        bool initialLayout(Context &context) override;
+
+        bool forceInitialGadgetLayout() override;
+
+        void draw(Context &context, Point drawLocation) override;
     };
 
-#if 0
     /**
-     * @class Border
+     * @class SingletBuilder.
      */
-    class Border : public Texture {
-    protected:
-        bool mRendered{false};
-        Corners mCorners{Corners::SQUARE};
-        Color mBackground{color::OpaqueBlack};
-        Visual mVisual{Visual::FLAT};
-
+    class BorderBuilder : public SingletBuilder {
     public:
-        Border() = default;
-        Border(const Border &) = delete;
-        Border(Border &&) = default;
-        Border& operator = (const Border&) = delete;
-        Border& operator = (Border &&) = default;
+        explicit BorderBuilder(std::shared_ptr<Gadget> g) : SingletBuilder(std::move(g)) {}
 
-        /**
-         * @brief Create a Border
-         * @details Builds a Texture compatible with building up textures within Rose . The pixel format is
-         * SDL_PIXELFORMAT_RGBA8888, the texture access is SDL_TEXTUREACCESS_TARGET.
-         * @param context The renderer to use.
-         * @param size The size of the texture.
-         */
-        [[maybe_unused]] Border(Context &context, const Size& size, const Theme& theme) : Texture(context, size) {
-            createThemedBorder(context, theme);
-        }
+        BorderBuilder() : SingletBuilder(std::make_shared<Border>()) {}
 
-        void createThemedBorder(Context &context, const Theme& theme);
-
-        void layout(rose::Context &context, Gadget &gadget);
+        ~BorderBuilder() override = default;
 
         auto border(ScreenCoordType borderSize) {
             gadget->getVisualMetrics().gadgetPadding = borderSize;
@@ -74,12 +71,7 @@ namespace rose {
         }
     };
 
-        void draw(rose::Context &context, const rose::Point &drawLocation, Gadget &gadget);
-
-        ~Border() = default;
-    };
-#endif
-}
+} // rose
 
 
 #endif //ROSE2_BORDER_H
