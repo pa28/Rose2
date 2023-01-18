@@ -167,11 +167,11 @@ namespace rose {
         }
 
         /**
-         * @brief Force initial gadget layout avoiding virtual method.
-         * @details This may be required for Widgets to call after they have configured their Gadgets.
+         * @brief Immediate Gadget layout calculation.
+         * @details Compute the layout of the Gadget locally using only what is know to the Gadget.
          * @return
          */
-        virtual bool forceInitialGadgetLayout();
+        virtual bool immediateGadgetLayout();
 
         /**
          * @brief Set internal alignment padding.
@@ -189,7 +189,7 @@ namespace rose {
          * @param context Graphics context
          * @return true if successful.
          */
-        virtual bool initialLayout(Context &) { return forceInitialGadgetLayout(); }
+        virtual bool initialLayout(Context &) { return immediateGadgetLayout(); }
 
         /**
          * @brief Adjust size, if necessary to fit into the constrained size. Finalize layout and visuals.

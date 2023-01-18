@@ -55,11 +55,11 @@ namespace rose {
         [[maybe_unused]] void setInternalAlignmentPadding(const Padding& padding) override;
 
         /**
-         * @brief Force initial gadget layout avoiding virtual method.
-         * @details This may be required for Widgets to call after they have configured their Gadgets.
+         * @brief Immediate Gadget layout calculation.
+         * @details Compute the layout of the Gadget locally using only what is know to the Gadget.
          * @return
          */
-        bool forceInitialGadgetLayout() override;
+        bool immediateGadgetLayout() override;
 
         /**
          * @brief Add a Gadget to the management list of this Singlet.

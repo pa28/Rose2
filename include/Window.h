@@ -50,7 +50,7 @@ namespace rose {
          * @param mgrPadding
          */
         bool initialLayout(Context &context) override {
-            forceInitialGadgetLayout();
+            immediateGadgetLayout();
             return Widget::initialLayout(context);
         }
 

@@ -30,9 +30,9 @@ namespace rose {
     void Singlet::setInternalAlignmentPadding(const Padding &padding) {
         if (mGadget) {
             mGadget->setInternalAlignmentPadding(padding);
-            mGadget->forceInitialGadgetLayout();
+            mGadget->immediateGadgetLayout();
             mVisualMetrics.desiredSize = mGadget->getVisualMetrics().clipRectangle.size;
-            Gadget::forceInitialGadgetLayout();
+            Gadget::immediateGadgetLayout();
 //            debugLayout(__PRETTY_FUNCTION__ );
         }
     }
@@ -55,10 +55,10 @@ namespace rose {
         }
     }
 
-    bool Singlet::forceInitialGadgetLayout() {
+    bool Singlet::immediateGadgetLayout() {
 //        debugLayout(__PRETTY_FUNCTION__ );
-        mGadget->forceInitialGadgetLayout();
-        Gadget::forceInitialGadgetLayout();
+        mGadget->immediateGadgetLayout();
+        Gadget::immediateGadgetLayout();
 //        debugLayout(__PRETTY_FUNCTION__ );
         return false;
     }

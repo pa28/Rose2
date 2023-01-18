@@ -36,7 +36,7 @@ namespace rose {
         }
     }
 
-    bool Gadget::forceInitialGadgetLayout() {
+    bool Gadget::immediateGadgetLayout() {
 
         /**
          * The renderRect size is the Gadget desired size + the Gadget padding.

@@ -49,7 +49,7 @@ namespace rose {
 
         bool initialLayout(Context &context) override;
 
-        bool forceInitialGadgetLayout() override;
+        bool immediateGadgetLayout() override;
 
         void draw(Context &context, Point drawLocation) override;
     };

@@ -73,7 +73,7 @@ namespace rose {
                                     }
                                     break;
                             }
-                            gadget->forceInitialGadgetLayout();
+                            gadget->immediateGadgetLayout();
                         }
                         break;
                     case MajorAxis::VERTICAL:
@@ -106,7 +106,7 @@ namespace rose {
                                     }
                                     break;
                             }
-                            gadget->forceInitialGadgetLayout();
+                            gadget->immediateGadgetLayout();
                         }
                         break;
                 }
@@ -121,7 +121,7 @@ namespace rose {
                     widget->getVisualMetrics().desiredSize = Size{mMinorAxisMax, mMajorAxisSize};
                     break;
             }
-            result |= widget->forceInitialGadgetLayout();
+            result |= widget->immediateGadgetLayout();
         } else {
             throw SceneTreeError("rose::LinearLayout can only manage derivatives of rose::Widget");
         }

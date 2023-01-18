@@ -30,8 +30,8 @@ bool rose::Border::initialLayout(rose::Context &context) {
     return Singlet::initialLayout(context);
 }
 
-bool rose::Border::forceInitialGadgetLayout() {
-    return Singlet::forceInitialGadgetLayout();
+bool rose::Border::immediateGadgetLayout() {
+    return Singlet::immediateGadgetLayout();
 }
 
 void rose::Border::draw(rose::Context &context, rose::Point drawLocation) {
