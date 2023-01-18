@@ -195,7 +195,7 @@ namespace rose {
          * @return true if point is 'inside' Gadget.
          */
         [[nodiscard]] bool containsPoint(const Point &point) const {
-            auto r = (mVisualMetrics.clipRectangle + mVisualMetrics.drawLocation).contains(point);
+            auto r = (mVisualMetrics.clipRectangle + mVisualMetrics.lastDrawLocation).contains(point);
             return r;
         }
 
