@@ -31,11 +31,13 @@ namespace rose {
             for (const auto &screen: mScreens)
                 screen->constrainedGadgetLayout(context(), sdlWindowSize);
         }
+        mNeedsLayout = false;
     }
 
     void Window::draw() {
         if (!mScreens.empty())
             mScreens.front()->draw(context(), Point());
+        mNeedsDrawing = false;
     }
 
     [[maybe_unused]] void Window::setFocusGadget(std::shared_ptr<Gadget> &gadget) {
@@ -183,6 +185,16 @@ namespace rose {
         return mApplicationPtr.lock()->getApplicationPtr();
     }
 
+    void Window::setNeedsLayout() {
+        mNeedsLayout = true;
+        mApplicationPtr.lock()->setNeedsLayout();
+    }
+
+    void Window::setNeedsDrawing() {
+        mNeedsDrawing = true;
+        mApplicationPtr.lock()->setNeedsDrawing();
+    }
+
     Screen::Screen(const std::shared_ptr<Window> &windowPtr, const Size &size) {
         mWindowPtr = windowPtr;
         mName = "Top";
@@ -196,5 +208,9 @@ namespace rose {
 
     std::weak_ptr<Application> Screen::getApplication() {
         return mWindowPtr.lock()->getApplication();
+    }
+
+    std::weak_ptr<Window> Screen::getWindow() {
+        return mWindowPtr;
     }
 } // rose

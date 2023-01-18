@@ -36,7 +36,8 @@ namespace rose {
                 event.onEvent(e);
             }
 
-            applicationDraw();
+            if (mNeedsDrawing)
+                applicationDraw();
 
             fps.next();
         }
@@ -47,6 +48,7 @@ namespace rose {
             window->draw();
             window->context().renderPresent();
         }
+        mNeedsDrawing = false;
     }
 
     bool Application::initializeGraphics() {
@@ -144,10 +146,11 @@ namespace rose {
     }
 
     void Application::winSizeChange(WindowEventType, const SDL_WindowEvent &e) {
-        auto winId = [e](std::shared_ptr<Window> w) { return w->windowID() == e.windowID; };
+        auto winId = [e](const std::shared_ptr<Window>& w) { return w->windowID() == e.windowID; };
         if (auto window = std::ranges::find_if(mWindows,winId); window != mWindows.end()) {
             (*window)->changeSize(Size{e.data1, e.data2});
             (*window)->layout();
+            (*window)->setNeedsDrawing();
         }
     }
 

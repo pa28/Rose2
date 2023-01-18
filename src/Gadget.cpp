@@ -38,6 +38,7 @@ namespace rose {
         } else if (mVisualMetrics.background) {
             context.fillRect(mVisualMetrics.clipRectangle + drawLocation, mVisualMetrics.background);
         }
+        mNeedsDrawing = false;
     }
 
     bool Gadget::immediateGadgetLayout() {
@@ -95,6 +96,24 @@ namespace rose {
             return manager.lock()->mouseButtonEvent(e);
         }
         return false;
+    }
+
+    void Gadget::setNeedsLayout() {
+        mNeedsLayout = true;
+        if (auto screenPtr = std::dynamic_pointer_cast<Screen>(shared_from_this()); screenPtr) {
+            screenPtr->getWindow().lock()->setNeedsLayout();
+        } else if (auto screen = getScreen(); screen) {
+            screen->setNeedsLayout();
+        }
+    }
+
+    void Gadget::setNeedsDrawing() {
+        mNeedsDrawing = true;
+        if (auto screenPtr = std::dynamic_pointer_cast<Screen>(shared_from_this()); screenPtr) {
+            screenPtr->getWindow().lock()->setNeedsDrawing();
+        } else if (auto screen = getScreen(); screen){
+            screen->setNeedsDrawing();
+        }
     }
 
 #pragma clang diagnostic pop

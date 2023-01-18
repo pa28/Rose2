@@ -75,6 +75,9 @@ namespace rose {
         friend class GadgetBuilder;
         friend class Window;
 
+        bool mNeedsLayout{true};            ///< True if application or a contained Gadget needs layout.
+        bool mNeedsDrawing{true};           ///< True if application or a contained Gadget needs drawing.
+
         static std::weak_ptr<Application> mApplicationPtr;
 
         std::vector<DecoratorFunction> mDecorators{};
@@ -161,6 +164,26 @@ namespace rose {
         }
 
         /**
+         * @return The current value of the needs layout flag.
+         */
+        [[maybe_unused]] bool needsLayout() const { return mNeedsLayout; }
+
+        /**
+         * @return The current value of the needs drawing flag.
+         */
+        [[maybe_unused]] bool needsDrawing() const { return mNeedsDrawing; }
+
+        /**
+         * @brief Sets the needs layout flag to true.
+         */
+        void setNeedsLayout();
+
+        /**
+         * @brief Sets the needs drawing flag to true.
+         */
+        void setNeedsDrawing();
+
+        /**
          * @brief Determine if a point is 'inside' a Gadget.
          * @param point The point to test.
          * @return true if point is 'inside' Gadget.
@@ -193,7 +216,7 @@ namespace rose {
          * @param context Graphics context
          * @return true if successful.
          */
-        virtual bool initialLayout(Context &) { return immediateGadgetLayout(); }
+        virtual bool initialLayout(Context &) { mNeedsLayout = false; return immediateGadgetLayout(); }
 
         /**
          * @brief Adjust size, if necessary to fit into the constrained size. Finalize layout and visuals.

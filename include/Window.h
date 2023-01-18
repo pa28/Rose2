@@ -30,7 +30,7 @@ namespace rose {
      * top of all the individual trees managed by a Window.
      */
     class Screen : public Widget {
-    private:
+    protected:
         std::weak_ptr<Window> mWindowPtr{};
 
     public:
@@ -75,12 +75,17 @@ namespace rose {
         void changeSize(const Size& size);
 
         std::weak_ptr<Application> getApplication();
+
+        std::weak_ptr<Window> getWindow();
     };
 
     /**
      * @class Window
      */
     class Window : public std::enable_shared_from_this<Window> {
+        bool mNeedsLayout{true};            ///< True if window or a contained Gadget needs layout.
+        bool mNeedsDrawing{true};           ///< True if window or a contained Gadget needs drawing.
+
         SdlWindow mSdlWindow{};
         Context mContext{};
         std::vector<Rectangle> mDisplayBounds{};
@@ -107,25 +112,83 @@ namespace rose {
 
         ~Window() = default;
 
+        /**
+         * @return The current value of the needs layout flag.
+         */
+        [[maybe_unused]] bool needsLayout() const { return mNeedsLayout; }
+
+        /**
+         * @return The current value of the needs drawing flag.
+         */
+        [[maybe_unused]] bool needsDrawing() const { return mNeedsDrawing; }
+
+        /**
+         * @brief Sets the needs layout flag to true and performs the same operation on the Application.
+         */
+        void setNeedsLayout();
+
+        /**
+         * @brief Sets the needs drawing flag to true and performs the same operation on the Application.
+         */
+        void setNeedsDrawing();
+
+        /**
+         * @brief Accessor for the Window graphics context.
+         * @return a Context.
+         */
         Context& context() { return mContext; }
 
+        /**
+         * @brief Accessor for the underlying SdlWindow.
+         * @return The SdlWindow.
+         */
         [[maybe_unused]] SdlWindow& sdlWindow() { return mSdlWindow; }
 
+        /**
+         * @brief Accessor for the current Application Theme values.
+         * @return Theme.
+         */
         Theme& getTheme();
 
+        /**
+         * @brief Accessor for the Application pointer.
+         * @return std::weak_ptr<Application>
+         */
         std::weak_ptr<Application> getApplication();
 
+        /**
+         * @brief Locate a Gadget that passes the provided unary predicate.
+         * @param lambda a unary predicate.
+         * @return std::shared_ptr<Gadget> which will be empty if no matching Gadget is found.
+         */
         std::shared_ptr<Gadget> findGadget(const std::function< bool(std::shared_ptr<Gadget>&) >& lambda);
 
+        /**
+         * @brief Get the SDL Window ID of the associated SdlWindow.
+         * @return The window ID.
+         */
         auto windowID() { return SDL_GetWindowID(mSdlWindow.get()); }
 
+        /**
+         * @brief Provide a weak pointer to this.
+         * @return std::weak_ptr<Window>
+         */
         auto weakPtr() { return std::weak_ptr<Window>(shared_from_this()); }
 
+        /**
+         * @brief Indicate to the window management system that this window is resizable, or not
+         * @param resizeable True if the window should be resizeable.
+         */
         [[maybe_unused]] void setResizeable(bool resizeable) {
             SDL_SetWindowResizable(mSdlWindow.get(), resizeable ? SDL_TRUE : SDL_FALSE);
         }
 
-        void setBackgroundColor(const Color &background) {
+        /**
+         * @brief Set the background color for all active screens.
+         * @param background the background color.
+         */
+        [[maybe_unused]] void setBackgroundColor(const Color &background) {
+            mNeedsDrawing = true;
             for (auto &screen : mScreens) {
                 screen->setBackground(background);
             }

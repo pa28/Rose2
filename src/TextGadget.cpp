@@ -59,6 +59,8 @@ namespace rose {
     }
 
     void TextGadget::textUpdated() {
+        setNeedsDrawing();
+        setNeedsLayout();
         mTextRenderRequired = true;
         mTexture.reset();
     }

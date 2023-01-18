@@ -27,6 +27,9 @@ namespace rose {
      */
     class Application : public std::enable_shared_from_this<Application> {
     protected:
+        bool mNeedsLayout{true};            ///< True if application or a contained Gadget needs layout.
+        bool mNeedsDrawing{true};           ///< True if application or a contained Gadget needs drawing.
+
         static constexpr std::string_view UsbDeviceByPath{"/dev/input/by-path/"};
         static constexpr std::string_view KeyboardPathRegEx{".*-kbd"};
 
@@ -113,6 +116,30 @@ namespace rose {
             } else {
                 return std::nullopt;
             }
+        }
+
+        /**
+         * @return The current value of the needs layout flag.
+         */
+        [[maybe_unused]] bool needsLayout() const { return mNeedsLayout; }
+
+        /**
+         * @return The current value of the needs drawing flag.
+         */
+        [[maybe_unused]] bool needsDrawing() const { return mNeedsDrawing; }
+
+        /**
+         * @brief Sets the needs layout flag to true.
+         */
+        void setNeedsLayout() {
+            mNeedsLayout = true;
+        }
+
+        /**
+         * @brief Sets the needs drawing flag to true.
+         */
+        void setNeedsDrawing() {
+            mNeedsDrawing = true;
         }
 
         bool initializeGraphics();
