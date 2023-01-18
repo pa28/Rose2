@@ -73,14 +73,14 @@ int main(int argc, char **argv) {
                                   SDL_WINDOW_RESIZABLE);
 
         if (BorderBuilder containerBorder{}; containerBorder) {
+            containerBorder.name("containerBorder");
             if (auto container = ColumnBuilder{}; container) {
                 container.setLayoutAlignment(LinearLayout::Alignment::BOTTOM_RIGHT)
                         .name("container")
-//                    .background(theme.colorShades[ThemeColor::Ok])
                         .layout(Point(0, 0), Size(800, 640));
 
                 if (BorderBuilder border{}; border) {
-//                border.background(theme.colorShades[ThemeColor::Alert]);
+                    border.name("helloBorder");
                     if (TextGadgetBuilder hello{}; hello) {
                         hello.text("Hello")
                                 .pointSize(20)
@@ -88,19 +88,19 @@ int main(int argc, char **argv) {
                                 .background(theme.colorShades[ThemeColor::Base])
                                 .name("Hello")
                                 >> border;
-                        std::cout << "Hello\n";
+                        std::cout << "hello\n";
                     }
                     border >> container;
                 }
 
                 if (BorderBuilder border{}; border) {
-//                border.background(theme.colorShades[ThemeColor::Base]);
+                    border.name("worldBorder");
                     if (TextGadgetBuilder world{}; world) {
                         world.text("World")
                                 .pointSize(20)
                                 .foreground(theme.colorShades[ThemeColor::Text])
                                 .background(theme.colorShades[ThemeColor::Base])
-                                .name("World")
+                                .name("world")
                                 >> border;
                         std::cout << "World\n";
                     }
