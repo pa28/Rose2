@@ -64,7 +64,7 @@ namespace rose {
     /**
      * @struct Theme
      */
-    struct Theme {
+    struct Theme : public std::enable_shared_from_this<Theme> {
 
         ThemeColorArray<HSVA> hsvaShades{};                 ///< HSV shades, used to manipulate colors.
         ThemeColorArray<Color> colorShades{};               ///< RGV shades, used to generate SDL_Colors for drawing.

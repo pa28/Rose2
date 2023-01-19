@@ -12,6 +12,7 @@
 
 namespace rose {
     Application::Application(int argc, char **argv) : mInputParser(argc, argv) {
+        mTheme = std::make_shared<Theme>();
         // Determine if a keyboard is attached.
         std::regex kbPathRegEx{std::string{KeyboardPathRegEx}.c_str()};
         for(auto& p: std::filesystem::directory_iterator(UsbDeviceByPath)) {

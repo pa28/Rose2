@@ -63,11 +63,11 @@ int main(int argc, char **argv) {
 
     if (auto application = std::make_shared<Application>(argc, argv); application) {
         application->initializeGraphics();
-        Theme &theme{application->getTheme()};
-        theme.setThemeShade(HSVA(200.f, .5f, 0.5f, 1.f));
-        theme.setThemeColors( color::DarkRed, color::DarkGreen, color::DarkYellow);
-        theme.setThemeTextColors( color::DarkRed, color::DarkGreen, color::DarkYellow);
-        theme.updateThemeColors();
+        auto theme = application->getTheme();
+        theme->setThemeShade(HSVA(200.f, .5f, 0.5f, 1.f));
+        theme->setThemeColors( color::DarkRed, color::DarkGreen, color::DarkYellow);
+        theme->setThemeTextColors( color::DarkRed, color::DarkGreen, color::DarkYellow);
+        theme->updateThemeColors();
 
         application->createWindow(application->applicationName(), Size(800, 480), Point::CenterScreen(1),
                                   SDL_WINDOW_RESIZABLE);
@@ -84,8 +84,8 @@ int main(int argc, char **argv) {
                     if (TextGadgetBuilder hello{}; hello) {
                         hello.text("Hello")
                                 .pointSize(20)
-                                .foreground(theme.colorShades[ThemeColor::Text])
-                                .background(theme.colorShades[ThemeColor::Base])
+                                .foreground(theme->colorShades[ThemeColor::Text])
+                                .background(theme->colorShades[ThemeColor::Base])
                                 .name("Hello")
                                 >> border;
                         std::cout << "hello\n";
@@ -98,8 +98,8 @@ int main(int argc, char **argv) {
                     if (TextGadgetBuilder world{}; world) {
                         world.text("World")
                                 .pointSize(20)
-                                .foreground(theme.colorShades[ThemeColor::Text])
-                                .background(theme.colorShades[ThemeColor::Base])
+                                .foreground(theme->colorShades[ThemeColor::Text])
+                                .background(theme->colorShades[ThemeColor::Base])
                                 .name("world")
                                 >> border;
                         std::cout << "World\n";

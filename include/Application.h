@@ -112,7 +112,7 @@ namespace rose {
          */
         void winSizeChange(WindowEventType type, const SDL_WindowEvent &e);
 
-        Theme mTheme{};
+        std::shared_ptr<Theme> mTheme{};
 
     public:
 
@@ -209,7 +209,7 @@ namespace rose {
 
         [[nodiscard]] std::string applicationName() const;
 
-        Theme& getTheme() { return mTheme; }
+        std::shared_ptr<Theme> getTheme() { return mTheme; }
 
         std::weak_ptr<Application> getApplicationPtr() {
             return shared_from_this();

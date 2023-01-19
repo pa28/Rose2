@@ -135,7 +135,7 @@ namespace rose {
         }
     }
 
-    Theme &Gadget::getTheme() {
+    std::shared_ptr<Theme> Gadget::getTheme() {
         if (mApplicationPtr.expired()) {
             getApplicationPtr();
         }
@@ -184,6 +184,6 @@ namespace rose {
         auto visualMetrics = gadget.getVisualMetrics();
         auto theme = gadget.getTheme();
         context.fillRect(visualMetrics.renderRect + visualMetrics.drawLocation,
-                         theme.colorShades[ThemeColor::Base]);
+                         theme->colorShades[ThemeColor::Base]);
     }
 } // rose

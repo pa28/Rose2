@@ -19,13 +19,13 @@
 
 bool rose::Border::initialLayout(rose::Context &context) {
     if (mVisual == Visual::UNSET)
-        mVisual = getTheme().visual;
+        mVisual = getTheme()->visual;
     if (mCorners == Corners::UNSET)
-        mCorners = getTheme().corners;
+        mCorners = getTheme()->corners;
     if (!mVisualMetrics.gadgetPadding)
-        mVisualMetrics.gadgetPadding = getTheme().borderSize;
+        mVisualMetrics.gadgetPadding = getTheme()->borderSize;
     if (!mVisualMetrics.background && mVisual == Visual::FLAT)
-        mVisualMetrics.background = getTheme().colorShades[ThemeColor::Bottom];
+        mVisualMetrics.background = getTheme()->colorShades[ThemeColor::Bottom];
 
     return Singlet::initialLayout(context);
 }
@@ -37,10 +37,10 @@ bool rose::Border::immediateGadgetLayout() {
 void rose::Border::draw(rose::Context &context, rose::Point drawLocation) {
     auto borderRect = mVisualMetrics.clipRectangle + drawLocation;
     auto borderSize = mVisualMetrics.gadgetPadding.topLeft.x;
-    auto top = getTheme().colorShades[ThemeColor::Top];
-    auto left = getTheme().colorShades[ThemeColor::Left];
-    auto right = getTheme().colorShades[ThemeColor::Right];
-    auto bottom = getTheme().colorShades[ThemeColor::Bottom];
+    auto top = getTheme()->colorShades[ThemeColor::Top];
+    auto left = getTheme()->colorShades[ThemeColor::Left];
+    auto right = getTheme()->colorShades[ThemeColor::Right];
+    auto bottom = getTheme()->colorShades[ThemeColor::Bottom];
 
     switch (mVisual) {
         case Visual::FLAT:

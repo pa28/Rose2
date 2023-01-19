@@ -150,7 +150,7 @@ namespace rose {
          * @brief Accessor for the current Application Theme values.
          * @return Theme.
          */
-        Theme& getTheme();
+        std::shared_ptr<Theme> getTheme();
 
         /**
          * @brief Accessor for the Application pointer.

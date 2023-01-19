@@ -56,7 +56,7 @@ namespace rose {
         RenderStyle mRenderStyle{Blended};   ///< The style of rendering Solid, Shaded, or Blended.
         std::string mFontName{};             ///< The name of the True Type Font to use.
         std::shared_ptr<_TTF_Font> mFont{};  ///< The cached font used.
-        int mPointSize{10};                  ///< The point (pixel) size of the font.
+        int mPointSize{};                    ///< The point (pixel) size of the font.
         Texture mTexture{};                  ///< The generated Texture.
         Size mTextSize{};                    ///< The size of the Texture in pixels.
 

@@ -172,7 +172,7 @@ namespace rose {
         }
     }
 
-    Theme &Window::getTheme() {
+    std::shared_ptr<Theme> Window::getTheme() {
         return mApplicationPtr.lock()->getTheme();
     }
 
@@ -200,7 +200,7 @@ namespace rose {
         mWindowPtr = windowPtr;
         mName = "Top";
         mVisualMetrics.desiredSize = size;
-        mVisualMetrics.background = windowPtr->getTheme().colorShades[ThemeColor::Base];
+        mVisualMetrics.background = windowPtr->getTheme()->colorShades[ThemeColor::Base];
     }
 
     void Screen::changeSize(const Size &size) {
