@@ -43,6 +43,7 @@ namespace rose {
 
     public:
         Widget() = default;
+        explicit Widget(std::shared_ptr<Theme>& theme) : Gadget(theme) {}
         Widget(const Widget&) = delete;
         Widget(Widget&&) = default;
         Widget& operator = (const Widget &) = delete;

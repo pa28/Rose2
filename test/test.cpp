@@ -72,36 +72,26 @@ int main(int argc, char **argv) {
         application->createWindow(application->applicationName(), Size(800, 480), Point::CenterScreen(1),
                                   SDL_WINDOW_RESIZABLE);
 
-        if (BorderBuilder containerBorder{}; containerBorder) {
+        if (BorderBuilder containerBorder{theme}; containerBorder) {
             containerBorder.name("containerBorder");
             if (auto container = ColumnBuilder{}; container) {
                 container.setLayoutAlignment(LinearLayout::Alignment::BOTTOM_RIGHT)
                         .name("container")
                         .layout(Point(0, 0), Size(800, 640));
 
-                if (BorderBuilder border{}; border) {
+                if (BorderBuilder border{theme}; border) {
                     border.name("helloBorder");
-                    if (TextGadgetBuilder hello{}; hello) {
-                        hello.text("Hello")
-                                .pointSize(20)
-                                .foreground(theme->colorShades[ThemeColor::Text])
-                                .background(theme->colorShades[ThemeColor::Base])
-                                .name("Hello")
-                                >> border;
+                    if (TextGadgetBuilder hello{theme}; hello) {
+                        hello.text("Hello").name("Hello") >> border;
                         std::cout << "hello\n";
                     }
                     border >> container;
                 }
 
-                if (BorderBuilder border{}; border) {
+                if (BorderBuilder border{theme}; border) {
                     border.name("worldBorder");
-                    if (TextGadgetBuilder world{}; world) {
-                        world.text("World")
-                                .pointSize(20)
-                                .foreground(theme->colorShades[ThemeColor::Text])
-                                .background(theme->colorShades[ThemeColor::Base])
-                                .name("world")
-                                >> border;
+                    if (TextGadgetBuilder world{theme}; world) {
+                        world.text("World").name("world") >> border;
                         std::cout << "World\n";
                     }
                     border >> container;

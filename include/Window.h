@@ -37,7 +37,7 @@ namespace rose {
 
     public:
         Screen() = default;
-
+        Screen(std::shared_ptr<Theme>& theme) : Widget(theme) {}
         Screen(const Screen&) = delete;
         Screen(Screen &&) = default;
         Screen& operator=(const Screen &) = delete;

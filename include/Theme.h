@@ -70,6 +70,8 @@ namespace rose {
         ThemeColorArray<Color> colorShades{};               ///< RGV shades, used to generate SDL_Colors for drawing.
 
         ScreenCoordType borderSize{2};                      ///< The default border size for the Theme.
+        ScreenCoordType textPointSize{20};                  ///< The default text point size for the Theme.
+        ScreenCoordType iconPointSize{50};                  ///< The default icon point size for the Theme.
 
         Corners corners{Corners::SQUARE};                   ///< The type of corners used for regular frames.
         Visual visual{Visual::NOTCH};                       ///< The type of visual used for regular frames.
@@ -77,7 +79,12 @@ namespace rose {
         Corners buttonCorners{Corners::SQUARE};             ///< The type of corners used for buttons.
         Visual buttonVisual{Visual::SHADOW};                ///< The type of visual used for buttons.
 
-        ScreenCoordType textPadding{5};
+        ScreenCoordType textPadding{5};                     ///< Padding around text
+
+        RenderStyle textRenderStyle{RenderStyle::Blended};
+
+        std::string fontName;                               ///< The name of the Font to use. Empty = library default.
+        std::string iconFontName{"Entypo"};              ///< The name of the Icon Font.
 
         Theme() = default;
         Theme(const Theme&) = default;

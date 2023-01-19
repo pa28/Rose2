@@ -38,6 +38,7 @@ namespace rose {
 
     public:
         Singlet() = default;
+        explicit Singlet(std::shared_ptr<Theme>& theme) : Gadget(theme) {}
         Singlet(const Singlet&) = delete;
         Singlet(Singlet&&) = default;
         Singlet& operator = (const Singlet&) = delete;
@@ -92,7 +93,7 @@ namespace rose {
     public:
         explicit SingletBuilder(std::shared_ptr<Gadget> g) : GadgetBuilder(std::move(g)) {}
 
-        SingletBuilder() : GadgetBuilder(std::make_shared<Singlet>()) {}
+        explicit SingletBuilder(std::shared_ptr<Theme>& theme) : GadgetBuilder(std::make_shared<Singlet>(theme)) {}
 
         ~SingletBuilder() override = default;
     };

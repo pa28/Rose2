@@ -17,19 +17,7 @@
 #include <Theme.h>
 #include <GraphicsModel.h>
 
-std::shared_ptr<rose::Theme> rose::Border::getThemeValues() {
-    if (auto theme = Gadget::getThemeValues(); theme) {
-        mVisual = theme->visual;
-        mCorners = theme->corners;
-        mVisualMetrics.gadgetPadding = theme->borderSize;
-        mVisualMetrics.background = theme->colorShades[ThemeColor::Bottom];
-        return theme;
-    }
-    return nullptr;
-}
-
 bool rose::Border::initialLayout(rose::Context &context) {
-    getThemeValues();
     return Singlet::initialLayout(context);
 }
 
@@ -120,4 +108,10 @@ bool rose::Border::enterLeaveEvent(bool enter, Uint32 ) {
         setNeedsDrawing();
     }
     return true;
+}
+
+rose::Border::Border(std::shared_ptr<rose::Theme> &theme) : Singlet(theme)  {
+    mCorners = theme->corners;
+    mVisual = theme->visual;
+    mVisualMetrics.gadgetPadding = theme->borderSize;
 }

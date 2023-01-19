@@ -12,18 +12,23 @@ namespace rose {
      * The type of corners a supporting Gadget should render.
      */
     enum class Corners {
-        UNSET,              ///< Not set, use Theme value.
         SQUARE,             ///< Square corners, provides a rectangular shape.
         ROUND,              ///< Rounded corners.
     };
 
     enum class Visual {
-        UNSET,              ///< Not set, use Theme value.
         FLAT,               ///< Flat, no 3D simulation. Actions implemented by changing background color.
         SHADOW,             ///< Simulated 3D Shadow box. Actions implemented by flipping Texture horizontally and vertically.
         NOTCH,              ///< Simulated 3D Notch.
         RIDGE,              ///< Simulated 3D Ridge.
     };
+
+    enum class RenderStyle{
+        Blended,        ///< Render text blended on a transparent background.
+        Shaded,         ///< Render text shaded on a solid background.
+        Solid           ///< Render text without blending or shading. Fastest but lowest quality.
+    };
+
 
     enum class Actions {
         ENTER, LEAVE, ACTIVATED, DEACTIVATED,

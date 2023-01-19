@@ -40,28 +40,26 @@ namespace rose {
     class [[maybe_unused]] TextGadget : public Gadget {
         friend class TextGadgetBuilder;
 
-    public:
-        enum RenderStyle{
-            Blended,        ///< Render text blended on a transparent background.
-            Shaded,         ///< Render text shaded on a solid background.
-            Solid           ///< Render text without blending or shading. Fastest but lowest quality.
-        };
-
     protected:
         constexpr static std::string_view ClassName = "TextGadget";
 
         bool mTextRenderRequired{true};      ///< True when re-rendering of text is required
-        std::string mText{};                 ///< The string to render.
-        Color mTextFgColor{};                ///< The foreground color to use.
-        RenderStyle mRenderStyle{Blended};   ///< The style of rendering Solid, Shaded, or Blended.
-        std::string mFontName{};             ///< The name of the True Type Font to use.
-        std::shared_ptr<_TTF_Font> mFont{};  ///< The cached font used.
-        int mPointSize{};                    ///< The point (pixel) size of the font.
         Texture mTexture{};                  ///< The generated Texture.
         Size mTextSize{};                    ///< The size of the Texture in pixels.
+        std::shared_ptr<_TTF_Font> mFont{};  ///< The cached font used.
+        std::string mText{};                 ///< The string to render.
+
+        /**
+         * Theme set values.
+         */
+        Color mTextFgColor{};                ///< The foreground color to use.
+        RenderStyle mRenderStyle{};          ///< The style of rendering Solid, Shaded, or Blended.
+        std::string mFontName{};             ///< The name of the True Type Font to use.
+        ScreenCoordType mPointSize{};        ///< The point (pixel) size of the font.
 
     public:
         TextGadget() = default;
+        explicit TextGadget(std::shared_ptr<Theme>& theme);
         TextGadget(const TextGadget&) = delete;
         TextGadget(TextGadget&&) = default;
         TextGadget& operator = (const TextGadget&) = delete;
@@ -69,8 +67,6 @@ namespace rose {
         ~TextGadget() override = default;
 
         const std::string_view& className() const override { return TextGadget::ClassName; }
-
-        std::shared_ptr<Theme> getThemeValues() override;
 
         bool initialLayout(Context &context) override;
 
@@ -129,7 +125,7 @@ namespace rose {
     public:
 
         TextGadgetBuilder() : GadgetBuilder(std::make_shared<TextGadget>()) {}
-
+        explicit TextGadgetBuilder(std::shared_ptr<Theme>& theme) : GadgetBuilder(std::make_shared<TextGadget>(theme)) {}
         explicit TextGadgetBuilder(std::shared_ptr<Gadget> g) : GadgetBuilder(std::move(g)) {}
 
         template<class S>
@@ -170,6 +166,7 @@ namespace rose {
 
     public:
         IconGadget() = default;
+        explicit IconGadget(std::shared_ptr<Theme>& theme);
         IconGadget(const IconGadget&) = delete;
         IconGadget(IconGadget&&) = default;
         IconGadget& operator = (const IconGadget&) = delete;

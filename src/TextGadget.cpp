@@ -17,6 +17,14 @@
 #include <Window.h>
 
 namespace rose {
+    TextGadget::TextGadget(std::shared_ptr<Theme> &theme) : Gadget(theme) {
+        mTextFgColor = theme->colorShades[ThemeColor::Text];
+        mRenderStyle = theme->textRenderStyle;
+        mFontName = theme->fontName;
+        mPointSize = theme->textPointSize;
+        mVisualMetrics.gadgetPadding = theme->textPadding;
+    }
+
     void TextGadget::createTexture(Context &context) {
         if (mText.empty())
             return;
@@ -33,15 +41,15 @@ namespace rose {
             auto fgColor = mTextFgColor;
 
             switch (mRenderStyle) {
-                case Blended:
+                case RenderStyle::Blended:
                     surface.reset(TTF_RenderUTF8_Blended(mFont.get(), textAndSuffix.c_str(), fgColor.sdlColor()));
                     break;
-                case Shaded:
+                case RenderStyle::Shaded:
                     surface.reset(
                             TTF_RenderUTF8_Shaded(mFont.get(), textAndSuffix.c_str(), fgColor.sdlColor(),
                                                   mVisualMetrics.background.sdlColor()));
                     break;
-                case Solid:
+                case RenderStyle::Solid:
                     surface.reset(TTF_RenderUTF8_Solid(mFont.get(), textAndSuffix.c_str(), fgColor.sdlColor()));
                     break;
             }
@@ -65,20 +73,10 @@ namespace rose {
         mTexture.reset();
     }
 
-    std::shared_ptr<Theme> TextGadget::getThemeValues() {
-        if (auto theme = Gadget::getThemeValues(); theme) {
-            mVisualMetrics.gadgetPadding = theme->textPadding;
-            return theme;
-        }
-        return nullptr;
-    }
-
     bool TextGadget::initialLayout(Context &context) {
-        getThemeValues();
-
         if (!mText.empty()) {
             try {
-                createTexture(context);
+               createTexture(context);
                 mVisualMetrics.desiredSize = mTextSize;
             } catch (TextGadgetException &e) {
                 fmt::print("{}\n", e.what());
@@ -95,6 +93,11 @@ namespace rose {
             Rectangle textRenderRect = mVisualMetrics.renderRect + drawLocation;
             context.renderCopy(mTexture, textRenderRect);
         }
+    }
+
+    IconGadget::IconGadget(std::shared_ptr<Theme> &theme) : TextGadget(theme) {
+        mFontName = theme->iconFontName;
+        mPointSize = theme->iconPointSize;
     }
 
 } // rose

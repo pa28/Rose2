@@ -35,12 +35,13 @@ namespace rose {
     protected:
         [[maybe_unused]] constexpr static std::string_view ClassName = "Border";
 
-        Corners mCorners{Corners::UNSET};
-        Visual mVisual{Visual::UNSET};
+        Corners mCorners{};
+        Visual mVisual{};
         bool mActive{false};
 
     public:
         Border() = default;
+        explicit Border(std::shared_ptr<Theme>& theme);
         Border(const Border&) = delete;
         Border(Border&&) = default;
         Border& operator=(const Border&) = delete;
@@ -51,8 +52,6 @@ namespace rose {
         const std::string_view& className() const override { return Border::ClassName; }
 
         bool initialLayout(Context &context) override;
-
-        std::shared_ptr<Theme> getThemeValues() override;
 
         bool immediateGadgetLayout() override;
 
@@ -71,6 +70,8 @@ namespace rose {
         explicit BorderBuilder(std::shared_ptr<Gadget> g) : SingletBuilder(std::move(g)) {}
 
         BorderBuilder() : SingletBuilder(std::make_shared<Border>()) {}
+
+        explicit BorderBuilder(std::shared_ptr<Theme>& theme) : SingletBuilder(std::make_shared<Border>(theme)) {}
 
         ~BorderBuilder() override = default;
 

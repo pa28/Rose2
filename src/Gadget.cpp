@@ -142,13 +142,9 @@ namespace rose {
         return mApplicationPtr.lock()->getTheme();
     }
 
-    [[maybe_unused]] std::shared_ptr<Theme> Gadget::getThemeValues() {
-        auto needsTheme = mNeedsThemeValues;
-        mNeedsThemeValues = false;
-        if (needsTheme) {
-            return getTheme();
-        }
-        return nullptr;
+    std::shared_ptr<Theme> Gadget::getThemeValues() {
+        auto theme = getTheme();
+        return theme;
     }
 
     void Builder::operator>>(Widget &widget) {
