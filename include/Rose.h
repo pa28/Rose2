@@ -15,6 +15,10 @@
 
 namespace rose {
 
+    /**
+     * @brief A concept specifying an object convertible to a std::string_view.
+     * @tparam T
+     */
     template<class T>
     concept StringLike = std::is_convertible_v<T, std::string_view>;
 
@@ -128,25 +132,54 @@ namespace rose {
             return std::strong_ordering::equal;
         }
 
+        /**
+         * @brief Determine the initialization state of the Point.
+         * @return True if the Point has been set with specific values, false if default constructed.
+         */
         constexpr explicit operator bool () const { return set; }
 
+        /**
+         * @brief Create a point that will position a Window centered on the specified display screen.
+         * @param screen The attached display to place the Window on.
+         * @return the Point.
+         */
         constexpr static Point CenterScreen(unsigned int screen = 0) {
             auto pos = static_cast<int>(SDL_WINDOWPOS_CENTERED_DISPLAY(screen));
             return Point{pos, pos };
         }
 
+        /**
+         * @brief Add a Size to this Point.
+         * @param size the Size.
+         * @return A new Point.
+         */
         constexpr Point operator+(const Size& size) const {
             Point p{*this}; p.x += size.w; p.y += size.h; return p;
         }
 
+        /**
+         * @brief Add an offset to the x and y coordinates of this point.
+         * @param border the offset.
+         * @return A new Point.
+         */
         constexpr Point operator+(int border) const {
             Point p{*this}; p.x += border; p.y += border; return p;
         }
 
+        /**
+         * @brief Add a Point to this Point.
+         * @param p the Point.
+         * @return A new Point.
+         */
         constexpr Point operator+(const Point &p) const {
             Point r{*this}; r.x += p.x; r.y += p.y; return r;
         }
 
+        /**
+         * @brief Add a Point to this Point.
+         * @param p the Point to add.
+         * @return This point.
+         */
         Point& operator += (const Point &p) {
             x += p.x;
             y += p.y;

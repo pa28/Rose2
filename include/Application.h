@@ -88,8 +88,18 @@ namespace rose {
          */
         std::shared_ptr<Gadget> validateMouseGadget(const Point &point, Uint32 timestamp);
 
+        /**
+         * @brief Handle window state change events.
+         * @param type the SDL Window event type.
+         * @param e the SDL Window event structure.
+         */
         void winStateChangeEvent(WindowEventType type, const SDL_WindowEvent &e);
 
+        /**
+         * @brief Handle window size change events.
+         * @param type The SDL Window event type.
+         * @param e the SDL Window event structure.
+         */
         void winSizeChange(WindowEventType type, const SDL_WindowEvent &e);
 
         Theme mTheme{};
@@ -142,15 +152,34 @@ namespace rose {
             mNeedsDrawing = true;
         }
 
+        /**
+         * Initialize the SDL graphics library.
+         * @return true on success.
+         */
         bool initializeGraphics();
 
+        /**
+         * @brief Return an iterator pointing to the first Window held by the Application.
+         * @return A random access iterator.
+         */
         auto begin() { return mWindows.begin(); }
 
+        /**
+         * @brief Return an iterator pointing to the past-the-end Window held by the Application.
+         * @return A random access iterator.
+         */
         auto end() { return mWindows.end(); }
 
+        /**
+         * @brief Create a new SDL Window attached to the Application.
+         * @tparam S A string-like type
+         * @param title The window title.
+         * @param size The window size.
+         * @param point The window position.
+         * @param flags SDL Window creation flags.
+         */
         template<class S>
         requires StringLike<S>
-
         void createWindow(S title, const Size &size, const Point &point, unsigned flags) {
             auto window = Window::createWindow();
             window->initialize(shared_from_this(), title, size, point, flags);
