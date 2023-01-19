@@ -73,11 +73,10 @@ int main(int argc, char **argv) {
                                   SDL_WINDOW_RESIZABLE);
 
         if (BorderBuilder containerBorder{theme}; containerBorder) {
-            containerBorder.name("containerBorder");
+            containerBorder.visual(Visual::SHADOW).name("containerBorder");
             if (auto container = ColumnBuilder{}; container) {
                 container.setLayoutAlignment(LinearLayout::Alignment::BOTTOM_RIGHT)
-                        .name("container")
-                        .layout(Point(0, 0), Size(800, 640));
+                        .name("container");
 
                 if (BorderBuilder border{theme}; border) {
                     border.name("helloBorder");

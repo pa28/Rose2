@@ -60,10 +60,15 @@ namespace rose {
         bool mouseButtonEvent(const SDL_MouseButtonEvent &e) override;
 
         bool enterLeaveEvent(bool enter, Uint32 timestamp) override;
+
+        void setVisual(Visual visual) {
+            mVisual = visual;
+            setNeedsDrawing();
+        }
     };
 
     /**
-     * @class SingletBuilder.
+     * @class BorderBuilder.
      */
     class BorderBuilder : public SingletBuilder {
     public:
@@ -77,6 +82,12 @@ namespace rose {
 
         auto border(ScreenCoordType borderSize) {
             gadget->getVisualMetrics().gadgetPadding = borderSize;
+            return *this;
+        }
+
+        auto visual(Visual visual) {
+            if (auto border = std::dynamic_pointer_cast<Border>(gadget); border)
+                border->setVisual(visual);
             return *this;
         }
     };
