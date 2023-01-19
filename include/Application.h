@@ -40,13 +40,15 @@ namespace rose {
 
         TimerTick mTimer{};             ///< Application real time signal source.
 
-        std::weak_ptr<Window> mMouseWindow{};
+        std::vector<std::shared_ptr<Window>>    mWindows{};     ///< The list of attached Windows.
 
-        std::weak_ptr<Gadget> mMouseGadget{};
+        std::weak_ptr<Window> mMouseWindow{};   ///< The Window that currently has the mouse, if any.
 
-        InputParser mInputParser;
+        std::weak_ptr<Gadget> mMouseGadget{};   ///< The Gadget that currently has the mouse, if any.
 
-        GraphicsModel mGraphicsModel;
+        InputParser mInputParser;   ///< InputParser for the command line arguments.
+
+        GraphicsModel mGraphicsModel;   ///< The GraphicsModel abstraction of the SDL library.
 
         Rectangle mWidowSizePos{};
 
@@ -54,8 +56,14 @@ namespace rose {
 
         std::string mWindowName{};
 
+        /**
+         * @brief Process SDL events.
+         */
         void basicEventLoop();
 
+        /**
+         * @brief Draw the application scene.
+         */
         void applicationDraw();
 
         /**
