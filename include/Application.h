@@ -18,6 +18,8 @@
 #include <Window.h>
 #include <Event.h>
 #include <Theme.h>
+#include <Signals.h>
+#include <TimerTick.h>
 
 namespace rose {
 
@@ -36,7 +38,7 @@ namespace rose {
         bool mKeyboardFound{false};     ///< Set to true if a keyboard is attached at startup.
         bool mRunEventLoop{true};       ///< The event loop runs while this is true.
 
-        std::vector<std::shared_ptr<Window>>    mWindows{};
+        TimerTick mTimer{};             ///< Application real time signal source.
 
         std::weak_ptr<Window> mMouseWindow{};
 
@@ -127,6 +129,12 @@ namespace rose {
                 return std::nullopt;
             }
         }
+
+        /**
+         * @brief Accessor for the system real time signal source.
+         * @return A reference to a TimerTick.
+         */
+        [[maybe_unused]] TimerTick& timer() { return mTimer; }
 
         /**
          * @return The current value of the needs layout flag.
