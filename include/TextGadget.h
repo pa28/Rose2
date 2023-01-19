@@ -130,6 +130,8 @@ namespace rose {
 
         TextGadgetBuilder() : GadgetBuilder(std::make_shared<TextGadget>()) {}
 
+        explicit TextGadgetBuilder(std::shared_ptr<Gadget> g) : GadgetBuilder(std::move(g)) {}
+
         template<class S>
         requires StringLike<S>
         auto text(S content) {
@@ -152,6 +154,38 @@ namespace rose {
             }
             return *this;
         }
+
+        template<class S>
+        requires StringLike<S>
+        auto setFontName(S fontName) {
+            if (auto gPtr = std::dynamic_pointer_cast<TextGadget>(gadget); gPtr) {
+                gPtr->setFontName(fontName);
+            }
+            return *this;
+        }
+    };
+
+    class IconGadget : public TextGadget {
+    protected:
+
+    public:
+        IconGadget() = default;
+        IconGadget(const IconGadget&) = delete;
+        IconGadget(IconGadget&&) = default;
+        IconGadget& operator = (const IconGadget&) = delete;
+        IconGadget& operator = (IconGadget&&) = default;
+        ~IconGadget() override = default;
+
+    };
+
+    /**
+     * @class IconGadgetBuilder
+     */
+    class [[maybe_unused]] IconGadgetBuilder : public TextGadgetBuilder {
+    public:
+
+        IconGadgetBuilder() : TextGadgetBuilder(std::make_shared<IconGadget>()) {}
+
     };
 
 } // rose

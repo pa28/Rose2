@@ -159,7 +159,7 @@ namespace rose {
 
         virtual ~Gadget() = default;
 
-        virtual const std::string_view& className() const { return Gadget::ClassName; }
+        [[maybe_unused]] virtual const std::string_view& className() const { return Gadget::ClassName; }
 
         [[nodiscard]] [[maybe_unused]] const std::string_view& name() { return mName; }
 
