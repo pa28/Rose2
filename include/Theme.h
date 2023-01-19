@@ -77,6 +77,8 @@ namespace rose {
         Corners buttonCorners{Corners::SQUARE};             ///< The type of corners used for buttons.
         Visual buttonVisual{Visual::SHADOW};                ///< The type of visual used for buttons.
 
+        ScreenCoordType textPadding{5};
+
         Theme() = default;
         Theme(const Theme&) = default;
         Theme(Theme&&) = default;

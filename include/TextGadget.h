@@ -70,6 +70,8 @@ namespace rose {
 
         const std::string_view& className() const override { return TextGadget::ClassName; }
 
+        std::shared_ptr<Theme> getThemeValues() override;
+
         bool initialLayout(Context &context) override;
 
         void draw(Context &context, Point drawLocation) override;

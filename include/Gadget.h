@@ -79,6 +79,7 @@ namespace rose {
 
         bool mNeedsLayout{true};            ///< True if application or a contained Gadget needs layout.
         bool mNeedsDrawing{true};           ///< True if application or a contained Gadget needs drawing.
+        bool mNeedsThemeValues{true};       ///< True if Gadget needs to load Theme values.
 
         static std::weak_ptr<Application> mApplicationPtr;
 
@@ -308,7 +309,13 @@ namespace rose {
          * @brief Get the Theme object from the Application.
          * @return A Theme&
          */
-        Theme& getTheme();
+        std::shared_ptr<Theme> getTheme();
+
+        /**
+         * @brief Load values from the theme.
+         * @return A shared_ptr to the current Theme if Theme values need to be loaded, nullptr otherwise.
+         */
+        [[maybe_unused]] virtual std::shared_ptr<Theme> getThemeValues();
 
         void getApplicationPtr();
 

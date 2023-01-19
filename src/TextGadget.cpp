@@ -65,9 +65,17 @@ namespace rose {
         mTexture.reset();
     }
 
+    std::shared_ptr<Theme> TextGadget::getThemeValues() {
+        if (auto theme = Gadget::getThemeValues(); theme) {
+            mVisualMetrics.gadgetPadding = theme->textPadding;
+            return theme;
+        }
+        return nullptr;
+    }
+
     bool TextGadget::initialLayout(Context &context) {
-        if (!mVisualMetrics.gadgetPadding)
-            mVisualMetrics.gadgetPadding = 5;
+        getThemeValues();
+
         if (!mText.empty()) {
             try {
                 createTexture(context);
