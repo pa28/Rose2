@@ -52,6 +52,8 @@ namespace rose {
 
         bool initialLayout(Context &context) override;
 
+        std::shared_ptr<Theme> getThemeValues() override;
+
         bool immediateGadgetLayout() override;
 
         void draw(Context &context, Point drawLocation) override;

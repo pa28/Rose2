@@ -17,16 +17,19 @@
 #include <Theme.h>
 #include <GraphicsModel.h>
 
-bool rose::Border::initialLayout(rose::Context &context) {
-    if (mVisual == Visual::UNSET)
-        mVisual = getTheme()->visual;
-    if (mCorners == Corners::UNSET)
-        mCorners = getTheme()->corners;
-    if (!mVisualMetrics.gadgetPadding)
-        mVisualMetrics.gadgetPadding = getTheme()->borderSize;
-    if (!mVisualMetrics.background && mVisual == Visual::FLAT)
-        mVisualMetrics.background = getTheme()->colorShades[ThemeColor::Bottom];
+std::shared_ptr<rose::Theme> rose::Border::getThemeValues() {
+    if (auto theme = Gadget::getThemeValues(); theme) {
+        mVisual = theme->visual;
+        mCorners = theme->corners;
+        mVisualMetrics.gadgetPadding = theme->borderSize;
+        mVisualMetrics.background = theme->colorShades[ThemeColor::Bottom];
+        return theme;
+    }
+    return nullptr;
+}
 
+bool rose::Border::initialLayout(rose::Context &context) {
+    getThemeValues();
     return Singlet::initialLayout(context);
 }
 
@@ -35,6 +38,8 @@ bool rose::Border::immediateGadgetLayout() {
 }
 
 void rose::Border::draw(rose::Context &context, rose::Point drawLocation) {
+    Singlet::draw(context, drawLocation);
+
     auto borderRect = mVisualMetrics.clipRectangle + drawLocation;
     auto borderSize = mVisualMetrics.gadgetPadding.topLeft.x;
     auto top = getTheme()->colorShades[ThemeColor::Top];
@@ -93,7 +98,6 @@ void rose::Border::draw(rose::Context &context, rose::Point drawLocation) {
         default:
             break;
     }
-    Singlet::draw(context, drawLocation);
 }
 
 bool rose::Border::mouseButtonEvent(const SDL_MouseButtonEvent &e) {
