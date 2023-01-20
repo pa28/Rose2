@@ -79,6 +79,17 @@ int main(int argc, char **argv) {
                         .name("container");
 
                 if (BorderBuilder border{theme}; border) {
+                    border.name("rocketBorder");
+                    if (IconGadgetBuilder rocket{theme}; rocket) {
+                        rocket.icon(ENTYPO_ICON_CIRCLE_WITH_CROSS)
+                            .foreground(theme->colorShades[ThemeColor::Alert])
+                            .name("rocket") >> border;
+                        std::cout << "rocket\n";
+                    }
+                    border >> container;
+                }
+
+                if (BorderBuilder border{theme}; border) {
                     border.name("helloBorder");
                     if (TextGadgetBuilder hello{theme}; hello) {
                         hello.text("Hello").name("Hello") >> border;

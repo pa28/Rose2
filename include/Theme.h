@@ -71,7 +71,7 @@ namespace rose {
 
         ScreenCoordType borderSize{2};                      ///< The default border size for the Theme.
         ScreenCoordType textPointSize{20};                  ///< The default text point size for the Theme.
-        ScreenCoordType iconPointSize{50};                  ///< The default icon point size for the Theme.
+        ScreenCoordType iconPointSize{19};                  ///< The default icon point size for the Theme.
 
         Corners corners{Corners::SQUARE};                   ///< The type of corners used for regular frames.
         Visual visual{Visual::NOTCH};                       ///< The type of visual used for regular frames.
@@ -84,7 +84,7 @@ namespace rose {
         RenderStyle textRenderStyle{RenderStyle::Blended};
 
         std::string fontName;                               ///< The name of the Font to use. Empty = library default.
-        std::string iconFontName{"Entypo"};              ///< The name of the Icon Font.
+        std::string iconFontName{"entypo"};              ///< The name of the Icon Font.
 
         Theme() = default;
         Theme(const Theme&) = default;

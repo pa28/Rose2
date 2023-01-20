@@ -236,19 +236,29 @@ namespace rose {
      * Representation of a Red, Green, Blue color with an Alpha channel.
      */
     class Color : public ColorArray {
-    private:
+    public:
         constexpr static size_t RED = 0;
         constexpr static size_t GREEN = 1;
         constexpr static size_t BLUE = 2;
         constexpr static size_t ALPHA = 3;
 
-    public:
         Color() = default;
         Color(const Color&) = default;
         Color(Color&&) = default;
         Color& operator=(const Color&) = default;
         Color& operator=(Color&&) = default;
         ~Color() = default;
+
+        static Color toColor(SDL_PixelFormat *format, uint32_t pixel) {
+            uint8_t r, g, b, a;
+            SDL_GetRGBA(pixel, format, &r, &g, &b, &a);
+            return Color{r, g, b, a};
+        }
+
+        static uint32_t mapSdl(SDL_PixelFormat *format, const Color& color) {
+            auto c = color.sdlColor();
+            return SDL_MapRGBA(format, c.r, c.g, c.b, c.a);
+        }
 
         /**
          * @brief Construct a Red, Green, Blue color.

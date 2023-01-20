@@ -23,6 +23,7 @@
 #include <Color.h>
 #include <Font.h>
 #include <Surface.h>
+#include <entypo.h>
 #include <exception>
 
 namespace rose {
@@ -163,6 +164,8 @@ namespace rose {
 
     class IconGadget : public TextGadget {
     protected:
+        constexpr static std::string_view ClassName = "IconGadget";
+        uint32_t mIconCode{ENTYPO_ICON_ROCKET};
 
     public:
         IconGadget() = default;
@@ -173,6 +176,27 @@ namespace rose {
         IconGadget& operator = (IconGadget&&) = default;
         ~IconGadget() override = default;
 
+        const std::string_view& className() const override { return IconGadget::ClassName; }
+
+        bool initialLayout(Context &context) override;
+
+        void draw(Context &context, Point drawLocation) override;
+
+        /**
+         * @brief Create a Blended Texture from text.
+         * @details Fetches the Font corresponding to mFontName and mPointSize, then renders the text in mText as
+         * UTF8 to mTexture. The foreground color is set to mTextFgColor. If mRenderStyle is set to Shaded the
+         * background color is set to mTextBgColor. The size of the Texture is placed in mTextSize.<p/>
+         * If the requested font is not found, or mText is empty any mTexture is reset and mTextSize is set to Zero.
+         * @param context The graphics Context.
+         * @throws TextGadgetException
+         */
+        void createIconTexture(Context &context);
+
+        void setIcon(uint32_t icon) {
+            mIconCode = icon;
+            setNeedsDrawing();
+        }
     };
 
     /**
@@ -182,7 +206,15 @@ namespace rose {
     public:
 
         IconGadgetBuilder() : TextGadgetBuilder(std::make_shared<IconGadget>()) {}
+        explicit IconGadgetBuilder(std::shared_ptr<Theme>& theme) : TextGadgetBuilder(std::make_shared<IconGadget>(theme)) {}
+        explicit IconGadgetBuilder(std::shared_ptr<Gadget> g) : TextGadgetBuilder(std::move(g)) {}
 
+        auto icon(uint32_t iconCode) {
+            if (auto iconGadget = std::dynamic_pointer_cast<IconGadget>(gadget); iconGadget) {
+                iconGadget->setIcon(iconCode);
+            }
+            return *this;
+        }
     };
 
 } // rose

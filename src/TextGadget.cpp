@@ -100,4 +100,67 @@ namespace rose {
         mPointSize = theme->iconPointSize;
     }
 
+#if 1
+    void IconGadget::createIconTexture(Context &context) {
+        if (!mFont) {
+            FontCache &fontCache = FontCache::getFontCache();
+            mFont = fetchFont(fontCache, mFontName, mPointSize);
+        }
+
+        mTextSize = Size();
+
+        auto utf8Data = utf8(mIconCode);
+        Surface surface{TTF_RenderUTF8_Blended(mFont.get(), reinterpret_cast<const char *>(utf8Data.data()),
+                                               mTextFgColor.sdlColor())};
+
+        int minX = surface->w;
+        int minY = surface->h;
+        int maxX = 0, maxY = 0;
+
+        for (auto y = 0; y < surface->h; ++y) {
+            for (auto x = 0; x < surface->w; ++x) {
+                auto rgba = Color::toColor(surface->format, surface.pixel(x, y));
+                if (rgba[Color::ALPHA] > 0.f) {
+                    minX = std::min(minX, x);
+                    minY = std::min(minY, y);
+                    maxX = std::max(maxX, x);
+                    maxY = std::max(maxY, y);
+                }
+            }
+        }
+
+#ifdef MINIMIZE_ENTYPO
+        Surface minimal{maxX - minX + 1, maxY - minY + 1};
+        for (auto y = 0; y < minimal->h; ++y) {
+            for (auto x = 0; x < minimal->w; ++x) {
+                auto rgba = Color::toColor(surface->format, surface.pixel(minX + x, minY + y));
+                minimal.pixel(x, y) = Color::mapSdl(minimal->format, rgba);
+            }
+        }
+        mTexture = minimal.toTexture(context);
+#else
+        mTexture = surface.toTexture(context);
+#endif
+        mTextSize = mTexture.getSize();
+    }
+
+    bool IconGadget::initialLayout(Context &context) {
+        if (mIconCode) {
+            try {
+                createIconTexture(context);
+                mVisualMetrics.desiredSize = mTextSize;
+            } catch (TextGadgetException &e) {
+                fmt::print("{}\n", e.what());
+            }
+        }
+        auto result = TextGadget::initialLayout(context);
+
+        return result;
+    }
+
+    void IconGadget::draw(Context &context, Point drawLocation) {
+        TextGadget::draw(context, drawLocation);
+    }
+#endif
+
 } // rose
