@@ -77,4 +77,10 @@ namespace rose {
         fmt::print("\t\tclipRectangle: {}\n", vm.clipRectangle);
     }
 
+    void Singlet::initialize() {
+        Gadget::initialize();
+        if (mGadget)
+            mGadget->initialize();
+    }
+
 } // rose

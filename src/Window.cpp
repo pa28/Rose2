@@ -196,6 +196,12 @@ namespace rose {
         mApplicationPtr.lock()->setNeedsDrawing();
     }
 
+    void Window::initializeSceneTree() {
+        for (auto& screen : mScreens) {
+            screen->initialize();
+        }
+    }
+
     Screen::Screen(const std::shared_ptr<Window> &windowPtr, const Size &size) {
         mWindowPtr = windowPtr;
         mName = "Top";

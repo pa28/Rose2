@@ -15,6 +15,7 @@
 
 #include "TextGadget.h"
 #include <Window.h>
+#include <Application.h>
 
 namespace rose {
     std::unique_ptr<Material> IconGadget::mMaterial{};
@@ -101,6 +102,9 @@ namespace rose {
     IconGadget::IconGadget(std::shared_ptr<Theme> &theme) : TextGadget(theme) {
         mFontName = theme->iconFontName;
         mPointSize = theme->iconPointSize;
+        mAnimationSlot->receiver = [](uint64_t ticks) {
+            fmt::print("{} - ticks: {}\n", "IconGadget", ticks);
+        };
     }
 
 #if 1
@@ -163,6 +167,14 @@ namespace rose {
     void IconGadget::draw(Context &context, Point drawLocation) {
         TextGadget::draw(context, drawLocation);
     }
+
+    void IconGadget::initialize() {
+        if (mIsInitialized)
+            return;
+
+        TextGadget::initialize();
+    }
+
 #endif
 
 } // rose

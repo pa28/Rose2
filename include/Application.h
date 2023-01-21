@@ -138,6 +138,8 @@ namespace rose {
             }
         }
 
+        AnimationProtocol::signal_type animationSignal{};
+
         /**
          * @brief Accessor for the system real time signal source.
          * @return A reference to a TimerTick.
@@ -203,7 +205,10 @@ namespace rose {
         }
 
         void run() {
-            mWindows.front()->layout();
+            for (auto & window : mWindows) {
+                window->layout();
+                window->initializeSceneTree();
+            }
             basicEventLoop();
         }
 

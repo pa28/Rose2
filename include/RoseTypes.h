@@ -6,6 +6,7 @@
 #define ROSE2_ROSETYPES_H
 
 #include <array>
+#include <Signals.h>
 
 namespace rose {
     typedef int ScreenCoordType;   ///< The type used to represent a screen coordinate.
@@ -34,6 +35,13 @@ namespace rose {
     enum class Actions {
         ENTER, LEAVE, ACTIVATED, DEACTIVATED,
     };
+
+    /**
+     * @class AnimationProtocol
+     * @brief This protocol sends a 64 bit value of the number of milliseconds since the library was
+     * initialized. This is useful for short animation tasks.
+     */
+    class AnimationProtocol : public Protocol<uint64_t> {};
 
     inline std::array<unsigned char, 8> utf8(unsigned int uc) {
         std::array<unsigned char, 8> seq{};

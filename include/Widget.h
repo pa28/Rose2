@@ -49,6 +49,8 @@ namespace rose {
         Widget& operator = (const Widget &) = delete;
         Widget& operator = (Widget &&) = default;
 
+        void initialize() override;
+
         bool initialLayout(Context &context) override;
 
         template<class Layout>

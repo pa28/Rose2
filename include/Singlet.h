@@ -44,6 +44,8 @@ namespace rose {
         Singlet& operator = (const Singlet&) = delete;
         Singlet& operator = (Singlet&&) = default;
 
+        void initialize() override;
+
         const std::string_view& className() const override { return Singlet::ClassName; }
 
         bool initialLayout(Context &context) override;

@@ -200,6 +200,8 @@ namespace rose {
         constexpr static std::string_view ClassName = "IconGadget";
         uint32_t mIconCode{ENTYPO_ICON_ROCKET};
 
+        AnimationProtocol::slot_type mAnimationSlot = AnimationProtocol::createSlot();
+
     public:
         template<class String1, class String2>
                 requires StringLike<String1> && StringLike<String2>
@@ -214,6 +216,8 @@ namespace rose {
         IconGadget& operator = (const IconGadget&) = delete;
         IconGadget& operator = (IconGadget&&) = default;
         ~IconGadget() override = default;
+
+        void initialize() override;
 
         const std::string_view& className() const override { return IconGadget::ClassName; }
 
@@ -254,6 +258,7 @@ namespace rose {
     public:
 
         IconGadgetBuilder() : TextGadgetBuilder(std::make_shared<IconGadget>()) {}
+
         explicit IconGadgetBuilder(std::shared_ptr<Theme>& theme) : TextGadgetBuilder(std::make_shared<IconGadget>(theme)) {}
 
         [[maybe_unused]] explicit IconGadgetBuilder(std::shared_ptr<Gadget> g) : TextGadgetBuilder(std::move(g)) {}

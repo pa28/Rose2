@@ -114,6 +114,8 @@ namespace rose {
 
         ~Window() = default;
 
+        void initializeSceneTree();
+
         /**
          * @return The current value of the needs layout flag.
          */

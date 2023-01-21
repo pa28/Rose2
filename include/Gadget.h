@@ -79,6 +79,7 @@ namespace rose {
 
         bool mNeedsLayout{true};            ///< True if application or a contained Gadget needs layout.
         bool mNeedsDrawing{true};           ///< True if application or a contained Gadget needs drawing.
+        bool mIsInitialized{false};         ///< True if the Gadget has been initialized on connection to the tree.
 
         static std::weak_ptr<Application> mApplicationPtr;
 
@@ -172,6 +173,8 @@ namespace rose {
             bool b = wt{}.owner_before(manager);
             return !(!a && !b);
         }
+
+        virtual void initialize() {}
 
         /**
          * @return The current value of the needs layout flag.

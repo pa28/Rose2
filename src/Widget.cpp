@@ -21,6 +21,8 @@ namespace rose {
     [[maybe_unused]] void Widget::manage(std::shared_ptr<Gadget> gadget) {
         gadget->managedBy(std::dynamic_pointer_cast<Widget>(shared_from_this()));
         mGadgetList.push_back(std::move(gadget));
+        if (mIsInitialized)
+            mGadgetList.back()->initialize();
     }
 
     void Widget::manage(Builder &builder) {
@@ -52,6 +54,13 @@ namespace rose {
             }
 
             return constraintRequired;
+        }
+    }
+
+    void Widget::initialize() {
+        Gadget::initialize();
+        for (auto& gadget : mGadgetList) {
+            gadget->initialize();
         }
     }
 
