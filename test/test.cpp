@@ -26,6 +26,8 @@ int main(int argc, char **argv) {
     if (auto application = std::make_shared<Application>(argc, argv); application) {
         application->initializeGraphics();
 
+        TextGadget::InitializeFontCache("/usr/share/fonts:/usr/local/share/fonts");
+
         IconGadget::InitializeMaterial("/home/richard/CLionProjects/material-design-icons/font:/usr/share/fonts:/usr/local/share/fonts",
                                        "MaterialIconsOutlined-Regular");
 

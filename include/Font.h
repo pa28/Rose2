@@ -9,8 +9,8 @@
 /**
  * @file Font.h
  * @author Richard Buckley <richard.buckley@ieee.org>
- * @version 1.0
- * @date 03/01/23
+ * @version 2.0
+ * @date 21/01/23
  * @brief Font management.
  * @details Software used in finding, loading, and drawing text with fonts.
  */
@@ -27,6 +27,7 @@
 #include <sstream>
 #include <optional>
 #include <fmt/format.h>
+#include <Rose.h>
 
 namespace rose {
 
@@ -62,57 +63,52 @@ namespace rose {
     }
 
     /**
-     * @class FontCache
-     * @brief Cache storage for requested fonts.
+     * @class FontManager
      */
-    class FontCache {
+    class FontManager : public std::vector<std::filesystem::path> {
     protected:
-        std::vector<std::filesystem::path> mFontPathList{};
+        std::map<std::string, std::filesystem::path> mFontPathMap{};  ///< The font file path cache
 
-        FontCache() {
-            std::stringstream strm("/home/richard/CLionProjects/material-design-icons/font:/usr/share/fonts:/usr/local/share/fonts");
+        std::map<FontCacheKey, FontPointer> mFontCache{};             ///< The font cache
+
+    public:
+        FontManager() = default;
+        FontManager(const FontManager&) = delete;
+        FontManager(FontManager&&) = default;
+        FontManager& operator=(const FontManager&) = delete;
+        FontManager& operator=(FontManager&&) = default;
+        ~FontManager() = default;
+
+        template<class String>
+        requires StringLike<String>
+        explicit FontManager(String string) {
+            std::stringstream strm(string);
             std::string rootPathStr{};
             while (getline(strm, rootPathStr, ':')) {
-                mFontPathList.emplace_back(rootPathStr);
+                emplace_back(rootPathStr);
             }
         }
 
-    public:
-        [[maybe_unused]] static FontCache& getFontCache() {
-            static FontCache instance{};
-
-            return instance;
-        }
-
-        /**
-         * @brief Locate a font file.
-         * @tparam StringType the type of fontName
-         * @param path The path to start search from
-         * @param fontName the Font name.
-         * @return a std::optional<std::filesystem::path> of the font file.
-         */
-        template<typename StringType>
-        std::optional<std::filesystem::path> locateFont(const std::filesystem::path &path, StringType fontName) {
+        template<typename String>
+        requires StringLike<String>
+        std::optional<std::filesystem::path> locateFont(const std::filesystem::path &path, String fontName) {
             for (auto &p : std::filesystem::recursive_directory_iterator(path)) {
                 if (p.path().stem() == fontName && p.is_regular_file()) {
-                    return p.path();
+                    auto ext = p.path().extension().string();
+                    if (ext == ".ttf" || ext == ".otf")
+                        return p.path();
                 }
             }
             return std::nullopt;
         }
 
-        /**
-         * @brief Find a font name in the font name cache
-         * @tparam StringType the type of fontName
-         * @param fontName the Font name
-         * @return a std::optional<std::filesystem::path> of the font file for the Font.
-         */
-        template<typename StringType>
-        std::optional<std::filesystem::path> getFontPath(StringType fontName) {
+        template<class String>
+        requires StringLike<String>
+        std::optional<std::filesystem::path> getFontPath(String fontName) {
             if (auto found = mFontPathMap.find(fontName); found != mFontPathMap.end())
                 return found->second;
 
-            for (auto const &rootPath : mFontPathList) {
+            for (auto const &rootPath : *this) {
                 auto fontPath = locateFont(rootPath, fontName);
                 if (fontPath) {
                     mFontPathMap[fontName] = fontPath.value();
@@ -123,13 +119,6 @@ namespace rose {
             return std::nullopt;
         }
 
-        /**
-         * @brief Get a FontPointer to a named Font of a specific point size.
-         * @tparam StringType the type of the Font name passed in.
-         * @param fontName The requested font name.
-         * @param ptSize The requested point size
-         * @return a std::optional<FontPointer>
-         */
         template<typename StringType>
         FontPointer getFont(StringType fontName, int ptSize) {
             if (auto found = mFontCache.find(FontCacheKey{fontName, ptSize}); found != mFontCache.end()) {
@@ -138,19 +127,49 @@ namespace rose {
 
             if (auto fontPath = getFontPath(fontName); fontPath) {
                 FontPointer fontPointer{TTF_OpenFont(fontPath.value().c_str(), ptSize), FontDestroy{}};
-                auto font = mFontCache.emplace(FontCacheKey{fontName, ptSize}, fontPointer);
-                if (font.second) {
-                    return font.first->second;
+                if (fontPointer) {
+                    auto font = mFontCache.emplace(FontCacheKey{fontName, ptSize}, fontPointer);
+                    if (font.second) {
+                        return font.first->second;
+                    }
+                } else {
+                    fmt::print("TTF_OpenFont error: {}\n", SDL_GetError());
                 }
             }
 
             return nullptr;
         }
+    };
 
+    /**
+     * @class FontCache
+     * @brief Cache storage for requested fonts.
+     */
+    class FontCache {
     protected:
-        std::map<std::string, std::filesystem::path> mFontPathMap;  ///< The font file path cache
+        std::vector<std::filesystem::path> mFontPathList{};
 
-        std::map<FontCacheKey, FontPointer> mFontCache;             ///< The font cache
+        FontManager mFontManager;
+
+        FontCache() {
+            std::stringstream strm("/home/richard/CLionProjects/material-design-icons/font:/usr/share/fonts:/usr/local/share/fonts");
+            std::string rootPathStr{};
+            while (getline(strm, rootPathStr, ':')) {
+                mFontPathList.emplace_back(rootPathStr);
+            }
+        }
+
+    public:
+        template<class String>
+        requires StringLike<String>
+        explicit FontCache(String fontSearchPaths) : mFontManager(fontSearchPaths) {}
+
+        template<class String>
+        requires StringLike<String>
+        FontPointer getFont(String fontName, int pointSize) {
+            auto fontPointer = mFontManager.getFont(fontName, pointSize);
+            return fontPointer;
+        }
     };
 
     [[maybe_unused]] inline std::tuple<int, int, int, int, int> getGlyphMetrics(FontPointer &font, Uint16 glyph) {

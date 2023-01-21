@@ -33,7 +33,14 @@ namespace rose {
     public:
         explicit TextGadgetException(const std::string &what_arg) : std::runtime_error(what_arg) {}
 
-        explicit TextGadgetException(const char *what_arg) : std::runtime_error(what_arg) {}
+        [[maybe_unused]] explicit TextGadgetException(const char *what_arg) : std::runtime_error(what_arg) {}
+    };
+
+    class FontCacheException : public std::runtime_error {
+    public:
+        [[maybe_unused]] explicit FontCacheException(const std::string &what_arg) : std::runtime_error(what_arg) {}
+
+        explicit FontCacheException(const char *what_arg) : std::runtime_error(what_arg) {}
     };
 
     /**
@@ -44,6 +51,8 @@ namespace rose {
 
     protected:
         constexpr static std::string_view ClassName = "TextGadget";
+
+        static std::unique_ptr<FontCache> mFontCache;
 
         bool mTextRenderRequired{true};      ///< True when re-rendering of text is required
         Texture mTexture{};                  ///< The generated Texture.
@@ -67,6 +76,27 @@ namespace rose {
         TextGadget& operator = (const TextGadget&) = delete;
         TextGadget& operator = (TextGadget&&) = default;
         ~TextGadget() override = default;
+
+        template<class String>
+        requires StringLike<String>
+        static void InitializeFontCache(String fontSearchPaths) {
+            mFontCache = std::make_unique<FontCache>(fontSearchPaths);
+        }
+
+        template<class String>
+        requires StringLike<String>
+        static FontPointer getFont(String fontName, int pointSize) {
+            if (mFontCache){
+                if (auto fontPointer = mFontCache->getFont(fontName, pointSize); fontPointer) {
+                    return fontPointer;
+                } else if (fontPointer = mFontCache->getFont("FreeSans", pointSize); fontPointer) {
+                    return fontPointer;
+                }
+                throw FontCacheException(fmt::format("Could not find requested font '{}' nor 'FreeSans'", fontName));
+            }
+
+            throw FontCacheException("TextGadget font cache not initialized.");
+        }
 
         const std::string_view& className() const override { return TextGadget::ClassName; }
 
@@ -139,14 +169,14 @@ namespace rose {
             return *this;
         }
 
-        auto foreground(const Color &color) {
+        [[maybe_unused]] auto foreground(const Color &color) {
             if (auto gPtr = std::dynamic_pointer_cast<TextGadget>(gadget); gPtr) {
                 gPtr->setForeground(color);
             }
             return *this;
         }
 
-        auto pointSize(int size) {
+        [[maybe_unused]] auto pointSize(int size) {
             if (auto gPtr = std::dynamic_pointer_cast<TextGadget>(gadget); gPtr) {
                 gPtr->setPointSize(size);
             }
@@ -155,7 +185,7 @@ namespace rose {
 
         template<class S>
         requires StringLike<S>
-        auto setFontName(S fontName) {
+        [[maybe_unused]] auto setFontName(S fontName) {
             if (auto gPtr = std::dynamic_pointer_cast<TextGadget>(gadget); gPtr) {
                 gPtr->setFontName(fontName);
             }
@@ -176,6 +206,7 @@ namespace rose {
         static void InitializeMaterial(String1 fontSearchPaths, String2 fontName) {
             mMaterial = std::make_unique<Material>(fontSearchPaths, fontName);
         }
+
         IconGadget() = default;
         explicit IconGadget(std::shared_ptr<Theme>& theme);
         IconGadget(const IconGadget&) = delete;
@@ -224,9 +255,10 @@ namespace rose {
 
         IconGadgetBuilder() : TextGadgetBuilder(std::make_shared<IconGadget>()) {}
         explicit IconGadgetBuilder(std::shared_ptr<Theme>& theme) : TextGadgetBuilder(std::make_shared<IconGadget>(theme)) {}
-        explicit IconGadgetBuilder(std::shared_ptr<Gadget> g) : TextGadgetBuilder(std::move(g)) {}
 
-        auto icon(uint32_t iconCode) {
+        [[maybe_unused]] explicit IconGadgetBuilder(std::shared_ptr<Gadget> g) : TextGadgetBuilder(std::move(g)) {}
+
+        [[maybe_unused]] auto icon(uint32_t iconCode) {
             if (auto iconGadget = std::dynamic_pointer_cast<IconGadget>(gadget); iconGadget) {
                 iconGadget->setIcon(iconCode);
             }
