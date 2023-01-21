@@ -18,6 +18,8 @@
 
 #include <Color.h>
 #include <RoseTypes.h>
+#include <entypo.h>
+#include <MaterialIcons.h>
 
 namespace rose {
 
@@ -84,7 +86,7 @@ namespace rose {
         RenderStyle textRenderStyle{RenderStyle::Blended};
 
         std::string fontName;                               ///< The name of the Font to use. Empty = library default.
-        std::string iconFontName{"entypo"};              ///< The name of the Icon Font.
+        std::string iconFontName{MaterialIconsFont};     ///< The name of the Icon Font.
 
         Theme() = default;
         Theme(const Theme&) = default;

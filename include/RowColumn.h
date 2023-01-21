@@ -77,6 +77,7 @@ namespace rose {
 
     public:
         RowColumn() : Widget() { mLayoutManager = std::make_unique<LinearLayout>(); }
+        explicit RowColumn(std::shared_ptr<Theme>& theme) : Widget(theme) { mLayoutManager = std::make_unique<LinearLayout>(); }
         RowColumn(const RowColumn&) = delete;
         RowColumn(RowColumn &&) = default;
         RowColumn& operator=(const RowColumn &) = delete;
@@ -119,6 +120,8 @@ namespace rose {
 
     public:
         Row() : RowColumn() { mLayoutManager = std::make_unique<LinearLayout>(); }
+        explicit Row(std::shared_ptr<Theme>& theme) : RowColumn(theme)
+            { mLayoutManager = std::make_unique<LinearLayout>(); }
         Row(const Row&) = delete;
         Row(Row &&) = default;
         Row& operator=(const Row &) = delete;
@@ -150,6 +153,8 @@ namespace rose {
 
     public:
         Column() : RowColumn() { mLayoutManager = std::make_unique<LinearLayout>(LinearLayout::MajorAxis::VERTICAL); }
+        explicit Column(std::shared_ptr<Theme>& theme) : RowColumn(theme)
+            { mLayoutManager = std::make_unique<LinearLayout>(LinearLayout::MajorAxis::VERTICAL); }
         Column(const Column&) = delete;
         Column(Column &&) = default;
         Column& operator=(const Column &) = delete;

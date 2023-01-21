@@ -70,7 +70,7 @@ namespace rose {
         std::vector<std::filesystem::path> mFontPathList{};
 
         FontCache() {
-            std::stringstream strm("/usr/share/fonts:/usr/local/share/fonts");
+            std::stringstream strm("/home/richard/CLionProjects/material-design-icons/font:/usr/share/fonts:/usr/local/share/fonts");
             std::string rootPathStr{};
             while (getline(strm, rootPathStr, ':')) {
                 mFontPathList.emplace_back(rootPathStr);

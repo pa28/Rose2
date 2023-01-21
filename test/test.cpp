@@ -11,6 +11,7 @@
 #include <Application.h>
 #include <Color.h>
 #include <Theme.h>
+#include <TextSet.h>
 
 using namespace rose;
 
@@ -75,19 +76,8 @@ int main(int argc, char **argv) {
         if (BorderBuilder containerBorder{theme}; containerBorder) {
             containerBorder.visual(Visual::SHADOW).name("containerBorder");
             if (auto container = ColumnBuilder{}; container) {
-                container.setLayoutAlignment(LinearLayout::Alignment::BOTTOM_RIGHT)
+                container.setLayoutAlignment(LinearLayout::Alignment::TOP_LEFT)
                         .name("container");
-
-                if (BorderBuilder border{theme}; border) {
-                    border.name("rocketBorder");
-                    if (IconGadgetBuilder rocket{theme}; rocket) {
-                        rocket.icon(ENTYPO_ICON_CIRCLE_WITH_CROSS)
-                            .foreground(theme->colorShades[ThemeColor::Alert])
-                            .name("rocket") >> border;
-                        std::cout << "rocket\n";
-                    }
-                    border >> container;
-                }
 
                 if (BorderBuilder border{theme}; border) {
                     border.name("helloBorder");
@@ -107,6 +97,19 @@ int main(int argc, char **argv) {
                     border >> container;
                 }
 
+                if (BorderBuilder border{theme}; border) {
+                    border.name("setBorder");
+                    if (TextSetBuilder textSet{theme}; textSet) {
+                        if (IconGadgetBuilder icon{theme}; icon) {
+                            icon.icon(MATERIAL_settings) >> textSet;
+                        }
+                        if (TextGadgetBuilder text{theme}; text) {
+                            text.text("Ex\u0332it") >> textSet;
+                        }
+                        textSet >> border;
+                    }
+                    border >> container;
+                }
                 container >> containerBorder;
             }
             containerBorder >> application;

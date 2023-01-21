@@ -64,14 +64,16 @@ namespace rose {
          * @details This will include setting this Widget as the manager of the Gadget, which will remove the
          * gadget from the management list of its current manager, if any.
          * @param gadget The Gadget to manage.
+         * @throws SceneTreeError
          */
-        [[maybe_unused]] void manage(std::shared_ptr<Gadget> gadget);
+        [[maybe_unused]] virtual void manage(std::shared_ptr<Gadget> gadget);
 
         /**
          * @brief Add a Gadget from a builder to the management list of this Widget
          * @param builder The Builder holding the new Gadget.
+         * @throws SceneTreeError
          */
-        [[maybe_unused]] void manage(Builder &builder);
+        [[maybe_unused]] virtual void manage(Builder &builder);
 
         /**
          * @brief Get a pointer to the first Gadget on the list of managed Gadgets.

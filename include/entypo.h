@@ -12,6 +12,8 @@
  * was generated, so the scripts that generated it needs to update as well.
  */
 
+static constexpr std::string_view EntypoFont = "entypo";
+
 /**
  * \file nanogui/entypo.h
  *
