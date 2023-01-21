@@ -130,11 +130,16 @@ namespace rose {
             return *this;
         }
 
-        std::optional<std::shared_ptr<Window>> window(size_t idx = 0) {
+        /**
+         * @brief Get a pointer to one of the windows.
+         * @param idx The index selects the window.
+         * @return std::shared_ptr<Window> which will be empty if there is no Window at idx.
+         */
+        std::shared_ptr<Window> window(size_t idx = 0) {
             if (idx < mWindows.size()) {
                 return mWindows.at(idx);
             } else {
-                return std::nullopt;
+                return nullptr;
             }
         }
 
@@ -224,7 +229,7 @@ namespace rose {
 } // rose
 
 inline void operator >> (rose::Builder builder, std::shared_ptr<rose::Application> &application) {
-    application->window().value()->gadget<rose::Widget>().value()->manage(builder.get<rose::Gadget>());
+    application->window()->gadget<rose::Widget>().value()->manage(builder.get<rose::Gadget>());
 }
 
 
