@@ -1,11 +1,3 @@
-//
-// Created by richard on 03/01/23.
-//
-
-/*
- * TextGadget.cpp Created by Richard Buckley (C) 03/01/23
- */
-
 /**
  * @file TextGadget.cpp
  * @author Richard Buckley <richard.buckley@ieee.org>

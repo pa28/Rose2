@@ -29,6 +29,9 @@
 
 namespace rose {
 
+    /**
+     * @brief Exception thrown when an unrecoverable error is encountered by the TextGadget.
+     */
     class TextGadgetException : public std::runtime_error {
     public:
         explicit TextGadgetException(const std::string &what_arg) : std::runtime_error(what_arg) {}
@@ -36,6 +39,9 @@ namespace rose {
         [[maybe_unused]] explicit TextGadgetException(const char *what_arg) : std::runtime_error(what_arg) {}
     };
 
+    /**
+     * @brief Exception thrown when the Font cache encounters an unrecoverable error.
+     */
     class FontCacheException : public std::runtime_error {
     public:
         [[maybe_unused]] explicit FontCacheException(const std::string &what_arg) : std::runtime_error(what_arg) {}
@@ -45,13 +51,17 @@ namespace rose {
 
     /**
      * @class TextGadget
+     * @brief A Gadget that displays a text string.
      */
     class [[maybe_unused]] TextGadget : public Gadget {
         friend class TextGadgetBuilder;
 
     protected:
-        constexpr static std::string_view ClassName = "TextGadget";
+        constexpr static std::string_view ClassName = "TextGadget";     ///< TextGadget class name.
 
+        /**
+         * @brief Global pointer to the font cache for the text fonts used in the application.
+         */
         static std::unique_ptr<FontCache> mFontCache;
 
         bool mTextRenderRequired{true};      ///< True when re-rendering of text is required
@@ -77,12 +87,25 @@ namespace rose {
         TextGadget& operator = (TextGadget&&) = default;
         ~TextGadget() override = default;
 
+        /**
+         * @brief A static method to initialize the global text font cache.
+         * @tparam String The type of fontSearchPaths.
+         * @param fontSearchPaths A colon ':' separated list of search paths.
+         */
         template<class String>
         requires StringLike<String>
         static void InitializeFontCache(String fontSearchPaths) {
             mFontCache = std::make_unique<FontCache>(fontSearchPaths);
         }
 
+        /**
+         * @brief A static method to get a font through the global text font cache.
+         * @details If the provided font name is not found the method will fall back to "FreeSans".
+         * @tparam String The type of fontName.
+         * @param fontName The name of the font to search for and return.
+         * @param pointSize The point size of the font to return.
+         * @return A FontPointer to the returned font.
+         */
         template<class String>
         requires StringLike<String>
         static FontPointer getFont(String fontName, int pointSize) {
@@ -98,6 +121,10 @@ namespace rose {
             throw FontCacheException("TextGadget font cache not initialized.");
         }
 
+        /**
+         * @brief Get the class name.
+         * @return std::string_view &
+         */
         const std::string_view& className() const override { return TextGadget::ClassName; }
 
         bool initialLayout(Context &context) override;
@@ -115,8 +142,17 @@ namespace rose {
          */
         void createTexture(Context &context);
 
+        /**
+         * @brief Called when the text is updated.
+         * @details Sets: needs drawing, needs layout, text render required and resets the Texture.
+         */
         void textUpdated();
 
+        /**
+         * @brief Sets the text point size.
+         * @details If the size is a change textUpdated() is called.
+         * @param pointSize the new point size.
+         */
         void setPointSize(int pointSize) {
             if (mPointSize != pointSize) {
                 mPointSize = pointSize;
@@ -124,6 +160,11 @@ namespace rose {
             }
         }
 
+        /**
+         * @brief Sets the text foreground color.
+         * @details If the color changes textUpdated() is called.
+         * @param color the new color.
+         */
         void setForeground(Color color) {
             if (mTextFgColor != color) {
                 mTextFgColor = color;
@@ -131,6 +172,12 @@ namespace rose {
             }
         }
 
+        /**
+         * @brief Set the font named.
+         * @details If the font name changes textUpdated() is called.
+         * @tparam S the fontName type.
+         * @param fontName the new font name.
+         */
         template<class S>
         requires StringLike<S>
         void setFontName(const S &fontName) {
@@ -140,6 +187,12 @@ namespace rose {
             }
         }
 
+        /**
+         * @brief Set the text string.
+         * @details If the text changes textUpdated() is called.
+         * @tparam S the type of text.
+         * @param text the new text string.
+         */
         template<class S>
         requires StringLike<S>
         void setText(const S &text) {
@@ -152,6 +205,7 @@ namespace rose {
 
     /**
      * @class TextGadgetBuilder
+     * @details A factory class for TextGadget.
      */
     class [[maybe_unused]] TextGadgetBuilder : public GadgetBuilder {
     public:
@@ -193,16 +247,34 @@ namespace rose {
         }
     };
 
+    /**
+     * @class IconGadget
+     * @brief Display a Material icon font element.
+     */
     class IconGadget : public TextGadget {
     protected:
+        /**
+         * @brief Global pointer to Material icon font.
+         * https://fonts.google.com/icons
+         */
         static std::unique_ptr<Material> mMaterial;
 
-        constexpr static std::string_view ClassName = "IconGadget";
-        uint32_t mIconCode{ENTYPO_ICON_ROCKET};
+        constexpr static std::string_view ClassName = "IconGadget";     ///< Class name.
+        uint32_t mIconCode{};                                           ///< The codepoint.
 
+        /**
+         * @brief Receiver slot for animation protocol.
+         */
         AnimationProtocol::slot_type mAnimationSlot = AnimationProtocol::createSlot();
 
     public:
+        /**
+         * @brief Static method to initialize the global storage of the Material Icon font.
+         * @tparam String1 the type of fontSearchPaths
+         * @tparam String2 the type of fontName
+         * @param fontSearchPaths A colon ':' separated list of search paths.
+         * @param fontName The name of the Material Icon font to use.
+         */
         template<class String1, class String2>
                 requires StringLike<String1> && StringLike<String2>
         static void InitializeMaterial(String1 fontSearchPaths, String2 fontName) {
@@ -236,23 +308,37 @@ namespace rose {
          */
         void createIconTexture(Context &context);
 
+        /**
+         * @brief Set the icon codepoint.
+         * @details If the codepoint changes textUpdated() is called.
+         * @param icon the codepoint.
+         */
         void setIcon(uint32_t icon) {
-            mIconCode = icon;
-            setNeedsDrawing();
+            if (mIconCode != icon) {
+                mIconCode = icon;
+                textUpdated();
+            }
         }
 
+        /**
+         * @brief Set the icon codepoint from a code point name.
+         * @details The code point names are read in from the codepoints file that comes along with the font file.
+         * the code point is set by calling setIcon(uint32_t icon).
+         * @tparam String the type of codePointName.
+         * @param codePointName The name of the code point to use.
+         */
         template<class String>
                 requires StringLike<String>
         void setIcon(String codePointName) {
             if (auto itr = mMaterial->find(codePointName); itr != mMaterial->end()) {
-                mIconCode = (*itr).second;
-                setNeedsDrawing();
+                setIcon(itr->second);
             }
         }
     };
 
     /**
      * @class IconGadgetBuilder
+     * @brief A factory class for IconGadget
      */
     class [[maybe_unused]] IconGadgetBuilder : public TextGadgetBuilder {
     public:

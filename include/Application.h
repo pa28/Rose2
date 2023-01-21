@@ -1,10 +1,10 @@
-//
-// Created by richard on 01/01/23.
-//
-
-/*
- * Application.h Created by Richard Buckley (C) 01/01/23
- */
+/**
+* @file Application.h
+* @author Richard Buckley <richard.buckley@ieee.org>
+* @version 1.0
+* @date 2023-01-01
+* @brief The main application object.
+*/
 
 #ifndef ROSE2_APPLICATION_H
 #define ROSE2_APPLICATION_H
@@ -50,11 +50,11 @@ namespace rose {
 
         GraphicsModel mGraphicsModel;   ///< The GraphicsModel abstraction of the SDL library.
 
-        Rectangle mWidowSizePos{};
+        Rectangle mWidowSizePos{};      ///< The window size and position.
 
-        Event event{};
+        Event event{};                  ///< The current event.
 
-        std::string mWindowName{};
+        std::string mWindowName{};      ///< The application window name.
 
         /**
          * @brief Process SDL events.
@@ -112,7 +112,7 @@ namespace rose {
          */
         void winSizeChange(WindowEventType type, const SDL_WindowEvent &e);
 
-        std::shared_ptr<Theme> mTheme{};
+        std::shared_ptr<Theme> mTheme{};    ///< Storage for the application Theme.
 
     public:
 
@@ -143,6 +143,11 @@ namespace rose {
             }
         }
 
+        /**
+         * @brief The animation signal.
+         * @details The animation signal is used to provide execution time to subscribing Gadgets once
+         * each time through the event loop.
+         */
         AnimationProtocol::signal_type animationSignal{};
 
         /**
@@ -209,6 +214,10 @@ namespace rose {
             mWindows.push_back(std::move(window));
         }
 
+        /**
+         * @brief Run the application.
+         * @details Initialize the scene tree then start the event loop.
+         */
         void run() {
             for (auto & window : mWindows) {
                 window->layout();
@@ -217,10 +226,22 @@ namespace rose {
             basicEventLoop();
         }
 
+        /**
+         * @brief Access the application name.
+         * @return std::string.
+         */
         [[nodiscard]] std::string applicationName() const;
 
+        /**
+         * @brief Access the application Theme.
+         * @return std::shared_ptr<Theme>.
+         */
         std::shared_ptr<Theme> getTheme() { return mTheme; }
 
+        /**
+         * @brief Get a shared pointer to the application.
+         * @return std::shared_ptr<Application>.
+         */
         std::weak_ptr<Application> getApplicationPtr() {
             return shared_from_this();
         }

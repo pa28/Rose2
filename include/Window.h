@@ -264,9 +264,21 @@ namespace rose {
          */
         [[maybe_unused]] [[maybe_unused]] void clearAllFocusFlags();
 
+        /**
+         * @brief Initialize the SDL graphics library and create a window.
+         * @param applicationPtr A pointer to the application object.
+         * @param title The window title.
+         * @param initialSize The initial size of the window.
+         * @param initialPosition The initial position of the window.
+         * @param extraFlags An OR mask of any extra flogs needed to set up the window.
+         */
         void initialize(const std::shared_ptr<Application>& applicationPtr, const std::string &title, Size initialSize,
                         const Point &initialPosition, uint32_t extraFlags);
 
+        /**
+         * @brief Propagate a window size change to the Screen
+         * @param size the new window size.
+         */
         void changeSize(const Size& size);
     };
 

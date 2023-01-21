@@ -75,19 +75,17 @@ namespace rose {
         friend class GadgetBuilder;
         friend class Window;
 
-        constexpr static std::string_view ClassName = "Gadget";
+        constexpr static std::string_view ClassName = "Gadget";     ///< class name
 
         bool mNeedsLayout{true};            ///< True if application or a contained Gadget needs layout.
         bool mNeedsDrawing{true};           ///< True if application or a contained Gadget needs drawing.
         bool mIsInitialized{false};         ///< True if the Gadget has been initialized on connection to the tree.
 
-        static std::weak_ptr<Application> mApplicationPtr;
+        static std::weak_ptr<Application> mApplicationPtr;      ///< Access to the Application object.
 
-        std::vector<DecoratorFunction> mDecorators{};
+        std::vector<DecoratorFunction> mDecorators{};           ///< List of decorator functions.
 
-        constexpr static GadgetType ThisType = GadgetType::Gadget;
-
-        [[maybe_unused]] std::string_view mName{};
+        [[maybe_unused]] std::string mName{};                   ///< Gadget instance name.
 
         std::weak_ptr<Gadget> manager{};  ///< Pointer to the current manager of this Gadget.
 
@@ -98,6 +96,9 @@ namespace rose {
              */
             Point drawLocation{};
 
+            /**
+             * @brief The last computed drawing location.
+             */
             Point lastDrawLocation{};
 
             /**
@@ -150,23 +151,29 @@ namespace rose {
 
     public:
         Gadget() = default;
-
         explicit Gadget(const std::shared_ptr<Theme>& ) : Gadget() {}
-
         Gadget(const Gadget &) = delete;
-
         Gadget(Gadget &&) = default;
-
         Gadget &operator=(const Gadget &) = delete;
-
         Gadget &operator=(Gadget &&) = default;
-
         virtual ~Gadget() = default;
 
+        /**
+         * @brief Get the Gadget class name.
+         * @return std::string_view&
+         */
         [[maybe_unused]] virtual const std::string_view& className() const { return Gadget::ClassName; }
 
-        [[nodiscard]] [[maybe_unused]] const std::string_view& name() { return mName; }
+        /**
+         * @brief Get the Gadget instance name.
+         * @return
+         */
+        [[nodiscard]] [[maybe_unused]] const std::string& name() { return mName; }
 
+        /**
+         * @brief Determine if the Gadget is managed.
+         * @return true if managed.
+         */
         [[nodiscard]] bool isManaged() const {
             using wt = std::weak_ptr<Widget>;
             bool a = manager.owner_before(wt{});
@@ -174,6 +181,12 @@ namespace rose {
             return !(!a && !b);
         }
 
+        /**
+         * @brief Initialize the gadget.
+         * @details Called when the initial scene tree is attached to the application. This is the chance for a
+         * Gadget to finalize construction that requires data from the Application or other parts of the scene
+         * tree.
+         */
         virtual void initialize() {}
 
         /**
@@ -253,8 +266,6 @@ namespace rose {
          */
         VisualMetrics &getVisualMetrics() { return mVisualMetrics; }
 
-        [[maybe_unused]] [[nodiscard]] virtual GadgetType gadgetType() const { return Gadget::ThisType; }
-
         /**
          * @brief Set the pointer to the current manager of this Gadget.
          * @param gadget
@@ -317,6 +328,10 @@ namespace rose {
          */
         std::shared_ptr<Theme> getTheme();
 
+        /**
+         * @brief Get and store a pointer to the Application object.
+         * @details The pointer is stored in mApplicationPtr.
+         */
         void getApplicationPtr();
 
         /**
@@ -340,6 +355,10 @@ namespace rose {
          */
         virtual bool mouseButtonEvent(const SDL_MouseButtonEvent &e);
 
+        /**
+         * @brief Add a decorator function to the list of decorators
+         * @param decoratorFunction the decorator function.
+         */
         void setDecorator(DecoratorFunction&& decoratorFunction) {
             mDecorators.emplace_back(decoratorFunction);
         }
@@ -366,11 +385,8 @@ namespace rose {
         std::shared_ptr<Gadget> gadget;     ///< Where the Gadget is built.
     public:
         Builder() = delete;
-
         virtual ~Builder() = default;
-
         explicit Builder(std::shared_ptr<Gadget> g) : gadget(std::move(g)) {}
-
         explicit operator bool() { return true; }
 
         /**
@@ -415,15 +431,13 @@ namespace rose {
         }
     };
 
-    template<class B>
-    concept IsBuilder = std::derived_from<B, Builder>;
+    template<class BuilderClass>
+    concept IsBuilder = std::derived_from<BuilderClass, Builder>;
 
     class GadgetBuilder : public Builder {
     public:
         explicit GadgetBuilder(std::shared_ptr<Gadget> g) : Builder(std::move(g)) {}
-
         explicit GadgetBuilder(std::shared_ptr<Theme>& theme) : Builder(std::make_shared<Gadget>(theme)) {}
-
         ~GadgetBuilder() override = default;
 
         /**
