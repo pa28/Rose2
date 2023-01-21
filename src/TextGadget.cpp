@@ -17,6 +17,8 @@
 #include <Window.h>
 
 namespace rose {
+    std::unique_ptr<Material> IconGadget::mMaterial{};
+
     TextGadget::TextGadget(std::shared_ptr<Theme> &theme) : Gadget(theme) {
         mTextFgColor = theme->colorShades[ThemeColor::Text];
         mRenderStyle = theme->textRenderStyle;
@@ -103,8 +105,7 @@ namespace rose {
 #if 1
     void IconGadget::createIconTexture(Context &context) {
         if (!mFont) {
-            FontCache &fontCache = FontCache::getFontCache();
-            mFont = fetchFont(fontCache, mFontName, mPointSize);
+            mFont = mMaterial->getFont(mPointSize);
         }
 
         mTextSize = Size();

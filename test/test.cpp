@@ -12,6 +12,7 @@
 #include <Color.h>
 #include <Theme.h>
 #include <TextSet.h>
+#include <Material.h>
 
 using namespace rose;
 
@@ -64,6 +65,10 @@ int main(int argc, char **argv) {
 
     if (auto application = std::make_shared<Application>(argc, argv); application) {
         application->initializeGraphics();
+
+        IconGadget::InitializeMaterial("/home/richard/CLionProjects/material-design-icons/font:/usr/share/fonts:/usr/local/share/fonts",
+                                       "MaterialIconsOutlined-Regular");
+
         auto theme = application->getTheme();
         theme->setThemeShade(HSVA(200.f, .5f, 0.5f, 1.f));
         theme->setThemeColors( color::DarkRed, color::DarkGreen, color::DarkYellow);
@@ -101,7 +106,7 @@ int main(int argc, char **argv) {
                     border.name("setBorder");
                     if (TextSetBuilder textSet{theme}; textSet) {
                         if (IconGadgetBuilder icon{theme}; icon) {
-                            icon.icon(MATERIAL_settings) >> textSet;
+                            icon.icon("satellite_alt") >> textSet;
                         }
                         if (TextGadgetBuilder text{theme}; text) {
                             text.text("Ex\u0332it") >> textSet;

@@ -25,6 +25,7 @@
 #include <Surface.h>
 #include <entypo.h>
 #include <exception>
+#include <Material.h>
 
 namespace rose {
 
@@ -164,10 +165,17 @@ namespace rose {
 
     class IconGadget : public TextGadget {
     protected:
+        static std::unique_ptr<Material> mMaterial;
+
         constexpr static std::string_view ClassName = "IconGadget";
         uint32_t mIconCode{ENTYPO_ICON_ROCKET};
 
     public:
+        template<class String1, class String2>
+                requires StringLike<String1> && StringLike<String2>
+        static void InitializeMaterial(String1 fontSearchPaths, String2 fontName) {
+            mMaterial = std::make_unique<Material>(fontSearchPaths, fontName);
+        }
         IconGadget() = default;
         explicit IconGadget(std::shared_ptr<Theme>& theme);
         IconGadget(const IconGadget&) = delete;
@@ -197,6 +205,15 @@ namespace rose {
             mIconCode = icon;
             setNeedsDrawing();
         }
+
+        template<class String>
+                requires StringLike<String>
+        void setIcon(String codePointName) {
+            if (auto itr = mMaterial->find(codePointName); itr != mMaterial->end()) {
+                mIconCode = (*itr).second;
+                setNeedsDrawing();
+            }
+        }
     };
 
     /**
@@ -212,6 +229,15 @@ namespace rose {
         auto icon(uint32_t iconCode) {
             if (auto iconGadget = std::dynamic_pointer_cast<IconGadget>(gadget); iconGadget) {
                 iconGadget->setIcon(iconCode);
+            }
+            return *this;
+        }
+
+        template<class String>
+        requires StringLike<String>
+        auto icon(String codePointName) {
+            if (auto iconGadget = std::dynamic_pointer_cast<IconGadget>(gadget); iconGadget) {
+                iconGadget->setIcon(codePointName);
             }
             return *this;
         }
