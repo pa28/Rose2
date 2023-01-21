@@ -64,6 +64,7 @@ namespace rose {
 
     /**
      * @class FontManager
+     * @brief Manage requests for Fonts by locating them in a specified set of filesystem paths.
      */
     class FontManager : public std::vector<std::filesystem::path> {
     protected:
@@ -79,6 +80,11 @@ namespace rose {
         FontManager& operator=(FontManager&&) = default;
         ~FontManager() = default;
 
+        /**
+         * @brief Create a FontManager with a set of colon ':' delimited font paths.
+         * @tparam String The type of the font path specification.
+         * @param string A set of font paths.
+         */
         template<class String>
         requires StringLike<String>
         explicit FontManager(String string) {
@@ -89,6 +95,14 @@ namespace rose {
             }
         }
 
+        /**
+         * @brief Locate a font by recursively iterating from a file system path.
+         * @details This method will only find True Type and Open Type fonts with extensions .ttf and .otf
+         * @tparam String The type of the font name.
+         * @param path The file system path to start the search from.
+         * @param fontName The name of the font to find.
+         * @return The filesystem path to the located font.
+         */
         template<typename String>
         requires StringLike<String>
         std::optional<std::filesystem::path> locateFont(const std::filesystem::path &path, String fontName) {
@@ -102,6 +116,14 @@ namespace rose {
             return std::nullopt;
         }
 
+        /**
+         * @brief Get a path to a font from the cache or from the filesystem.
+         * @details The font cache is search first, if not found the filesystem is searched using locateFont().
+         * If the font is found on the filesystem it is added to the cache.
+         * @tparam String The type of the font name.
+         * @param fontName The font name
+         * @return std::optional<std::filesystem::path>
+         */
         template<class String>
         requires StringLike<String>
         std::optional<std::filesystem::path> getFontPath(String fontName) {
@@ -119,6 +141,14 @@ namespace rose {
             return std::nullopt;
         }
 
+        /**
+         * @brief Get a pointer to a font specified by name and point size.
+         * @details The filesystem is searched using getFontPath().
+         * @tparam StringType The type of the font name.
+         * @param fontName The font name.
+         * @param ptSize The point size.
+         * @return a FontPointer which may be nullptr if the font is not found.
+         */
         template<typename StringType>
         FontPointer getFont(StringType fontName, int ptSize) {
             if (auto found = mFontCache.find(FontCacheKey{fontName, ptSize}); found != mFontCache.end()) {
@@ -211,6 +241,7 @@ namespace rose {
         return fontMetrics;
     }
 
+#if 0
     /**
      * @brief Fetch a font.
      * @details If the font at the size requested is in the cache, the cached value is returned. If the font
@@ -229,6 +260,7 @@ namespace rose {
         }
         return font;
     }
+#endif
 
 } // rose
 
