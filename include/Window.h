@@ -37,7 +37,7 @@ namespace rose {
 
     public:
         Screen() = default;
-        Screen(std::shared_ptr<Theme>& theme) : Widget(theme) {}
+        explicit Screen(std::shared_ptr<Theme>& theme) : Widget(theme) {}
         Screen(const Screen&) = delete;
         Screen(Screen &&) = default;
         Screen& operator=(const Screen &) = delete;
@@ -78,7 +78,7 @@ namespace rose {
 
         std::weak_ptr<Application> getApplication();
 
-        std::weak_ptr<Window> getWindow();
+        std::weak_ptr<Window> getScreenWindow();
     };
 
     /**
@@ -212,6 +212,12 @@ namespace rose {
          * @details The scene is rendered from the bottom up (root of the tree to the leaves) in preorder.
          */
         void draw();
+
+        /**
+         * @brief Traverse the Screen scene tree re-drawing an exposed area.
+         * @param exposed The area exposed.
+         */
+        void expose(Rectangle exposed);
 
         template<class UiType>
         [[maybe_unused]] std::optional<std::shared_ptr<UiType>> gadget(size_t idx = 0) {

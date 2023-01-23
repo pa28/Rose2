@@ -56,6 +56,8 @@ namespace rose {
 
     class LayoutManager;
 
+    class Window;
+
     class Screen;
 
     class Application;
@@ -297,8 +299,29 @@ namespace rose {
         /**
          * @brief Draw this Gadget.
          * @param context The graphics context to use.
+         * @param drawLocation The point at which to draw the Gadget.
          */
         virtual void draw(Context &context, Point drawLocation);
+
+        /**
+         * @brief Expose a portion of the Gadget.
+         * @details This method is called when only a portion of the screen has to be redrawn because it is
+         * exposed by removal of an overlying Gadget or a Gadget has changed due to animation or other
+         * modifying process.
+         * @param context The graphics context to use.
+         * @param exposed The exposed rectangle.
+         */
+        virtual void expose(Context &context, Rectangle exposed);
+
+        /**
+         * @brief Compute the intersection of the exposed rectangle with the Gadget.
+         * @details If there is no intersection an unset Rectangle is returned.
+         * @param exposed The exposed area
+         * @return The intersection, if any.
+         */
+        Rectangle exposure(Rectangle exposed) const {
+            return (mVisualMetrics.clipRectangle + mVisualMetrics.lastDrawLocation).intersection(exposed);
+        }
 
         /**
          * @brief Set the desired size of the Gadget
@@ -334,9 +357,26 @@ namespace rose {
 
         /**
          * @brief Get the Screen which ultimately hosts this Gadget.
-         * @return std::shared_ptr<Screen> pointing to the screen, or empty.
+         * @return std::shared_ptr<Screen> pointing to the Screen, or empty.
          */
         std::shared_ptr<Screen> getScreen();
+
+        /**
+         * @brief Get the Window which ultimately hold this Gadget.
+         * @return std::shard_ptr<Window> point to the Window, or empty.
+         */
+        std::shared_ptr<Window> getWindow();
+
+        /**
+         * @brief Calculate and return the current exposure rectangle for a Gadget.
+         * @details The exposure rectangle is the clipping rectangle translated to the last drawing location.
+         * @return The exposure Rectangle.
+         */
+        Rectangle getExposedRectangle() const {
+            if (mVisualMetrics.lastDrawLocation && mVisualMetrics.clipRectangle)
+                return mVisualMetrics.clipRectangle + mVisualMetrics.lastDrawLocation;
+            return Rectangle{};
+        }
 
         /**
          * @brief Get the Theme object from the Application.

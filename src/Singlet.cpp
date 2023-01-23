@@ -54,6 +54,16 @@ namespace rose {
         }
     }
 
+    void Singlet::expose(Context &context, Rectangle exposed) {
+        if (auto exposedGadget = exposure(exposed); exposedGadget) {
+            ClipRectangleGuard clipRectangleGuard{context, exposedGadget};
+            Gadget::draw(context, mVisualMetrics.lastDrawLocation);
+            if (mGadget) {
+                mGadget->expose(context, exposedGadget);
+            }
+        }
+    }
+
     bool Singlet::immediateGadgetLayout() {
         mGadget->immediateGadgetLayout();
         Gadget::immediateGadgetLayout();

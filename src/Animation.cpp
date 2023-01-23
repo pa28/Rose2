@@ -80,7 +80,6 @@ namespace rose {
         if (!mGadget.expired()) {
             auto gadget = mGadget.lock();
 
-            auto vMetrics = gadget->getVisualMetrics();
             if (gadget->getVisualMetrics().animateBackground) {
                 gadget->getVisualMetrics().animateBackground = color::DarkRed.color();
                 gadget->getVisualMetrics().animateBackground[Color::ALPHA] = mIntensity;

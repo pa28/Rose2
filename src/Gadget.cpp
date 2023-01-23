@@ -47,6 +47,14 @@ namespace rose {
         mNeedsDrawing = false;
     }
 
+    void Gadget::expose(Context &context, Rectangle exposed) {
+        auto lastDrawn = mVisualMetrics.lastDrawLocation;
+        if (auto exposedGadget = (mVisualMetrics.clipRectangle + mVisualMetrics.lastDrawLocation).intersection(exposed); exposedGadget) {
+            ClipRectangleGuard clipRectangleGuard{context, exposedGadget};
+            draw(context, mVisualMetrics.lastDrawLocation);
+        }
+    }
+
     bool Gadget::immediateGadgetLayout() {
 
         /**
@@ -107,7 +115,7 @@ namespace rose {
     void Gadget::setNeedsLayout() {
         mNeedsLayout = true;
         if (auto screenPtr = std::dynamic_pointer_cast<Screen>(shared_from_this()); screenPtr) {
-            screenPtr->getWindow().lock()->setNeedsLayout();
+            screenPtr->getScreenWindow().lock()->setNeedsLayout();
         } else if (auto screen = getScreen(); screen) {
             screen->setNeedsLayout();
         }
@@ -116,7 +124,7 @@ namespace rose {
     void Gadget::setNeedsDrawing() {
         mNeedsDrawing = true;
         if (auto screenPtr = std::dynamic_pointer_cast<Screen>(shared_from_this()); screenPtr) {
-            screenPtr->getWindow().lock()->setNeedsDrawing();
+            screenPtr->getScreenWindow().lock()->setNeedsDrawing();
         } else if (auto screen = getScreen(); screen){
             screen->setNeedsDrawing();
         }
@@ -156,6 +164,15 @@ namespace rose {
 
     Gadget::Gadget() {
 
+    }
+
+    std::shared_ptr<Window> Gadget::getWindow() {
+        if (auto screen = getScreen(); screen) {
+            if (auto window = screen->getScreenWindow(); !window.expired()) {
+                return window.lock();
+            }
+        }
+        return nullptr;
     }
 
     void Builder::operator>>(Widget &widget) {

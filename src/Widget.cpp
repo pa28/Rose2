@@ -43,6 +43,16 @@ namespace rose {
         }
     }
 
+    void Widget::expose(Context &context, Rectangle exposed) {
+        if (auto exposedGadget = exposure(exposed); exposedGadget) {
+            ClipRectangleGuard clipRectangleGuard{context, exposedGadget};
+            Gadget::draw(context, mVisualMetrics.lastDrawLocation);
+            for (auto &gadget : mGadgetList) {
+                gadget->expose(context, exposedGadget);
+            }
+        }
+    }
+
     bool Widget::initialLayout(Context &context) {
         if (mLayoutManager) {
             auto widget = shared_from_this();

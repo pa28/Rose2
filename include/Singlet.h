@@ -86,6 +86,9 @@ namespace rose {
          * @param context The graphics context to use.
          */
         void draw(Context &context, Point drawLocation) override;
+
+        void expose(Context &context, Rectangle exposed) override;
+
     };
 
     /**

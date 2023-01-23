@@ -137,6 +137,8 @@ namespace rose {
          */
         void draw(Context &context, Point drawLocation) override;
 
+        void expose(Context &context, Rectangle exposed) override;
+
         ~Widget() override = default;
     };
 

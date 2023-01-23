@@ -131,6 +131,8 @@ namespace rose {
 
         void draw(Context &context, Point drawLocation) override;
 
+        void expose(Context &context, Rectangle exposed) override;
+
         /**
          * @brief Create a Blended Texture from text.
          * @details Fetches the Font corresponding to mFontName and mPointSize, then renders the text in mText as

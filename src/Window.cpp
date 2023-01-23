@@ -36,8 +36,15 @@ namespace rose {
 
     void Window::draw() {
         if (!mScreens.empty())
-            mScreens.front()->draw(context(), Point());
+            mScreens.front()->draw(context(), Point(0,0));
         mNeedsDrawing = false;
+    }
+
+    void Window::expose(Rectangle exposed) {
+        for (auto & screen : mScreens) {
+            screen->expose(context(), exposed);
+        }
+        context().renderPresent();
     }
 
     [[maybe_unused]] void Window::setFocusGadget(std::shared_ptr<Gadget> &gadget) {
@@ -217,7 +224,7 @@ namespace rose {
         return mWindowPtr.lock()->getApplication();
     }
 
-    std::weak_ptr<Window> Screen::getWindow() {
+    std::weak_ptr<Window> Screen::getScreenWindow() {
         return mWindowPtr;
     }
 } // rose

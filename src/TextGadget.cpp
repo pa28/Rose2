@@ -91,6 +91,10 @@ namespace rose {
         }
     }
 
+    void TextGadget::expose(Context &context, Rectangle exposed) {
+        Gadget::expose(context, exposed);
+    }
+
     IconGadget::IconGadget(std::shared_ptr<Theme> &theme) : TextGadget(theme) {
         mFontName = theme->iconFontName;
         mPointSize = theme->iconPointSize;
