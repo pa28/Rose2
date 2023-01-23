@@ -97,7 +97,7 @@ namespace rose {
 
         /**
          * @brief Locate a font by recursively iterating from a file system path.
-         * @details This method will only find True Type and Open Type fonts with extensions .ttf and .otf
+         * @details This method will only find True Type and Open Type fonts with extensions .ttf, .otf, .afm
          * @tparam String The type of the font name.
          * @param path The file system path to start the search from.
          * @param fontName The name of the font to find.
@@ -109,7 +109,7 @@ namespace rose {
             for (auto &p : std::filesystem::recursive_directory_iterator(path)) {
                 if (p.path().stem() == fontName && p.is_regular_file()) {
                     auto ext = p.path().extension().string();
-                    if (ext == ".ttf" || ext == ".otf")
+                    if (ext == ".ttf" || ext == ".otf" || ext == ".afm" || ext == ".t1" || ext == ".pfb")
                         return p.path();
                 }
             }

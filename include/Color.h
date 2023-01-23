@@ -448,6 +448,7 @@ namespace rose {
         [[maybe_unused]] constexpr HSVA DarkRed{ 0.f, 1.f, 0.6f, 1.f };
         [[maybe_unused]] constexpr HSVA DarkGreen{ 79.f, 1.f, .6f,1.f};
         [[maybe_unused]] constexpr HSVA DarkYellow{ 50.f, 1.f, 0.6f, 1.f };
+        [[maybe_unused]] constexpr HSVA TransparentDarkRed{ 0.f, 1.f, 0.6f, 0.f};
     }
 
 } // rose

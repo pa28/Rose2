@@ -94,9 +94,6 @@ namespace rose {
     IconGadget::IconGadget(std::shared_ptr<Theme> &theme) : TextGadget(theme) {
         mFontName = theme->iconFontName;
         mPointSize = theme->iconPointSize;
-        mAnimationSlot->receiver = [](uint64_t ticks) {
-            fmt::print("{} - ticks: {}\n", "IconGadget", ticks);
-        };
     }
 
 #if 1

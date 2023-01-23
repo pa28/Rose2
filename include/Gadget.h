@@ -34,6 +34,7 @@
 #include <Rose.h>
 #include <Color.h>
 #include <GraphicsModel.h>
+#include <Animation.h>
 #include <fmt/format.h>
 
 namespace rose {
@@ -58,6 +59,8 @@ namespace rose {
     class Screen;
 
     class Application;
+
+    class Animation;
 
     /**
      * @brief A DecoratorFunction can be attached to a Gadget to be called when Gadget::Draw is called.
@@ -140,6 +143,7 @@ namespace rose {
              * @details If set this color is rendered to the clipRectangle before any other drawing.
              */
             Color background{};
+            Color animateBackground{};
 
             /**
              * True if the Gadget has focus.
@@ -150,13 +154,21 @@ namespace rose {
         virtual std::shared_ptr<Theme> getThemeValues();
 
     public:
-        Gadget() = default;
+        std::unique_ptr<Animation> mAnimationPtr{};
+
+        Gadget();
         explicit Gadget(const std::shared_ptr<Theme>& ) : Gadget() {}
         Gadget(const Gadget &) = delete;
         Gadget(Gadget &&) = default;
         Gadget &operator=(const Gadget &) = delete;
         Gadget &operator=(Gadget &&) = default;
         virtual ~Gadget() = default;
+
+        /**
+         * @brief Get initialization state of the Gadget.
+         * @return true if initialized.
+         */
+        bool isInitialized() const { return mIsInitialized; }
 
         /**
          * @brief Get the Gadget class name.
@@ -187,7 +199,11 @@ namespace rose {
          * Gadget to finalize construction that requires data from the Application or other parts of the scene
          * tree.
          */
-        virtual void initialize() {}
+        virtual void initialize() {
+            mIsInitialized = true;
+            if (mAnimationPtr)
+                mAnimationPtr->initialize();
+        }
 
         /**
          * @return The current value of the needs layout flag.
@@ -332,7 +348,7 @@ namespace rose {
          * @brief Get and store a pointer to the Application object.
          * @details The pointer is stored in mApplicationPtr.
          */
-        void getApplicationPtr();
+        std::shared_ptr<Application> getApplicationPtr();
 
         /**
          * @brief Receive Enter/Leave events.
@@ -508,6 +524,11 @@ namespace rose {
             return *this;
         }
 
+        [[maybe_unused]] auto lightColor(const Color &lightColor) {
+            gadget->mVisualMetrics.animateBackground = lightColor;
+            return *this;
+        }
+
         /**
          * @brief Set DecoratorFunction on the Gadget
          * @param decoratorFunction
@@ -515,6 +536,14 @@ namespace rose {
          */
         [[maybe_unused]] auto decorator(DecoratorFunction&& decoratorFunction) {
             gadget->setDecorator(std::move(decoratorFunction));
+            return *this;
+        }
+
+        template<class Animate>
+                requires std::derived_from<Animate, Animation>
+        [[maybe_unused]] auto animation() {
+            gadget->mAnimationPtr = std::move(std::make_unique<Animate>());
+            gadget->mAnimationPtr->setGadget(gadget);
             return *this;
         }
     };

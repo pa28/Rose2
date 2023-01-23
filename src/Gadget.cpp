@@ -15,6 +15,7 @@
 #include "Singlet.h"
 #include <Window.h>
 #include <Application.h>
+#include <Animation.h>
 
 namespace rose {
 
@@ -35,8 +36,13 @@ namespace rose {
             for (const auto &decorator: mDecorators) {
                 decorator(context, *this);
             }
-        } else if (mVisualMetrics.background) {
-            context.fillRect(mVisualMetrics.clipRectangle + drawLocation, mVisualMetrics.background);
+        } else {
+            if (mVisualMetrics.background) {
+                context.fillRect(mVisualMetrics.clipRectangle + drawLocation, mVisualMetrics.background);
+            }
+            if (mVisualMetrics.animateBackground) {
+                context.fillRect(mVisualMetrics.clipRectangle + drawLocation, mVisualMetrics.animateBackground);
+            }
         }
         mNeedsDrawing = false;
     }
@@ -129,10 +135,11 @@ namespace rose {
         return {};
     }
 
-    void Gadget::getApplicationPtr() {
+    std::shared_ptr<Application> Gadget::getApplicationPtr() {
         if (mApplicationPtr.expired()) {
             mApplicationPtr = getScreen()->getApplication();
         }
+        return mApplicationPtr.lock();
     }
 
     std::shared_ptr<Theme> Gadget::getTheme() {
@@ -145,6 +152,10 @@ namespace rose {
     std::shared_ptr<Theme> Gadget::getThemeValues() {
         auto theme = getTheme();
         return theme;
+    }
+
+    Gadget::Gadget() {
+
     }
 
     void Builder::operator>>(Widget &widget) {

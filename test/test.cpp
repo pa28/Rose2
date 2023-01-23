@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
     if (auto application = std::make_shared<Application>(argc, argv); application) {
         application->initializeGraphics();
 
-        TextGadget::InitializeFontCache("/usr/share/fonts:/usr/local/share/fonts");
+        TextGadget::InitializeFontCache("/usr/share/fonts/truetype/liberation2:/usr/share/fonts");
 
         IconGadget::InitializeMaterial("/home/richard/CLionProjects/material-design-icons/font:/usr/share/fonts:/usr/local/share/fonts",
                                        "MaterialIconsOutlined-Regular");
@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
                 if (BorderBuilder border{theme}; border) {
                     border.name("helloBorder");
                     if (TextGadgetBuilder hello{theme}; hello) {
-                        hello.text("Hello").name("Hello") >> border;
+                        hello.text("Hello").name("Hello").lightColor(color::DarkYellow.color()) >> border;
                         std::cout << "hello\n";
                     }
                     border >> container;
@@ -67,11 +67,20 @@ int main(int argc, char **argv) {
                 if (BorderBuilder border{theme}; border) {
                     border.name("setBorder");
                     if (TextSetBuilder textSet{theme}; textSet) {
-                        if (IconGadgetBuilder icon{theme}; icon) {
-                            icon.icon("satellite_alt") >> textSet;
-                        }
                         if (TextGadgetBuilder text{theme}; text) {
-                            text.text("Ex\u0332it") >> textSet;
+                            text.text("Exit") >> textSet;
+                        }
+                        if (IconGadgetBuilder cmd{theme}; cmd) {
+                            cmd.icon(60135)
+//                                .animation<LightAnimation>()
+                                .name("icon")
+                                .lightColor(color::DarkRed.color())
+                                     >> textSet;
+                            cmd.get<Gadget>()->mAnimationPtr = std::make_unique<LightAnimation>();
+                            cmd.get<Gadget>()->mAnimationPtr->setGadget(cmd.get<Gadget>());
+                        }
+                        if (TextGadgetBuilder shortCut{theme}; shortCut) {
+                            shortCut.text("x") >> textSet;
                         }
                         textSet >> border;
                     }

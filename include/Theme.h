@@ -73,7 +73,7 @@ namespace rose {
 
         ScreenCoordType borderSize{2};                      ///< The default border size for the Theme.
         ScreenCoordType textPointSize{20};                  ///< The default text point size for the Theme.
-        ScreenCoordType iconPointSize{19};                  ///< The default icon point size for the Theme.
+        ScreenCoordType iconPointSize{20};                  ///< The default icon point size for the Theme.
 
         Corners corners{Corners::SQUARE};                   ///< The type of corners used for regular frames.
         Visual visual{Visual::NOTCH};                       ///< The type of visual used for regular frames.
@@ -85,7 +85,8 @@ namespace rose {
 
         RenderStyle textRenderStyle{RenderStyle::Blended};
 
-        std::string fontName;                               ///< The name of the Font to use. Empty = library default.
+        // P052-Italic NimbusRoman-Regular
+        std::string fontName{"LiberationSans-Regular"};                               ///< The name of the Font to use. Empty = library default.
         std::string iconFontName{MaterialIconsFont};     ///< The name of the Icon Font.
 
         Theme() = default;

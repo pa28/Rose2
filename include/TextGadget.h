@@ -74,7 +74,7 @@ namespace rose {
          * Theme set values.
          */
         Color mTextFgColor{};                ///< The foreground color to use.
-        RenderStyle mRenderStyle{};          ///< The style of rendering Solid, Shaded, or Blended.
+        RenderStyle mRenderStyle{RenderStyle::Blended};          ///< The style of rendering Solid, Shaded, or Blended.
         std::string mFontName{};             ///< The name of the True Type Font to use.
         ScreenCoordType mPointSize{};        ///< The point (pixel) size of the font.
 
@@ -262,11 +262,6 @@ namespace rose {
         constexpr static std::string_view ClassName = "IconGadget";     ///< Class name.
         uint32_t mIconCode{};                                           ///< The codepoint.
 
-        /**
-         * @brief Receiver slot for animation protocol.
-         */
-        AnimationProtocol::slot_type mAnimationSlot = AnimationProtocol::createSlot();
-
     public:
         /**
          * @brief Static method to initialize the global storage of the Material Icon font.
@@ -345,7 +340,7 @@ namespace rose {
 
         IconGadgetBuilder() : TextGadgetBuilder(std::make_shared<IconGadget>()) {}
 
-        explicit IconGadgetBuilder(std::shared_ptr<Theme>& theme) : TextGadgetBuilder(std::make_shared<IconGadget>(theme)) {}
+        explicit IconGadgetBuilder(std::shared_ptr<Theme>& theme): TextGadgetBuilder(std::make_shared<IconGadget>(theme)) {}
 
         [[maybe_unused]] explicit IconGadgetBuilder(std::shared_ptr<Gadget> g) : TextGadgetBuilder(std::move(g)) {}
 

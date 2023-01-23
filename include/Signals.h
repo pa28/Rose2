@@ -27,6 +27,7 @@ namespace rose {
         using signal_function = std::function<void(Args...)>;
 
         signal_function receiver{};
+        bool connected{false};
     };
 
     /**
@@ -46,7 +47,8 @@ namespace rose {
         using signal_function = std::function<void(Args...)>;
 
         explicit operator bool () {
-            return !callList.empty();
+            auto r = !callList.empty();
+            return r;
         }
 
         /**
@@ -67,12 +69,15 @@ namespace rose {
                 clean();
                 for (auto &weak : callList) {
                     if (auto locked = weak.lock(); locked) {
-                        if (locked == slot)
+                        if (locked == slot) {
+                            slot->connected = true;
                             return;
+                        }
                     }
                 }
 
                 callList.push_back(slot);
+                slot->connected = true;
             }
         }
 
@@ -82,10 +87,12 @@ namespace rose {
          */
         void disconnect(std::shared_ptr<Slot<Args...>> &slot) {
             callList.erase(std::remove_if(callList.begin(), callList.end(), [&](auto weak) {
-                if (weak.expired())
+                if (weak.expired()) {
                     return true;
-                if (auto strong = weak.lock(); strong)
+                } else if (auto strong = weak.lock(); strong) {
+                    slot->connected = false;
                     return strong == slot;
+                }
                 return false;
             }));
         }
