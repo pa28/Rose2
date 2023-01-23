@@ -85,7 +85,8 @@ namespace rose {
                 gadget->getVisualMetrics().animateBackground[Color::ALPHA] = mIntensity;
             }
 
-            gadget->draw(gadget->getApplicationPtr()->window()->context(), vMetrics.lastDrawLocation);
+            if (auto exposed = gadget->getExposedRectangle(); exposed)
+                gadget->getWindow()->expose(exposed);
         }
     }
 

@@ -38,7 +38,7 @@ namespace rose {
             }
 
             animationSignal.transmit(SDL_GetTicks64());
-            if (mNeedsDrawing || animationSignal)
+            if (mNeedsDrawing)
                 applicationDraw();
 
             fps.next();

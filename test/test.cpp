@@ -68,16 +68,14 @@ int main(int argc, char **argv) {
                     border.name("setBorder");
                     if (TextSetBuilder textSet{theme}; textSet) {
                         if (TextGadgetBuilder text{theme}; text) {
-                            text.text("Exit") >> textSet;
+                            text.text("Exit").name("exit") >> textSet;
                         }
                         if (IconGadgetBuilder cmd{theme}; cmd) {
                             cmd.icon(60135)
-//                                .animation<LightAnimation>()
+                                .animation<LightAnimation>()
                                 .name("icon")
                                 .lightColor(color::DarkRed.color())
                                      >> textSet;
-                            cmd.get<Gadget>()->mAnimationPtr = std::make_unique<LightAnimation>();
-                            cmd.get<Gadget>()->mAnimationPtr->setGadget(cmd.get<Gadget>());
                         }
                         if (TextGadgetBuilder shortCut{theme}; shortCut) {
                             shortCut.text("x") >> textSet;

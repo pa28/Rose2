@@ -49,7 +49,7 @@ namespace rose {
 
         virtual void initialize() = 0;
 
-        void setGadget(std::shared_ptr<Gadget> gadget) { mGadget = std::move(gadget); }
+        void setGadget(const std::shared_ptr<Gadget>& gadget) { mGadget = gadget; }
 
         void connectSignal();
 

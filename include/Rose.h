@@ -275,7 +275,6 @@ namespace rose {
             auto [a,b] = point.comparePoints(p);
             auto [c,d] = p.comparePoints(point+size);
             return std::is_lteq(a) && std::is_lteq(b) && std::is_lt(c) && std::is_lt(d);
-//            return point <= p && p < (point + size);
         }
 
         [[nodiscard]] constexpr Rectangle intersection(const Rectangle &o) const {
@@ -292,7 +291,7 @@ namespace rose {
 
             // no intersection
             if (x5 > x6 || y5 > y6) {
-                return Rectangle{0,0,0,0};
+                return Rectangle{};
             }
 
             return Rectangle{x5, y5, x6 - x5, y6 - y5};
