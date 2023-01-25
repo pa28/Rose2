@@ -71,14 +71,14 @@ int main(int argc, char **argv) {
                             text.text("Exit").name("exit") >> textSet;
                         }
                         if (IconGadgetBuilder cmd{theme}; cmd) {
-                            cmd.icon(60135)
+                            cmd.icon("rocket")
                                 .animation<LightAnimation>()
                                 .name("icon")
                                 .lightColor(color::DarkRed.color())
                                      >> textSet;
                         }
                         if (TextGadgetBuilder shortCut{theme}; shortCut) {
-                            shortCut.text("x") >> textSet;
+                            shortCut.text("x").pointSize(15).name("sCut") >> textSet;
                         }
                         textSet >> border;
                     }

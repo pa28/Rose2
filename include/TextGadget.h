@@ -203,6 +203,8 @@ namespace rose {
                 textUpdated();
             }
         }
+
+        const FontPointer& getFont() const { return mFont; }
     };
 
     /**
@@ -331,6 +333,8 @@ namespace rose {
                 setIcon(itr->second);
             }
         }
+
+        uint32_t getIconCode() const { return mIconCode; }
     };
 
     /**

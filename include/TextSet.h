@@ -40,6 +40,7 @@ namespace rose {
 
         ~TextSetLayout() override = default;
 
+        bool initialWidgetLayout(Context &context, std::shared_ptr<Gadget> &gadget) override;
     };
 
     /**

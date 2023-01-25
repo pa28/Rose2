@@ -202,22 +202,15 @@ namespace rose {
         }
     };
 
-    [[maybe_unused]] inline std::tuple<int, int, int, int, int> getGlyphMetrics(FontPointer &font, Uint16 glyph) {
-        int minx{}, maxx{}, miny{}, maxy{}, advance{};
-        if (font)
-            TTF_GlyphMetrics(font.get(), glyph, &minx, &maxx, &miny, &maxy, &advance);
-        return std::make_tuple(minx, maxx, miny, maxy, advance);
-    }
-
     /**
      * @struct FontMetrics
      * @brief The size metrics that pertain to a particular font.
      */
     struct FontMetrics {
-        [[maybe_unused]] int fontAscent,     ///< The height above the base line.
-        fontDescent,        ///< The length of descenders below the baseline a negative number.
-        fontHeight,         ///< The total height of the font (ascent - descent
-        fontLineSkip;       ///< The size of a line advance for the font.
+        int fontAscent{},     ///< The height above the base line.
+        fontDescent{},        ///< The length of descenders below the baseline a negative number.
+        fontHeight{},         ///< The total height of the font (ascent - descent
+        fontLineSkip{};       ///< The size of a line advance for the font.
 
         FontMetrics() = default;
         constexpr FontMetrics(const FontMetrics &) noexcept = default;
@@ -232,7 +225,7 @@ namespace rose {
      * et al.
      * @return a std::tuple with font height, font ascent, font descent, and font line skip.
      */
-    [[maybe_unused]] inline auto getFontMetrics(FontPointer &font) {
+    [[maybe_unused]] inline auto getFontMetrics(const FontPointer& font) {
         FontMetrics fontMetrics{};
         fontMetrics.fontHeight = TTF_FontHeight(font.get());
         fontMetrics.fontAscent = TTF_FontAscent(font.get());
@@ -240,6 +233,42 @@ namespace rose {
         fontMetrics.fontLineSkip = TTF_FontLineSkip(font.get());
         return fontMetrics;
     }
+
+    struct GlyphMetrics {
+        FontMetrics fontMetrics{};
+        int minX{}, maxX{}, minY{}, maxY{}, advance{};
+
+        GlyphMetrics() = default;
+        GlyphMetrics(const GlyphMetrics&) = default;
+        GlyphMetrics(GlyphMetrics&&) = default;
+        GlyphMetrics& operator=(const GlyphMetrics&) = default;
+        GlyphMetrics& operator=(GlyphMetrics&&) = default;
+    };
+
+    [[maybe_unused]] inline GlyphMetrics getGlyphMetrics(const FontPointer &font, Uint16 glyph) {
+        GlyphMetrics gm{};
+        if (font) {
+            gm.fontMetrics.fontHeight = TTF_FontHeight(font.get());
+            gm.fontMetrics.fontAscent = TTF_FontAscent(font.get());
+            gm.fontMetrics.fontDescent = TTF_FontDescent(font.get());
+            gm.fontMetrics.fontLineSkip = TTF_FontLineSkip(font.get());
+            TTF_GlyphMetrics(font.get(), glyph, &gm.minX, &gm.maxX, &gm.minY, &gm.maxY, &gm.advance);
+        }
+        return gm;
+    }
+
+    [[maybe_unused]] inline GlyphMetrics getGlyphMetrics32(const FontPointer &font, Uint32 glyph) {
+        GlyphMetrics gm{};
+        if (font) {
+            gm.fontMetrics.fontHeight = TTF_FontHeight(font.get());
+            gm.fontMetrics.fontAscent = TTF_FontAscent(font.get());
+            gm.fontMetrics.fontDescent = TTF_FontDescent(font.get());
+            gm.fontMetrics.fontLineSkip = TTF_FontLineSkip(font.get());
+            TTF_GlyphMetrics32(font.get(), glyph, &gm.minX, &gm.maxX, &gm.minY, &gm.maxY, &gm.advance);
+        }
+        return gm;
+    }
+
 
 #if 0
     /**
@@ -263,5 +292,67 @@ namespace rose {
 #endif
 
 } // rose
+
+namespace fmt {
+    template<>
+    class formatter<rose::FontMetrics> {
+        char presentation_ = 'd';
+    public:
+        // parse format and store it
+        constexpr auto parse(format_parse_context &ctx) {
+            auto i = ctx.begin(), end = ctx.end();
+            if (i != end && (*i == 'd' || *i == 'o')) {
+                presentation_ = *i++;
+            }
+            if (i != end && *i != '}') {
+                throw format_error("Invalid rectangle format.");
+            }
+            return i;
+        }
+
+        // format a value using stored specification:
+        template<class FmtContext>
+        constexpr auto format(const rose::FontMetrics &fm, FmtContext &ctx) const {
+            // note: we can't use ternary operator '?:' in a constexpr
+            switch (presentation_) {
+                default:
+                    // 'ctx.out()' is an output iterator
+                case 'd':
+                    return format_to(ctx.out(), "[A{:d}, D{:d}, H{:d}, Ls{:d}]",
+                                     fm.fontAscent, fm.fontDescent, fm.fontHeight, fm.fontLineSkip);
+            }
+        }
+    };
+
+    template<>
+    class formatter<rose::GlyphMetrics> {
+        char presentation_ = 'd';
+    public:
+        // parse format and store it
+        constexpr auto parse(format_parse_context &ctx) {
+            auto i = ctx.begin(), end = ctx.end();
+            if (i != end && (*i == 'd' || *i == 'o')) {
+                presentation_ = *i++;
+            }
+            if (i != end && *i != '}') {
+                throw format_error("Invalid rectangle format.");
+            }
+            return i;
+        }
+
+        // format a value using stored specification:
+        template<class FmtContext>
+        constexpr auto format(const rose::GlyphMetrics &gm, FmtContext &ctx) const {
+            // note: we can't use ternary operator '?:' in a constexpr
+            switch (presentation_) {
+                default:
+                    // 'ctx.out()' is an output iterator
+                case 'd':
+                    return format_to(ctx.out(), "[Font: {}; x{:d}, X{:d}, y{:d}, Y{:d}, adv{:d}]",
+                                     gm.fontMetrics, gm.minX, gm.maxX, gm.minY, gm.maxY, gm.advance);
+            }
+        }
+    };
+} // fmt
 
 #endif //ROSE2_FONT_H
