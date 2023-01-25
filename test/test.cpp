@@ -74,8 +74,8 @@ int main(int argc, char **argv) {
                     border >> container;
                 }
 
-                if (BorderBuilder border{theme}; border) {
-                    border.name("setBorder");
+                if (auto stateButton =  StateButtonBuilder{theme}; stateButton) {
+                    stateButton.name("stateButton");
                     if (TextSetBuilder textSet{theme}; textSet) {
                         if (TextGadgetBuilder text{theme}; text) {
                             text.text("Exit").name("exit") >> textSet;
@@ -90,9 +90,9 @@ int main(int argc, char **argv) {
                         if (TextGadgetBuilder shortCut{theme}; shortCut) {
                             shortCut.text("x").pointSize(15).name("sCut") >> textSet;
                         }
-                        textSet >> border;
+                        textSet >> stateButton;
                     }
-                    border >> container;
+                    stateButton >> container;
                 }
                 container >> containerBorder;
             }
