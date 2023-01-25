@@ -57,10 +57,6 @@ namespace rose {
 
         void draw(Context &context, Point drawLocation) override;
 
-        bool mouseButtonEvent(const SDL_MouseButtonEvent &e) override;
-
-        bool enterLeaveEvent(bool enter, Uint32 timestamp) override;
-
         void setVisual(Visual visual) {
             mVisual = visual;
             setNeedsDrawing();

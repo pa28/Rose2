@@ -43,6 +43,8 @@ namespace rose {
      */
     class AnimationProtocol : public Protocol<uint64_t> {};
 
+    class ButtonStateProtocol : public Protocol<bool, uint64_t> {};
+
     inline std::array<unsigned char, 8> utf8(unsigned int uc) {
         std::array<unsigned char, 8> seq{};
         size_t n = 0;

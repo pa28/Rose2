@@ -88,28 +88,6 @@ void rose::Border::draw(rose::Context &context, rose::Point drawLocation) {
     }
 }
 
-bool rose::Border::mouseButtonEvent(const SDL_MouseButtonEvent &e) {
-    if (e.button == SDL_BUTTON_LMASK) {
-        if (e.state == SDL_PRESSED && !mActive) {
-            mActive = true;
-            setNeedsDrawing();
-        } else if (e.state == SDL_RELEASED && mActive) {
-            mActive = false;
-            setNeedsDrawing();
-        }
-        return true;
-    }
-    return Gadget::mouseButtonEvent(e);
-}
-
-bool rose::Border::enterLeaveEvent(bool enter, Uint32 ) {
-    if (!enter && mActive) {
-        mActive = false;
-        setNeedsDrawing();
-    }
-    return true;
-}
-
 rose::Border::Border(std::shared_ptr<rose::Theme> &theme) : Singlet(theme)  {
     mCorners = theme->corners;
     mVisual = theme->visual;

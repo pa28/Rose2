@@ -12,6 +12,7 @@
 #include <Color.h>
 #include <Theme.h>
 #include <TextSet.h>
+#include <Button.h>
 
 using namespace rose;
 
@@ -24,6 +25,14 @@ struct binomial_compare_test {
 int main(int argc, char **argv) {
 
     if (auto application = std::make_shared<Application>(argc, argv); application) {
+        ButtonStateProtocol::slot_type buttonSignal;
+        buttonSignal = ButtonStateProtocol::createSlot();
+        buttonSignal->receiver = [](bool , uint64_t ) {
+            SDL_Event event;
+            event.type = SDL_QUIT;
+            SDL_PushEvent(&event);
+        };
+
         application->initializeGraphics();
 
         TextGadget::InitializeFontCache("/usr/share/fonts/truetype/liberation2:/usr/share/fonts");
@@ -46,13 +55,14 @@ int main(int argc, char **argv) {
                 container.setLayoutAlignment(LinearLayout::Alignment::TOP_LEFT)
                         .name("container");
 
-                if (BorderBuilder border{theme}; border) {
-                    border.name("helloBorder");
+                if (auto button = ButtonBuilder{theme}; button) {
+                    button.name("helloButton");
+                    button.get<Button>()->activateSignal.connect(buttonSignal);
                     if (TextGadgetBuilder hello{theme}; hello) {
-                        hello.text("Hello").name("Hello").lightColor(color::DarkYellow.color()) >> border;
+                        hello.text("Hello").name("Hello") >> button;
                         std::cout << "hello\n";
                     }
-                    border >> container;
+                    button >> container;
                 }
 
                 if (BorderBuilder border{theme}; border) {
