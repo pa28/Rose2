@@ -44,6 +44,8 @@ namespace rose {
         Singlet& operator = (const Singlet&) = delete;
         Singlet& operator = (Singlet&&) = default;
 
+        std::shared_ptr<Gadget> getManagedGadget() { return mGadget; }
+
         void initialize() override;
 
         const std::string_view& className() const override { return Singlet::ClassName; }

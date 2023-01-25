@@ -80,10 +80,11 @@ namespace rose {
     class StateButton : public Button {
     protected:
         bool mButtonState{false};
+        uint32_t mOffCode{}, mOnCode{};         // Icon code points for off and on state.
 
     public:
         StateButton() = default;
-        explicit StateButton(std::shared_ptr<Theme>& theme) : Button(theme) {}
+        explicit StateButton(std::shared_ptr<Theme>& theme);
         StateButton(const StateButton&) = delete;
         StateButton(StateButton&&) = default;
         StateButton& operator=(const StateButton&) = delete;
@@ -103,6 +104,7 @@ namespace rose {
         void sendStateChangeSignal(uint64_t timestamp) {
             actionSignal.transmit(mButtonState, timestamp);
         }
+
     };
 
     /**
@@ -112,9 +114,9 @@ namespace rose {
     public:
         explicit StateButtonBuilder(std::shared_ptr<Gadget> g) : ButtonBuilder(std::move(g)) {}
 
-        StateButtonBuilder() : ButtonBuilder(std::make_shared<Border>()) {}
+        StateButtonBuilder() : ButtonBuilder(std::make_shared<StateButton>()) {}
 
-        explicit StateButtonBuilder(std::shared_ptr<Theme>& theme) : ButtonBuilder(std::make_shared<Border>(theme)) {}
+        explicit StateButtonBuilder(std::shared_ptr<Theme>& theme) : ButtonBuilder(std::make_shared<StateButton>(theme)) {}
 
         ~StateButtonBuilder() override = default;
 
