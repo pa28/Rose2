@@ -14,6 +14,8 @@
  */
 
 #include "Button.h"
+#include "TextGadget.h"
+#include "SceneTree.h"
 
 namespace rose {
 
@@ -40,11 +42,16 @@ namespace rose {
             } else if (e.state == SDL_RELEASED && mActive) {
                 setActive(false);
                 mButtonState = !mButtonState;
+                auto icon = findDesiredGadget<IconGadget>(shared_from_this());
                 sendStateChangeSignal(SDL_GetTicks64());
             }
             return true;
         }
         return Button::mouseButtonEvent(e);
+    }
+
+    StateButton::StateButton(std::shared_ptr<Theme> &theme) : Button(theme) {
+        fmt::print("StateButton\n");
     }
 
     bool Button::enterLeaveEvent(bool enter, Uint32 ) {
