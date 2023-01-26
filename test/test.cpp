@@ -75,20 +75,13 @@ int main(int argc, char **argv) {
                 }
 
                 if (auto stateButton =  StateButtonBuilder{theme}; stateButton) {
-                    stateButton.name("stateButton");
+                    stateButton.radioButton().name("stateButton");
                     if (TextSetBuilder textSet{theme}; textSet) {
+                        if (IconGadgetBuilder check{theme}; check) {
+                            check >> textSet;
+                        }
                         if (TextGadgetBuilder text{theme}; text) {
-                            text.text("Exit").name("exit") >> textSet;
-                        }
-                        if (IconGadgetBuilder cmd{theme}; cmd) {
-                            cmd.icon("rocket")
-                                .animation<LightAnimation>()
-                                .name("icon")
-                                .lightColor(color::DarkRed.color())
-                                     >> textSet;
-                        }
-                        if (TextGadgetBuilder shortCut{theme}; shortCut) {
-                            shortCut.text("x").pointSize(15).name("sCut") >> textSet;
+                            text.text("Check").name("check") >> textSet;
                         }
                         textSet >> stateButton;
                     }

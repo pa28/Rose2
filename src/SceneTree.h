@@ -40,7 +40,7 @@ namespace rose {
      * @return The first found std::shared_ptr<Gadget> which can be down cast to DesiredGadget or a nullptr
      */
     template<class DesiredGadget>
-    std::shared_ptr<Gadget> findDesiredGadget(std::shared_ptr<Gadget> gadget) {
+    std::shared_ptr<DesiredGadget> findDesiredGadget(std::shared_ptr<Gadget> gadget) {
         auto found = searchTreeFor(gadget, [](std::shared_ptr<Gadget> g) -> bool {
             return std::dynamic_pointer_cast<DesiredGadget>(g).operator bool();
         }, 2);

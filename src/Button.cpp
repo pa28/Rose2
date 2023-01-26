@@ -42,7 +42,7 @@ namespace rose {
             } else if (e.state == SDL_RELEASED && mActive) {
                 setActive(false);
                 mButtonState = !mButtonState;
-                auto icon = findDesiredGadget<IconGadget>(shared_from_this());
+                setManagedIconCodePoint();
                 sendStateChangeSignal(SDL_GetTicks64());
             }
             return true;
@@ -52,6 +52,27 @@ namespace rose {
 
     StateButton::StateButton(std::shared_ptr<Theme> &theme) : Button(theme) {
         fmt::print("StateButton\n");
+    }
+
+    void StateButton::initialize() {
+        setManagedIconCodePoint();
+        Button::initialize();
+    }
+
+    void StateButton::setManagedIconCodePoint() {
+        if (mIcon.expired()) {
+            if (auto icon = findDesiredGadget<IconGadget>(shared_from_this()); icon) {
+                mIcon = icon;
+                icon->setIcon(mButtonState ? mOnCode : mOffCode);
+            }
+        } else {
+            mIcon.lock()->setIcon(mButtonState ? mOnCode : mOffCode);
+        }
+    }
+
+    bool StateButton::initialLayout(Context &context) {
+        setManagedIconCodePoint();
+        return Button::initialLayout(context);
     }
 
     bool Button::enterLeaveEvent(bool enter, Uint32 ) {

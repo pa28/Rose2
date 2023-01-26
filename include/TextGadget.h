@@ -251,6 +251,12 @@ namespace rose {
         }
     };
 
+    class CodePointError : public std::runtime_error {
+    public:
+        CodePointError(const std::string& whatArg) : std::runtime_error(whatArg) {}
+        CodePointError(const char *whatArg) : std::runtime_error(whatArg) {}
+    };
+
     /**
      * @class IconGadget
      * @brief Display a Material icon font element.
@@ -317,6 +323,21 @@ namespace rose {
                 mIconCode = icon;
                 textUpdated();
             }
+        }
+
+        /**
+         * @brief Convert a code point name into a code point.
+         * @tparam String The type of the code point name.
+         * @param codePointName The code point name.
+         * @return the code point.
+         */
+        template<class String>
+                requires StringLike<String>
+        static uint32_t getIcon(String codePointName) {
+            if (auto itr = mMaterial->find(codePointName); itr != mMaterial->end()) {
+                return itr->second;
+            }
+            throw CodePointError(fmt::format("Code point error: code point '{}' not found.", codePointName));
         }
 
         /**

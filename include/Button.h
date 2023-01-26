@@ -19,6 +19,7 @@
 #define ROSE2_BUTTON_H
 
 #include <Border.h>
+#include <TextGadget.h>
 
 namespace rose {
 
@@ -81,6 +82,7 @@ namespace rose {
     protected:
         bool mButtonState{false};
         uint32_t mOffCode{}, mOnCode{};         // Icon code points for off and on state.
+        std::weak_ptr<IconGadget> mIcon{};      // Local pointer to the managed IconGadget.
 
     public:
         StateButton() = default;
@@ -91,6 +93,12 @@ namespace rose {
         StateButton& operator=(StateButton&&) = default;
 
         ~StateButton() override = default;
+
+        bool initialLayout(Context &context) override;
+
+        void draw(Context &context, Point drawLocation) override {
+            Button::draw(context, drawLocation);
+        }
 
         /**
          * @brief Signal to convey the action of a stateful button.
@@ -105,6 +113,35 @@ namespace rose {
             actionSignal.transmit(mButtonState, timestamp);
         }
 
+        /**
+         * @brief Set the off and on icon code points.
+         * @param off The off code point.
+         * @param on The on code point.
+         */
+        void setIcons(uint32_t off, uint32_t on) {
+            mOffCode = off;
+            mOnCode = on;
+        }
+
+        /**
+         * @brief Set the off and on icon code points from names.
+         * @throws CodePointError
+         * @tparam S1 Type of off name
+         * @tparam S2 Type of on name
+         * @param off Code point name for the off icon.
+         * @param on Code point name for the on icon.
+         */
+        template<class S1, class S2>
+                requires StringLike<S1> && StringLike<S2>
+        void setIcons(S1 off, S2 on) {
+            auto cpOff = IconGadget::getIcon(off);
+            auto cpOn = IconGadget::getIcon(on);
+            setIcons(cpOff, cpOn);
+        }
+
+        void setManagedIconCodePoint();
+
+        void initialize() override;
     };
 
     /**
@@ -120,6 +157,32 @@ namespace rose {
 
         ~StateButtonBuilder() override = default;
 
+        auto setIcons(uint32_t off, uint32_t on) {
+            std::dynamic_pointer_cast<StateButton>(gadget)->setIcons(off, on);
+            return *this;
+        }
+
+        template<class S1, class S2>
+                requires StringLike<S1> && StringLike<S2>
+        auto setIcons(S1 off, S2 on) {
+            std::dynamic_pointer_cast<StateButton>(gadget)->setIcons(off, on);
+            return *this;
+        }
+
+        auto toggleButton() {
+            std::dynamic_pointer_cast<StateButton>(gadget)->setIcons("toggle_off", "toggle_on");
+            return *this;
+        }
+
+        auto checkBox() {
+            std::dynamic_pointer_cast<StateButton>(gadget)->setIcons("check_box_outline_blank", "check_box");
+            return *this;
+        }
+
+        auto radioButton() {
+            std::dynamic_pointer_cast<StateButton>(gadget)->setIcons("radio_button_unchecked", "radio_button_checked");
+            return *this;
+        }
     };
 
 } // rose

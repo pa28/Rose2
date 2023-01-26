@@ -158,6 +158,8 @@ namespace rose {
     }
 
     void IconGadget::draw(Context &context, Point drawLocation) {
+        if (!mTexture)
+            createIconTexture(context);
         TextGadget::draw(context, drawLocation);
     }
 
