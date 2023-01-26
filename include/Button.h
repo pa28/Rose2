@@ -240,7 +240,11 @@ namespace rose {
 
         bool setActiveState(Uint8 state, Uint8 button) override;
 
-        MultiButtonProtocol::signal_type updateSignal{};
+        MultiButtonProtocol::signal_type updateSignal{[this]() {
+            for (auto & item : mItems) {
+                updateSignal.transmitLastConnected(item.itemId == mActiveItem, item.itemId, SDL_GetTicks64());
+            }
+        }};
     };
 
     class MultiButtonBuilder : public ButtonBuilder {
