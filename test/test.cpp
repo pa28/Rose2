@@ -24,6 +24,10 @@ struct binomial_compare_test {
 
 int main(int argc, char **argv) {
 
+    static constexpr std::array<std::tuple<uint32_t,std::string_view>,4> SpaceButtonItems = {{
+            { 0u, "rocket" }, { 1u, "rocket_launch" }, { 2u, "satellite_alt" }, { 3u, "satellite"}
+    }};
+
     if (auto application = std::make_shared<Application>(argc, argv); application) {
         ButtonStateProtocol::slot_type buttonSignal;
         buttonSignal = ButtonStateProtocol::createSlot();
@@ -31,6 +35,12 @@ int main(int argc, char **argv) {
             SDL_Event event;
             event.type = SDL_QUIT;
             SDL_PushEvent(&event);
+        };
+
+        MultiButtonProtocol::slot_type multiButtonSignal;
+        multiButtonSignal = MultiButtonProtocol::createSlot();
+        multiButtonSignal->receiver = [](bool state, uint32_t item, uint64_t) {
+            fmt::print("Multi button item {} state {}\n", item, state);
         };
 
         application->initializeGraphics();
@@ -65,13 +75,10 @@ int main(int argc, char **argv) {
                     button >> container;
                 }
 
-                if (BorderBuilder border{theme}; border) {
-                    border.name("worldBorder");
-                    if (TextGadgetBuilder world{theme}; world) {
-                        world.text("World").name("world") >> border;
-                        std::cout << "World\n";
-                    }
-                    border >> container;
+                if (auto multi = MultiButtonBuilder{theme}; multi) {
+                    multi.items(SpaceButtonItems).name("worldBorder");
+                    multi.get<MultiButton>()->updateSignal.connect(multiButtonSignal);
+                    multi >> container;
                 }
 
                 if (auto stateButton =  StateButtonBuilder{theme}; stateButton) {

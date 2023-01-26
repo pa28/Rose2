@@ -22,24 +22,29 @@ namespace rose {
     Button::Button(std::shared_ptr<Theme> &theme) : Border(theme) {
     }
 
-    bool Button::mouseButtonEvent(const SDL_MouseButtonEvent &e) {
-        if (e.button == SDL_BUTTON_LMASK) {
-            if (e.state == SDL_PRESSED && !mActive) {
+    bool Button::setActiveState(Uint8 state, Uint8 button) {
+        if (button == SDL_BUTTON_LMASK) {
+            if (state == SDL_PRESSED && !mActive) {
                 setActive(true);
-            } else if (e.state == SDL_RELEASED && mActive) {
+            } else if (state == SDL_RELEASED && mActive) {
                 setActive(false);
                 sendActivateSignal(SDL_GetTicks64());
             }
             return true;
         }
+        return false;
+    }
+
+    bool Button::mouseButtonEvent(const SDL_MouseButtonEvent &e) {
+        if (auto r = setActiveState(e.state, e.button); r) return r;
         return Border::mouseButtonEvent(e);
     }
 
-    bool StateButton::mouseButtonEvent(const SDL_MouseButtonEvent &e) {
-        if (e.button == SDL_BUTTON_LMASK) {
-            if (e.state == SDL_PRESSED && !mActive) {
+    bool StateButton::setActiveState(Uint8 state, Uint8 button) {
+        if (button == SDL_BUTTON_LMASK) {
+            if (state == SDL_PRESSED && !mActive) {
                 setActive(true);
-            } else if (e.state == SDL_RELEASED && mActive) {
+            } else if (state == SDL_RELEASED && mActive) {
                 setActive(false);
                 mButtonState = !mButtonState;
                 setManagedIconCodePoint();
@@ -47,7 +52,7 @@ namespace rose {
             }
             return true;
         }
-        return Button::mouseButtonEvent(e);
+        return false;
     }
 
     StateButton::StateButton(std::shared_ptr<Theme> &theme) : Button(theme) {
@@ -81,4 +86,21 @@ namespace rose {
         return true;
     }
 
+    bool MultiButton::setActiveState(Uint8 state, Uint8 button) {
+        if (state == SDL_PRESSED) {
+            setActive(true);
+        } else if (!mItems.empty()) {
+            updateSignal.transmit(false, mItems.at(mActiveItem).itemId, SDL_GetTicks64());
+            if (button == SDL_BUTTON_LEFT) {
+                mActiveItem = (mActiveItem + 1) % mItems.size();
+            } else if (button == SDL_BUTTON_RIGHT) {
+                mActiveItem = mActiveItem> 0 ? (mActiveItem - 1) % mItems.size() : mItems.size() - 1;
+            }
+            updateSignal.transmit(true, mItems.at(mActiveItem).itemId, SDL_GetTicks64());
+            setActive(false);
+            setManagedIconCodePoint();
+            return true;
+        }
+        return false;
+    }
 } // rose

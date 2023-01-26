@@ -43,7 +43,21 @@ namespace rose {
      */
     class AnimationProtocol : public Protocol<uint64_t> {};
 
+    /**
+     * @class ButtonStateProtocol
+     * @brief This protocol sends the state of a button.
+     * @details For a basic push button receipt of the signal indicates the button has been pressed and released.
+     * <br/>For a stateful button (ToggleButton, CheckButton, etc) the bool value indicates the current state. A
+     * 64 bit value of the number of milliseconds since library initialization is included.
+     */
     class ButtonStateProtocol : public Protocol<bool, uint64_t> {};
+
+    /**
+     * @class MultiButtonProtocol
+     * @brief The protocol sends the updates of the button states over time. The bool indicates the state for the
+     * item with the specified 32 bit ID. The time tick of the update is give by the 64 bit value.
+     */
+    class MultiButtonProtocol : public Protocol<bool, uint32_t, uint64_t> {};
 
     inline std::array<unsigned char, 8> utf8(unsigned int uc) {
         std::array<unsigned char, 8> seq{};

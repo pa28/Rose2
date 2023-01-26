@@ -333,8 +333,8 @@ namespace rose {
          */
         template<class String>
                 requires StringLike<String>
-        static uint32_t getIcon(String codePointName) {
-            if (auto itr = mMaterial->find(codePointName); itr != mMaterial->end()) {
+        static uint32_t getIcon(const String& codePointName) {
+            if (auto itr = mMaterial->find(std::string{codePointName}); itr != mMaterial->end()) {
                 return itr->second;
             }
             throw CodePointError(fmt::format("Code point error: code point '{}' not found.", codePointName));

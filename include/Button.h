@@ -20,6 +20,7 @@
 
 #include <Border.h>
 #include <TextGadget.h>
+#include <ranges>
 
 namespace rose {
 
@@ -39,6 +40,8 @@ namespace rose {
         Button& operator=(Button&&) = default;
 
         ~Button() override = default;
+
+        virtual bool setActiveState(Uint8 state, Uint8 button);
 
         /**
          * @brief Signal to convey activation events such as button pressed.
@@ -107,7 +110,7 @@ namespace rose {
          */
         ButtonStateProtocol::signal_type actionSignal{};
 
-        bool mouseButtonEvent(const SDL_MouseButtonEvent &e) override;
+        bool setActiveState(Uint8 state, Uint8 button) override;
 
         void sendStateChangeSignal(uint64_t timestamp) {
             actionSignal.transmit(mButtonState, timestamp);
@@ -181,6 +184,85 @@ namespace rose {
 
         auto radioButton() {
             std::dynamic_pointer_cast<StateButton>(gadget)->setIcons("radio_button_unchecked", "radio_button_checked");
+            return *this;
+        }
+    };
+
+    template<class Range>
+    concept MultiButtonItemRange = requires(Range& range) {
+        std::ranges::begin(range);
+        std::ranges::end(range);
+        { std::ranges::begin(range) } -> std::convertible_to<std::tuple<uint32_t,std::string_view>*>;
+    };
+
+    class MultiButton : public Button {
+    public:
+        struct  Item {
+            uint32_t itemId{}, codePoint{};
+        };
+
+    protected:
+        std::vector<Item> mItems{};
+        std::vector<Item>::size_type mActiveItem{};
+
+        void setManagedIconCodePoint() {
+            if (auto icon = std::dynamic_pointer_cast<IconGadget>(mGadget); icon) {
+                icon->setIcon(mItems.at(mActiveItem).codePoint);
+            } else {
+                throw SceneTreeError(fmt::format("MultiButton does not manage an IconGadget {} {}",
+                                                 __FILE__, __LINE__));
+            }
+        }
+
+    public:
+        MultiButton() = default;
+        explicit MultiButton(std::shared_ptr<Theme>& theme) : Button(theme) {}
+        MultiButton(const MultiButton&) = delete;
+        MultiButton(MultiButton&&) = default;
+        MultiButton& operator=(const MultiButton&) = delete;
+        MultiButton& operator=(MultiButton&&) = default;
+
+        ~MultiButton() override = default;
+
+        auto begin() { return mItems.begin(); }
+
+        auto end() { return mItems.end(); }
+
+        template<class Range>
+                requires MultiButtonItemRange<Range>
+        void addItems(const Range& items) {
+            for (const auto& item : items ) {
+                const auto [itemNumber, codePointName] = item;
+                mItems.emplace_back(itemNumber, IconGadget::getIcon(codePointName));
+            }
+            setManagedIconCodePoint();
+        }
+
+        bool setActiveState(Uint8 state, Uint8 button) override;
+
+        MultiButtonProtocol::signal_type updateSignal{};
+    };
+
+    class MultiButtonBuilder : public ButtonBuilder {
+    public:
+        explicit MultiButtonBuilder(std::shared_ptr<Gadget> g) : ButtonBuilder(std::move(g)) {}
+
+        MultiButtonBuilder() : ButtonBuilder(std::make_shared<MultiButton>()) {
+            if (auto icon = IconGadgetBuilder{}; icon)
+                icon >> *this;
+        }
+
+        explicit MultiButtonBuilder(std::shared_ptr<Theme>& theme) : ButtonBuilder(std::make_shared<MultiButton>(theme)) {
+            if (auto icon = IconGadgetBuilder{theme}; icon)
+                icon >> *this;
+        }
+
+        ~MultiButtonBuilder() override = default;
+
+        template<class Range>
+                requires MultiButtonItemRange<Range>
+        auto items(const Range& buttonItems) {
+            std::dynamic_pointer_cast<MultiButton>(gadget)->addItems(buttonItems);
             return *this;
         }
     };
