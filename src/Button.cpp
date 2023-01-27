@@ -22,13 +22,13 @@ namespace rose {
     Button::Button(std::shared_ptr<Theme> &theme) : Border(theme) {
     }
 
-    bool Button::setActiveState(Uint8 state, Uint8 button) {
+    bool Button::setActiveState(Uint8 state, Uint8 button, uint64_t ticks) {
         if (button == SDL_BUTTON_LMASK) {
             if (state == SDL_PRESSED && !mActive) {
                 setActive(true);
             } else if (state == SDL_RELEASED && mActive) {
                 setActive(false);
-                sendActivateSignal(SDL_GetTicks64());
+                sendActivateSignal(ticks);
             }
             return true;
         }
@@ -36,11 +36,11 @@ namespace rose {
     }
 
     bool Button::mouseButtonEvent(const SDL_MouseButtonEvent &e) {
-        if (auto r = setActiveState(e.state, e.button); r) return r;
+        if (auto r = setActiveState(e.state, e.button, timestamp32to64(e.timestamp)); r) return r;
         return Border::mouseButtonEvent(e);
     }
 
-    bool StateButton::setActiveState(Uint8 state, Uint8 button) {
+    bool StateButton::setActiveState(Uint8 state, Uint8 button, uint64_t ticks) {
         if (button == SDL_BUTTON_LMASK) {
             if (state == SDL_PRESSED && !mActive) {
                 setActive(true);
@@ -48,7 +48,7 @@ namespace rose {
                 setActive(false);
                 mButtonState = !mButtonState;
                 setManagedIconCodePoint();
-                sendStateChangeSignal(SDL_GetTicks64());
+                sendStateChangeSignal(ticks);
             }
             return true;
         }
@@ -86,17 +86,17 @@ namespace rose {
         return true;
     }
 
-    bool MultiButton::setActiveState(Uint8 state, Uint8 button) {
+    bool MultiButton::setActiveState(Uint8 state, Uint8 button, uint64_t ticks) {
         if (state == SDL_PRESSED) {
             setActive(true);
         } else if (!mItems.empty()) {
-            updateSignal.transmit(false, mItems.at(mActiveItem).itemId, SDL_GetTicks64());
+            updateSignal.transmit(false, mItems.at(mActiveItem).itemId, ticks);
             if (button == SDL_BUTTON_LEFT) {
                 mActiveItem = (mActiveItem + 1) % mItems.size();
             } else if (button == SDL_BUTTON_RIGHT) {
                 mActiveItem = mActiveItem> 0 ? (mActiveItem - 1) % mItems.size() : mItems.size() - 1;
             }
-            updateSignal.transmit(true, mItems.at(mActiveItem).itemId, SDL_GetTicks64());
+            updateSignal.transmit(true, mItems.at(mActiveItem).itemId, ticks);
             setActive(false);
             setManagedIconCodePoint();
             return true;

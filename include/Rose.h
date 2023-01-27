@@ -15,6 +15,10 @@
 
 namespace rose {
 
+    inline uint64_t timestamp32to64(uint32_t timestamp32) {
+        return (SDL_GetTicks64() & 0xFFFF0000u) | timestamp32;
+    }
+
     /**
      * @brief A concept specifying an object convertible to a std::string_view.
      * @tparam T

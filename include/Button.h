@@ -41,7 +41,7 @@ namespace rose {
 
         ~Button() override = default;
 
-        virtual bool setActiveState(Uint8 state, Uint8 button);
+        virtual bool setActiveState(Uint8 state, Uint8 button, uint64_t ticks);
 
         /**
          * @brief Signal to convey activation events such as button pressed.
@@ -110,7 +110,7 @@ namespace rose {
          */
         ButtonStateProtocol::signal_type actionSignal{};
 
-        bool setActiveState(Uint8 state, Uint8 button) override;
+        bool setActiveState(Uint8 state, Uint8 button, uint64_t ticks) override;
 
         void sendStateChangeSignal(uint64_t timestamp) {
             actionSignal.transmit(mButtonState, timestamp);
@@ -238,7 +238,7 @@ namespace rose {
             setManagedIconCodePoint();
         }
 
-        bool setActiveState(Uint8 state, Uint8 button) override;
+        bool setActiveState(Uint8 state, Uint8 button, uint64_t ticks) override;
 
         MultiButtonProtocol::signal_type updateSignal{[this]() {
             for (auto & item : mItems) {
