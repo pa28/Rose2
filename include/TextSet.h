@@ -76,7 +76,7 @@ namespace rose {
 
         TextSetBuilder() : RowBuilder(std::make_shared<TextSet>()) {}
 
-        explicit TextSetBuilder(std::shared_ptr<Theme>& themme) : RowBuilder(std::make_shared<TextSet>(themme)) {}
+        explicit TextSetBuilder(std::shared_ptr<Theme>& theme) : RowBuilder(std::make_shared<TextSet>(theme)) {}
 
         ~TextSetBuilder() override = default;
     };
