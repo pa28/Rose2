@@ -263,7 +263,7 @@ namespace rose {
 
     protected:
         ItemListType mItems{};
-        ItemListType ::size_type mActiveItem{};
+        ItemListType::size_type mActiveItem{};
 
         /**
          * @brief Set the icon code point on the managed IconGadget.
