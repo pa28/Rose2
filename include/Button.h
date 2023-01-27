@@ -11,8 +11,15 @@
  * @author Richard Buckley <richard.buckley@ieee.org>
  * @version 1.0
  * @date 25/01/23
- * @brief 
- * @details
+ * @brief Foundation class for, and some simple Buttons.
+ * @details Buttons are constructed as an animatable Border (which is derived from Singlet) which surrounds the
+ * image of the button face. In some case the user program is responsible for constructing the scene subtree, and
+ * attaching it, which makes up the face of the button. This could be almost anything that is possible to construct
+ * with the library, however elements which consume events required for the correct operation of a button will,
+ * of course, cause erratic and possible unusable program behavior.
+ * <br/>
+ * More complex buttons construct their managed subtree based on a specification provided. These are easier to use
+ * but less flexible.
  */
 
 #ifndef ROSE2_BUTTON_H
@@ -48,16 +55,36 @@ namespace rose {
          */
         ButtonStateProtocol::signal_type activateSignal{};
 
+        /**
+         * @brief Transmit the activate signal to attached slots.
+         * @param timeStamp The 64 bit timestamp at the time of sending.
+         */
         void sendActivateSignal(uint64_t timeStamp) {
             activateSignal.transmit(true, timeStamp);
         }
 
+        /**
+         * @brief Process mouse enter and leave events.
+         * @param enter true when the mouse enters, false when it leaves.
+         * @param timestamp The SDL 32 bit time stamp from SDL_Event.
+         * @return
+         */
         bool enterLeaveEvent(bool enter, Uint32 timestamp) override;
 
+        /**
+         * @brief Process mouse button events.
+         * @param e the mouse button event structure.
+         * @return true if the event was consumed.
+         */
         bool mouseButtonEvent(const SDL_MouseButtonEvent &e) override;
 
-//        void initialize() override = 0;
-
+        /**
+         * @brief Set the button active state.
+         * @details Iff the button state changes it requests redrawing.
+         * <br/>Visual semantics can differ but the active state is intended to indicate to the user the button
+         * is currently 'pressed'.
+         * @param active the (possibly) new button state.
+         */
         virtual void setActive(bool active) {
             if (mActive != active) {
                 mActive = active;

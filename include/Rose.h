@@ -15,8 +15,22 @@
 
 namespace rose {
 
+    /**
+     * @brief Convert a 32 bit SDL timestamp to a 64 bit timestamp.
+     * @brief In the simplest case the lower 32 bits of the 64 bit timestamp are replaced with the 32 bit timestamp.
+     * If the lower 32 bits of the current 64 bit timestamp are less than the 32 bit time stamp then the 32 bit
+     * timestamp has rolled over between the time it was taken and this function called; the 64 bit timestamp is
+     * rolled back to align with the original 32 bit timestamp.
+     * @param timestamp32
+     * @return
+     */
     inline uint64_t timestamp32to64(uint32_t timestamp32) {
-        return (SDL_GetTicks64() & 0xFFFF0000u) | timestamp32;
+        auto timestamp64 = SDL_GetTicks64();
+        if ((static_cast<uint32_t>(timestamp64 & 0xFFFFFFFF) < timestamp32) &&
+                (timestamp64 >= 0x100000000)) {    // Test for roll over of 32 bit value
+            timestamp64 -= 0x100000000;
+        }
+        return (timestamp64 & 0xFFFFFFFF00000000u) | timestamp32;
     }
 
     /**
