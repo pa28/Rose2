@@ -80,7 +80,7 @@ namespace rose {
         return Button::initialLayout(context);
     }
 
-    bool Button::enterLeaveEvent(bool enter, Uint32 ) {
+    bool Button::enterLeaveEvent(bool enter, Uint32) {
         if (!enter)
             setActive(false);
         return true;
@@ -94,7 +94,7 @@ namespace rose {
             if (button == SDL_BUTTON_LEFT) {
                 mActiveItem = (mActiveItem + 1) % mItems.size();
             } else if (button == SDL_BUTTON_RIGHT) {
-                mActiveItem = mActiveItem> 0 ? (mActiveItem - 1) % mItems.size() : mItems.size() - 1;
+                mActiveItem = mActiveItem > 0 ? (mActiveItem - 1) % mItems.size() : mItems.size() - 1;
             }
             updateSignal.transmit(true, mItems.at(mActiveItem).itemId, ticks);
             setActive(false);

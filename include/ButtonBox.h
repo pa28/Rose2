@@ -29,11 +29,17 @@ namespace rose {
 
     public:
         ButtonBox() : RowColumn() { mLayoutManager = std::make_unique<LinearLayout>(); }
-        explicit ButtonBox(std::shared_ptr<Theme>& theme) : RowColumn(theme) { mLayoutManager = std::make_unique<LinearLayout>(); }
-        ButtonBox(const ButtonBox&) = delete;
+
+        explicit ButtonBox(std::shared_ptr<Theme> &theme) : RowColumn(
+                theme) { mLayoutManager = std::make_unique<LinearLayout>(); }
+
+        ButtonBox(const ButtonBox &) = delete;
+
         ButtonBox(ButtonBox &&) = default;
-        ButtonBox& operator=(const ButtonBox &) = delete;
-        ButtonBox& operator=(ButtonBox&&) = default;
+
+        ButtonBox &operator=(const ButtonBox &) = delete;
+
+        ButtonBox &operator=(ButtonBox &&) = default;
 
         ~ButtonBox() override = default;
 

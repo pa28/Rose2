@@ -45,11 +45,16 @@ namespace rose {
 
     public:
         Button() = default;
-        explicit Button(std::shared_ptr<Theme>& theme);
-        Button(const Button&) = delete;
-        Button(Button&&) = default;
-        Button& operator=(const Button&) = delete;
-        Button& operator=(Button&&) = default;
+
+        explicit Button(std::shared_ptr<Theme> &theme);
+
+        Button(const Button &) = delete;
+
+        Button(Button &&) = default;
+
+        Button &operator=(const Button &) = delete;
+
+        Button &operator=(Button &&) = default;
 
         ~Button() override = default;
 
@@ -107,7 +112,7 @@ namespace rose {
 
         ButtonBuilder() : BorderBuilder(std::make_shared<Button>()) {}
 
-        explicit ButtonBuilder(std::shared_ptr<Theme>& theme) : BorderBuilder(std::make_shared<Button>(theme)) {}
+        explicit ButtonBuilder(std::shared_ptr<Theme> &theme) : BorderBuilder(std::make_shared<Button>(theme)) {}
 
         ~ButtonBuilder() override = default;
 
@@ -129,11 +134,16 @@ namespace rose {
 
     public:
         StateButton() = default;
-        explicit StateButton(std::shared_ptr<Theme>& theme);
-        StateButton(const StateButton&) = delete;
-        StateButton(StateButton&&) = default;
-        StateButton& operator=(const StateButton&) = delete;
-        StateButton& operator=(StateButton&&) = default;
+
+        explicit StateButton(std::shared_ptr<Theme> &theme);
+
+        StateButton(const StateButton &) = delete;
+
+        StateButton(StateButton &&) = default;
+
+        StateButton &operator=(const StateButton &) = delete;
+
+        StateButton &operator=(StateButton &&) = default;
 
         ~StateButton() override = default;
 
@@ -175,7 +185,7 @@ namespace rose {
          * @param on Code point name for the on icon.
          */
         template<class S1, class S2>
-                requires StringLike<S1> && StringLike<S2>
+        requires StringLike<S1> && StringLike<S2>
         void setIcons(S1 off, S2 on) {
             auto cpOff = IconGadget::getIcon(off);
             auto cpOn = IconGadget::getIcon(on);
@@ -199,7 +209,8 @@ namespace rose {
 
         StateButtonBuilder() : ButtonBuilder(std::make_shared<StateButton>()) {}
 
-        explicit StateButtonBuilder(std::shared_ptr<Theme>& theme) : ButtonBuilder(std::make_shared<StateButton>(theme)) {}
+        explicit StateButtonBuilder(std::shared_ptr<Theme> &theme) : ButtonBuilder(
+                std::make_shared<StateButton>(theme)) {}
 
         ~StateButtonBuilder() override = default;
 
@@ -209,7 +220,7 @@ namespace rose {
         }
 
         template<class S1, class S2>
-                requires StringLike<S1> && StringLike<S2>
+        requires StringLike<S1> && StringLike<S2>
         auto setIcons(S1 off, S2 on) {
             std::dynamic_pointer_cast<StateButton>(gadget)->setIcons(off, on);
             return *this;
@@ -245,15 +256,15 @@ namespace rose {
      */
 
     template<class Range>
-    concept MultiButtonItemRange = requires(Range& range) {
+    concept MultiButtonItemRange = requires(Range &range) {
         std::ranges::begin(range);
         std::ranges::end(range);
-        { std::ranges::begin(range) } -> std::convertible_to<std::tuple<uint32_t,std::string_view>*>;
+        { std::ranges::begin(range) } -> std::convertible_to<std::tuple<uint32_t, std::string_view> *>;
     };
 
     class MultiButton : public Button {
     public:
-        struct  Item {
+        struct Item {
             uint32_t itemId{}, codePoint{};
         };
 
@@ -280,11 +291,16 @@ namespace rose {
 
     public:
         MultiButton() = default;
-        explicit MultiButton(std::shared_ptr<Theme>& theme) : Button(theme) {}
-        MultiButton(const MultiButton&) = delete;
-        MultiButton(MultiButton&&) = default;
-        MultiButton& operator=(const MultiButton&) = delete;
-        MultiButton& operator=(MultiButton&&) = default;
+
+        explicit MultiButton(std::shared_ptr<Theme> &theme) : Button(theme) {}
+
+        MultiButton(const MultiButton &) = delete;
+
+        MultiButton(MultiButton &&) = default;
+
+        MultiButton &operator=(const MultiButton &) = delete;
+
+        MultiButton &operator=(MultiButton &&) = default;
 
         ~MultiButton() override = default;
 
@@ -307,9 +323,9 @@ namespace rose {
          * @param items the range of items.
          */
         template<class Range>
-                requires MultiButtonItemRange<Range>
-        void addItems(const Range& items) {
-            for (const auto& item : items ) {
+        requires MultiButtonItemRange<Range>
+        void addItems(const Range &items) {
+            for (const auto &item: items) {
                 const auto [itemNumber, codePointName] = item;
                 mItems.emplace_back(itemNumber, IconGadget::getIcon(codePointName));
             }
@@ -331,7 +347,7 @@ namespace rose {
          * data to the new subscriber.
          */
         MultiButtonProtocol::signal_type updateSignal{[this]() {
-            for (auto & item : mItems) {
+            for (auto &item: mItems) {
                 updateSignal.transmitLastConnected(item.itemId == mActiveItem, item.itemId, SDL_GetTicks64());
             }
         }};
@@ -346,7 +362,8 @@ namespace rose {
                 icon >> *this;
         }
 
-        explicit MultiButtonBuilder(std::shared_ptr<Theme>& theme) : ButtonBuilder(std::make_shared<MultiButton>(theme)) {
+        explicit MultiButtonBuilder(std::shared_ptr<Theme> &theme) : ButtonBuilder(
+                std::make_shared<MultiButton>(theme)) {
             if (auto icon = IconGadgetBuilder{theme}; icon)
                 icon >> *this;
         }
@@ -354,8 +371,8 @@ namespace rose {
         ~MultiButtonBuilder() override = default;
 
         template<class Range>
-                requires MultiButtonItemRange<Range>
-        auto items(const Range& buttonItems) {
+        requires MultiButtonItemRange<Range>
+        auto items(const Range &buttonItems) {
             std::dynamic_pointer_cast<MultiButton>(gadget)->addItems(buttonItems);
             return *this;
         }
