@@ -13,9 +13,9 @@
  * @date 25/01/23
  */
 
-#include "Button.h"
+#include "buttons/Button.h"
 #include "TextGadget.h"
-#include "SceneTree.h"
+#include "manager/SceneTree.h"
 
 namespace rose {
 

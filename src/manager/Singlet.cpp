@@ -13,7 +13,7 @@
  * @date 10/01/23
  */
 
-#include "Singlet.h"
+#include "manager/Singlet.h"
 
 namespace rose {
     bool Singlet::initialLayout(Context &context) {

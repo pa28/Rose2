@@ -30,8 +30,8 @@
 #ifndef ROSE2_BUTTON_H
 #define ROSE2_BUTTON_H
 
-#include <Border.h>
-#include <TextGadget.h>
+#include "manager/Border.h"
+#include "TextGadget.h"
 #include <ranges>
 
 namespace rose {

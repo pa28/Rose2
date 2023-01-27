@@ -6,9 +6,9 @@
  * Window.cpp Created by Richard Buckley (C) 02/01/23
  */
 
-#include "Window.h"
-#include <Application.h>
-#include <fmt/printf.h>
+#include "manager/Window.h"
+#include "Application.h"
+#include "fmt/printf.h"
 
 namespace rose {
 

@@ -13,9 +13,9 @@
  * @date 09/01/23
  */
 
-#include "Border.h"
-#include <Theme.h>
-#include <GraphicsModel.h>
+#include "manager/Border.h"
+#include "Theme.h"
+#include "GraphicsModel.h"
 
 bool rose::Border::initialLayout(rose::Context &context) {
     return Singlet::initialLayout(context);

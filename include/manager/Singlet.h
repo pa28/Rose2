@@ -54,9 +54,9 @@ namespace rose {
 
         /**
          * @brief Set internal alignment padding.
-         * @details Internal alignment padding is used to align Gadgets inside of managers. Internal alignment
+         * @details Internal alignment padding is used to align Gadgets inside of manager. Internal alignment
          * may be set directly by using the getVisualMetrics() accessor function; however this method should
-         * be used as it allows managers to place the padding in an appropriate location.
+         * be used as it allows manager to place the padding in an appropriate location.
          * @param padding the padding.
          */
         [[maybe_unused]] void setInternalAlignmentPadding(const Padding& padding) override;

@@ -18,10 +18,10 @@
 #ifndef ROSE2_BORDER_H
 #define ROSE2_BORDER_H
 
-#include <Rose.h>
-#include <RoseTypes.h>
-#include <GraphicsModel.h>
-#include <Singlet.h>
+#include "Rose.h"
+#include "RoseTypes.h"
+#include "GraphicsModel.h"
+#include "manager/Singlet.h"
 
 namespace rose {
 

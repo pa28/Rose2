@@ -6,7 +6,7 @@
  */
 
 #include "TextGadget.h"
-#include <Window.h>
+#include "manager/Window.h"
 #include <Application.h>
 
 namespace rose {

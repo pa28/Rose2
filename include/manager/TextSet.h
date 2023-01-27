@@ -18,10 +18,10 @@
 #ifndef ROSE2_TEXTSET_H
 #define ROSE2_TEXTSET_H
 
-#include <Rose.h>
-#include <RoseTypes.h>
-#include <RowColumn.h>
-#include <TextGadget.h>
+#include "Rose.h"
+#include "RoseTypes.h"
+#include "manager/RowColumn.h"
+#include "TextGadget.h"
 
 namespace rose {
 

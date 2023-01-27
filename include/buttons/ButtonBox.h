@@ -18,7 +18,7 @@
 #ifndef ROSE2_BUTTONBOX_H
 #define ROSE2_BUTTONBOX_H
 
-#include <RowColumn.h>
+#include "manager/RowColumn.h"
 
 namespace rose {
 

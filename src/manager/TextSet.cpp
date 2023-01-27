@@ -13,7 +13,7 @@
  * @date 20/01/23
  */
 
-#include "TextSet.h"
+#include "manager/TextSet.h"
 
 namespace rose {
     void TextSet::manage(std::shared_ptr<Gadget> gadget) {

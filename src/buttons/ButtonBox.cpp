@@ -13,8 +13,8 @@
  * @date 27/01/23
  */
 
-#include "ButtonBox.h"
-#include "Button.h"
+#include "buttons/ButtonBox.h"
+#include "buttons/Button.h"
 
 namespace rose {
     void ButtonBox::manage(std::shared_ptr<Gadget> gadget) {

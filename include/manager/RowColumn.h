@@ -11,14 +11,14 @@
  * @author Richard Buckley <richard.buckley@ieee.org>
  * @version 1.0
  * @date 04/01/23
- * @brief Base class for layout managers.
+ * @brief Base class for layout manager.
  * @details
  */
 
 #ifndef ROSE2_ROWCOLUMN_H
 #define ROSE2_ROWCOLUMN_H
 
-#include <Widget.h>
+#include "Widget.h"
 
 namespace rose {
 

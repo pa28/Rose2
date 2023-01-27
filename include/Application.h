@@ -15,7 +15,7 @@
 #include <vector>
 #include <memory>
 #include <InputParser.h>
-#include <Window.h>
+#include "manager/Window.h"
 #include <Event.h>
 #include <Theme.h>
 #include <Signals.h>

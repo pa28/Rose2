@@ -11,9 +11,9 @@
  */
 
 #include "Gadget.h"
-#include "Widget.h"
-#include "Singlet.h"
-#include <Window.h>
+#include "manager/Widget.h"
+#include "manager/Singlet.h"
+#include "manager/Window.h"
 #include <Application.h>
 #include <Animation.h>
 

@@ -9,10 +9,10 @@
 #ifndef ROSE2_WINDOW_H
 #define ROSE2_WINDOW_H
 
-#include <Rose.h>
+#include "Rose.h"
 #include <SDL.h>
-#include <GraphicsModel.h>
-#include <Widget.h>
+#include "GraphicsModel.h"
+#include "manager/Widget.h"
 #include <exception>
 #include <functional>
 #include <stack>
@@ -201,8 +201,8 @@ namespace rose {
         /**
          * @brief Layout the contents of the window.
          * @details Layout is a two stage process.
-         * Stage one is exploratory. Layout managers gather data on the Gadgets they have to layout.
-         * Stage two is executive. Layout managers tell Gadgets where they are positioned and how much space
+         * Stage one is exploratory. Layout manager gather data on the Gadgets they have to layout.
+         * Stage two is executive. Layout manager tell Gadgets where they are positioned and how much space
          * they have to occupy.
          */
         void layout();
@@ -236,7 +236,7 @@ namespace rose {
         void clearFocusChain();
 
         /**
-         * @brief The specified gadget, and all its managers have their focus flag set and are pushed onto
+         * @brief The specified gadget, and all its manager have their focus flag set and are pushed onto
          * the back of the focus chain.
          * @details This results in the focus chain representing a bottom up list. A Window can search the
          * list forward to find a gadget that is able to accept a focus related event.

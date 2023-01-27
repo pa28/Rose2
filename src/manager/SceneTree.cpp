@@ -13,11 +13,11 @@
  * @date 25/01/23
  */
 
-#include "SceneTree.h"
-#include <Rose.h>
-#include <RoseTypes.h>
-#include <Singlet.h>
-#include <Widget.h>
+#include "manager/SceneTree.h"
+#include "Rose.h"
+#include "RoseTypes.h"
+#include "manager/Singlet.h"
+#include "manager/Widget.h"
 #include <stack>
 
 namespace rose {

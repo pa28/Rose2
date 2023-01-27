@@ -5,15 +5,15 @@
 #include <iostream>
 #include <array>
 #include <Rose.h>
-#include <RowColumn.h>
-#include <Border.h>
+#include "manager/RowColumn.h"
+#include "manager/Border.h"
 #include <TextGadget.h>
 #include <Application.h>
 #include <Color.h>
 #include <Theme.h>
-#include <TextSet.h>
-#include <Button.h>
-#include "ButtonBox.h"
+#include "manager/TextSet.h"
+#include "buttons/Button.h"
+#include "buttons/ButtonBox.h"
 
 using namespace rose;
 

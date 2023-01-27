@@ -36,10 +36,10 @@ list(APPEND EXTRA_LIBS GL Xxf86vm Xrandr Xinerama Xcursor Xi X11 sqlite3 pthread
 list(APPEND RoseLibraries Rose2 ${SDL2_LIBRARY} ${SDL2IMAGE_LIBRARY} ${SDL2TTF_LIBRARY} ${CURLPP_LIBRARIES} ${SOCI_LIBRARY}
         ${SOCI_sqlite3_PLUGIN} ${LOCALTIME_LIBRARY} ${EXTRA_LIBS})
 
-list(APPEND ROSE_SRC src/SceneTree.cpp src/Application.cpp src/GraphicsModel.cpp src/Surface.cpp src/Rose.cpp
-        src/Gadget.cpp src/Color.cpp src/Window.cpp src/Font.cpp src/TextGadget.cpp src/RowColumn.cpp src/Event.cpp
-        src/Theme.cpp src/Border.cpp src/Singlet.cpp src/Widget.cpp src/TimerTick.cpp src/TextSet.cpp src/Material.cpp
-        src/Animation.cpp src/Button.cpp src/ButtonBox.cpp)
+list(APPEND ROSE_SRC src/manager/SceneTree.cpp src/Application.cpp src/GraphicsModel.cpp src/Surface.cpp src/Rose.cpp
+        src/Gadget.cpp src/Color.cpp src/manager/Window.cpp src/Font.cpp src/TextGadget.cpp src/manager/RowColumn.cpp src/Event.cpp
+        src/Theme.cpp src/manager/Border.cpp src/manager/Singlet.cpp src/manager/Widget.cpp src/TimerTick.cpp src/manager/TextSet.cpp src/Material.cpp
+        src/Animation.cpp src/buttons/Button.cpp src/buttons/ButtonBox.cpp)
 
 add_library(Rose2 SHARED ${ROSE_SRC} ${LIB_FMT})
 

@@ -19,7 +19,7 @@
 #define ROSE2_WIDGET_H
 
 #include <memory>
-#include <Singlet.h>
+#include "Singlet.h"
 
 namespace rose {
 

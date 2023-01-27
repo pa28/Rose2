@@ -13,7 +13,7 @@
  * @date 10/01/23
  */
 
-#include "Widget.h"
+#include "manager/Widget.h"
 #include "Gadget.h"
 
 namespace rose {

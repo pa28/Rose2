@@ -14,7 +14,7 @@
 #ifndef ROSE2_SCENETREE_H
 #define ROSE2_SCENETREE_H
 
-#include <Gadget.h>
+#include "Gadget.h"
 #include <functional>
 
 namespace rose {

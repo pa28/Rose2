@@ -246,9 +246,9 @@ namespace rose {
 
         /**
          * @brief Set internal alignment padding.
-         * @details Internal alignment padding is used to align Gadgets inside of managers. Internal alignment
+         * @details Internal alignment padding is used to align Gadgets inside of manager. Internal alignment
          * may be set directly by using the getVisualMetrics() accessor function; however this method should
-         * be used as it allows managers to place the padding in an appropriate location.
+         * be used as it allows manager to place the padding in an appropriate location.
          * @param padding the padding.
          */
         [[maybe_unused]] virtual void setInternalAlignmentPadding(const Padding& padding) {
@@ -264,7 +264,7 @@ namespace rose {
 
         /**
          * @brief Adjust size, if necessary to fit into the constrained size. Finalize layout and visuals.
-         * @details Called by managers (derived from Singlet or Widget) when they are called to be constrained.
+         * @details Called by manager (derived from Singlet or Widget) when they are called to be constrained.
          * @param context Graphics context
          * @param constraint If set, the Gadget must render itself within the constrained size.
          * @return true if successful.
