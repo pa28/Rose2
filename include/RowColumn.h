@@ -60,6 +60,8 @@ namespace rose {
 
         void setAlignment(Alignment alignment) { mAlignment = alignment; }
 
+        void setMajorAxis(MajorAxis majorAxis) { mMajorAxis = majorAxis; }
+
         /**
          * @brief Default layout strategy is to do nothing.
          * @param gadget The widget to layout.
@@ -102,6 +104,13 @@ namespace rose {
         RowColumnBuilder() : WidgetBuilder(std::make_shared<RowColumn>()) {}
 
         ~RowColumnBuilder() override = default;
+
+        auto setMajorAxis(LinearLayout::MajorAxis majorAxis) {
+            if (auto gPtr = std::dynamic_pointer_cast<RowColumn>(gadget); gPtr) {
+                gPtr->getLayoutManager()->setMajorAxis(majorAxis);
+            }
+            return *this;
+        }
 
         auto setLayoutAlignment(LinearLayout::Alignment alignment) {
             if (auto gPtr = std::dynamic_pointer_cast<RowColumn>(gadget); gPtr) {
