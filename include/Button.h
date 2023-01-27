@@ -18,6 +18,11 @@
  * with the library, however elements which consume events required for the correct operation of a button will,
  * of course, cause erratic and possible unusable program behavior.
  * <br/>
+ * The there are three supported ways of providing a face:
+ *  - Attaching a TextGadget.
+ *  - Attaching an IconGadget or other derivative of TextGadget.
+ *  - Attaching a TextSet which may contain multiple TextGadgets or IconGadgets.
+ * <br/>
  * More complex buttons construct their managed subtree based on a specification provided. These are easier to use
  * but less flexible.
  */
@@ -108,6 +113,14 @@ namespace rose {
 
     };
 
+    /**
+     * @class StateButton
+     * @brief A button which has a boolean state indicated by one of two icons.
+     * @details This class is the base for Toggle, Check, and Radio buttons. The state of the button is indicated
+     * by displaying one of two specified icons. The StateButton manages a single Gadget which provides the button
+     * face which must include an IconGadget nested no deeper than two levels down. If multiple IconGadgets are
+     * subordinate to the StateButton within reach, the first encountered is used.
+     */
     class StateButton : public Button {
     protected:
         bool mButtonState{false};
@@ -169,6 +182,9 @@ namespace rose {
             setIcons(cpOff, cpOn);
         }
 
+        /**
+         * @brief Find the managed IconGadget and change its code point to match the state of the button.
+         */
         void setManagedIconCodePoint();
 
         void initialize() override;
@@ -215,6 +231,19 @@ namespace rose {
         }
     };
 
+    /**
+     * @class MultiButton
+     * @brief A compact Icon only multiple state button.
+     * @details The MultiButton provides control similar to the familiar Radio button paradigm but in a much more
+     * compact form. The face of the button is provided by a single IconGadget which is created and attached when
+     * the MultiButton is built. The user provides a set of MultiButton::Item values which determine the number of
+     * states and the Icon displayed for each state.
+     * <br/>
+     * The button moves forward through the list of states with a left mouse button click, backward with a right
+     * mouse click.
+     * @throws SceneTreeError if the managed Gadget is not an IconGadget.
+     */
+
     template<class Range>
     concept MultiButtonItemRange = requires(Range& range) {
         std::ranges::begin(range);
@@ -259,10 +288,24 @@ namespace rose {
 
         ~MultiButton() override = default;
 
+        /**
+         * @brief Get an iterator pointing to the first state item.
+         * @return IteratorType
+         */
         auto begin() { return mItems.begin(); }
 
+        /**
+         * @brief Get an iterator pointing one past the last state item.
+         * @return IteratorType
+         */
         auto end() { return mItems.end(); }
 
+        /**
+         * @brief Add the provided range of items to the button item list.
+         * @details The range must be of values convertable to std::tuple<uint32_t,std::string_view>*
+         * @tparam Range the type of the range.
+         * @param items the range of items.
+         */
         template<class Range>
                 requires MultiButtonItemRange<Range>
         void addItems(const Range& items) {
@@ -273,8 +316,20 @@ namespace rose {
             setManagedIconCodePoint();
         }
 
+        /**
+         * @brief Use decode mouse button data to set the active state of the button.
+         * @param state The mouse button state.
+         * @param button The button that changed.
+         * @param ticks When the change happened.
+         * @return true if the event was consumed.
+         */
         bool setActiveState(Uint8 state, Uint8 button, uint64_t ticks) override;
 
+        /**
+         * @brief The update signal transmitted when the button state is changed.
+         * @details The lambda is called when a new connection is made to the signal sending the current state
+         * data to the new subscriber.
+         */
         MultiButtonProtocol::signal_type updateSignal{[this]() {
             for (auto & item : mItems) {
                 updateSignal.transmitLastConnected(item.itemId == mActiveItem, item.itemId, SDL_GetTicks64());
