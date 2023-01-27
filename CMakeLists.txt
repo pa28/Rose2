@@ -39,7 +39,7 @@ list(APPEND RoseLibraries Rose2 ${SDL2_LIBRARY} ${SDL2IMAGE_LIBRARY} ${SDL2TTF_L
 list(APPEND ROSE_SRC src/SceneTree.cpp src/Application.cpp src/GraphicsModel.cpp src/Surface.cpp src/Rose.cpp
         src/Gadget.cpp src/Color.cpp src/Window.cpp src/Font.cpp src/TextGadget.cpp src/RowColumn.cpp src/Event.cpp
         src/Theme.cpp src/Border.cpp src/Singlet.cpp src/Widget.cpp src/TimerTick.cpp src/TextSet.cpp src/Material.cpp
-        src/Animation.cpp src/Button.cpp)
+        src/Animation.cpp src/Button.cpp src/ButtonBox.cpp)
 
 add_library(Rose2 SHARED ${ROSE_SRC} ${LIB_FMT})
 

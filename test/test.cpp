@@ -13,6 +13,7 @@
 #include <Theme.h>
 #include <TextSet.h>
 #include <Button.h>
+#include "ButtonBox.h"
 
 using namespace rose;
 
@@ -61,9 +62,9 @@ int main(int argc, char **argv) {
 
         if (BorderBuilder containerBorder{theme}; containerBorder) {
             containerBorder.visual(Visual::SHADOW).name("containerBorder");
-            if (auto container = ColumnBuilder{}; container) {
+            if (auto container = ButtonBoxBuilder{}; container) {
                 container.setLayoutAlignment(LinearLayout::Alignment::TOP_LEFT)
-                        .name("container");
+                        .name("buttonBox");
 
                 if (auto button = ButtonBuilder{theme}; button) {
                     button.name("helloButton");
