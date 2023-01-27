@@ -228,10 +228,18 @@ namespace rose {
             uint32_t itemId{}, codePoint{};
         };
 
-    protected:
-        std::vector<Item> mItems{};
-        std::vector<Item>::size_type mActiveItem{};
+        using ItemListType = std::vector<Item>;
 
+        using IteratorType = ItemListType::iterator;
+
+    protected:
+        ItemListType mItems{};
+        ItemListType ::size_type mActiveItem{};
+
+        /**
+         * @brief Set the icon code point on the managed IconGadget.
+         * @throws SceneTreeError if the button does not manage an IconGadget.
+         */
         void setManagedIconCodePoint() {
             if (auto icon = std::dynamic_pointer_cast<IconGadget>(mGadget); icon) {
                 icon->setIcon(mItems.at(mActiveItem).codePoint);
