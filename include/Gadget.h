@@ -528,10 +528,9 @@ namespace rose {
      * @param parameter The Visual value.
      */
     template<class GadgetType, class Parm>
-    requires std::is_same_v<Parm, Parameter<MetaType::DecoratorFunc,DecoratorFunction>>
-            && std::derived_from<GadgetType, Gadget>
-    [[maybe_unused]] void setEnumParameter(std::shared_ptr<GadgetType>& gadget, Parm parameter) {
-        gadget->setDecorator(parameter.data);
+    requires std::is_same_v<Parm, Visual> && std::derived_from<GadgetType, Gadget>
+    [[maybe_unused]] void setParameter(std::shared_ptr<GadgetType>& gadget, Parm parameter) {
+        gadget->setVisual(parameter);
     }
 
     /**

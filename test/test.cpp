@@ -53,9 +53,7 @@ int main(int argc, char **argv) {
         application->createWindow(application->applicationName(), Size(800, 480), Point::CenterScreen(1),
                                   SDL_WINDOW_RESIZABLE);
 
-        if (auto containerBorder = Build<Border>(theme); containerBorder) {
-            containerBorder->setVisual(Visual::SHADOW);
-            containerBorder->setName("containerBorder");
+        if (auto containerBorder = Build<Border>(theme, param::GadgetName{"containerBorder"}, Visual::SHADOW); containerBorder) {
             if (auto container = Build<ButtonBox>(theme, param::GadgetName{"container"},
                               LinearLayout::MajorAxis::VERTICAL, LinearLayout::Alignment::TOP_LEFT); container) {
                 if (auto button = Build<Button>(theme); button) {
