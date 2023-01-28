@@ -4,6 +4,8 @@ Simple UI framework for small systems.
 
 ## Documentation
 
+[![docs available](https://img.shields.io/badge/Docs-Available-brightgreen)](https://codedocs.xyz/pa28/Rose2/)
+
 Basic [documentation](https://codedocs.xyz/pa28/Rose2/) is a work in progress hosted by [codedocs.xyz](https://codedocs.xyz/)
 
 ## Features (design goals)
