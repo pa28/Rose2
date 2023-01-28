@@ -517,7 +517,7 @@ namespace rose {
     requires std::is_same_v<Parm,Parameter<MetaType::Background,Color>>
             && std::derived_from<GadgetType, Gadget>
     [[maybe_unused]] void setEnumParameter(std::shared_ptr<GadgetType>& gadget, Parm parameter) {
-        gadget->setName(parameter.data);
+        gadget->setBackground(parameter.data);
     }
 
     /**
