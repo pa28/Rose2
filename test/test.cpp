@@ -55,7 +55,8 @@ int main(int argc, char **argv) {
 
         if (auto containerBorder = Build<Border>(theme, param::GadgetName{"containerBorder"}, Visual::SHADOW); containerBorder) {
             if (auto container = Build<ButtonBox>(theme, param::GadgetName{"container"},
-                              LinearLayout::MajorAxis::VERTICAL, LinearLayout::Alignment::TOP_LEFT); container) {
+                              LinearLayout::MajorAxis::VERTICAL,
+                              LinearLayout::Alignment::TOP_LEFT); container) {
                 if (auto button = Build<Button>(theme); button) {
                     button->activateSignal.connect(buttonSignal);
                     if (auto hello = Build<TextGadget>(theme, param::Text{"Hello"}); hello) {
@@ -64,7 +65,8 @@ int main(int argc, char **argv) {
                     container->manage(button);
                 }
 
-                if (auto multi = Build<MultiButton>(theme, param::GadgetName{"worldButton"}, SpaceButtonItems); multi) {
+                if (auto multi = Build<MultiButton>(theme, param::GadgetName{"worldButton"}); multi) {
+                    multi->setItems(SpaceButtonItems);
                     multi->updateSignal.connect(multiButtonSignal);
                     container->manage(multi);
                 }
