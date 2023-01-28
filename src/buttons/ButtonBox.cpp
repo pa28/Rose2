@@ -20,7 +20,8 @@ namespace rose {
     void ButtonBox::manage(std::shared_ptr<Gadget> gadget) {
         if (std::dynamic_pointer_cast<Button>(gadget))
             Widget::manage(gadget);
-        throw SceneTreeError(fmt::format("ButtonBox can only manage objects derived from Button."));
+        else
+            throw SceneTreeError(fmt::format("ButtonBox can only manage objects derived from Button."));
     }
 
     void ButtonBox::manage(Builder &builder) {

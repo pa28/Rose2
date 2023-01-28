@@ -94,6 +94,18 @@ namespace rose {
         const std::string_view& className() const override { return RowColumn::ClassName; }
     };
 
+    template<class GadgetType, class Arg>
+    requires std::derived_from<GadgetType, RowColumn> && std::is_same_v<Arg,LinearLayout::MajorAxis>
+    void setParameter(std::shared_ptr<GadgetType>& gadget, Arg arg) {
+        gadget->getLayoutManager()->setMajorAxis(arg);
+    }
+
+    template<class GadgetType, class Arg>
+    requires std::derived_from<GadgetType, RowColumn> && std::is_same_v<Arg,LinearLayout::Alignment>
+    void setParameter(std::shared_ptr<GadgetType>& gadget, Arg arg) {
+        gadget->getLayoutManager()->setAlignment(arg);
+    }
+
     /**
      * @class RowColumnBuilder
      */

@@ -207,6 +207,13 @@ namespace rose {
         const FontPointer& getFont() const { return mFont; }
     };
 
+    template<class GadgetType, class Parm>
+    requires std::is_same_v<Parm,Parameter<MetaType::Text,std::string>>
+             && std::derived_from<GadgetType, TextGadget>
+    void setEnumParameter(std::shared_ptr<GadgetType>& gadget, Parm parameter) {
+        gadget->setText(parameter.data);
+    }
+
     /**
      * @class TextGadgetBuilder
      * @details A factory class for TextGadget.

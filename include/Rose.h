@@ -13,6 +13,13 @@
 #include <fmt/format.h>
 #include <Theme.h>
 
+/*! @mainpage Rose2
+ * @section intro_sec Introduction
+ * The Rose2 library is a simple UI framework for small systems.
+ *
+ * @section install_sec Installation
+ */
+
 namespace rose {
 
     /**
@@ -31,6 +38,39 @@ namespace rose {
             timestamp64 -= 0x100000000;
         }
         return (timestamp64 & 0xFFFFFFFF00000000u) | timestamp32;
+    }
+
+    struct GadgetName {
+        std::string name{};
+    };
+
+    struct Text {
+        std::string text{};
+    };
+
+    struct Background {
+        Color color;
+    };
+
+    enum class MetaType {
+        GadgetName,
+        Text,
+        Background,
+        DecoratorFunc,
+    };
+
+    template<class Enum, Enum has, Enum needs>
+            concept IsMetaParameter = requires{
+        std::is_same_v<Enum,MetaType>;
+        (has == needs);
+    };
+
+    template<MetaType M, class DataType> struct Parameter { DataType data{}; };
+
+    namespace param {
+        using GadgetName = Parameter<MetaType::GadgetName, std::string>;
+        using Text = Parameter<MetaType::Text, std::string>;
+        using Background = Parameter<MetaType::Background, Color>;
     }
 
     /**

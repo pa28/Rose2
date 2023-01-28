@@ -2,6 +2,10 @@
 
 Simple UI framework for small systems.
 
+## Documentation
+
+Basic [documentation](https://codedocs.xyz/pa28/Rose/) is a work in progress hosted by [codedocs.xyz](https://codedocs.xyz/)
+
 ## Features (design goals)
 
 * Implemented on top of the [Simple DirectMedial Layer](https://www.libsdl.org/) library.

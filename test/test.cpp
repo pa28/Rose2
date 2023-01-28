@@ -62,16 +62,12 @@ int main(int argc, char **argv) {
 
         if (BorderBuilder containerBorder{theme}; containerBorder) {
             containerBorder.visual(Visual::SHADOW).name("containerBorder");
-            if (auto container = ButtonBoxBuilder{}; container) {
-                container.setLayoutAlignment(LinearLayout::Alignment::TOP_LEFT)
-                        .name("buttonBox");
-
-                if (auto button = ButtonBuilder{theme}; button) {
-                    button.name("helloButton");
-                    button.get<Button>()->activateSignal.connect(buttonSignal);
-                    if (TextGadgetBuilder hello{theme}; hello) {
-                        hello.text("Hello").name("Hello") >> button;
-                        std::cout << "hello\n";
+            if (auto container = Build<ButtonBox>(theme, param::GadgetName{"container"},
+                              LinearLayout::MajorAxis::VERTICAL, LinearLayout::Alignment::TOP_LEFT); container) {
+                if (auto button = Build<Button>(theme); button) {
+                    button->activateSignal.connect(buttonSignal);
+                    if (auto hello = Build<TextGadget>(theme, param::Text{"Hello"}); hello) {
+                        hello >> button;
                     }
                     button >> container;
                 }
@@ -95,7 +91,7 @@ int main(int argc, char **argv) {
                     }
                     stateButton >> container;
                 }
-                container >> containerBorder;
+                container >> containerBorder.get<Border>();
             }
             containerBorder >> application;
         }

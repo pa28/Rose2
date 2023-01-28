@@ -48,6 +48,29 @@ namespace rose {
         explicit SceneTreeError(const std::string &whatArg) : std::runtime_error(whatArg) {}
     };
 
+    template<class GadgetType>
+    void SetGadgetParameters(std::shared_ptr<GadgetType>&) {
+    }
+
+    template<class GadgetType, MetaType M, class Arg, class...Rest>
+    void SetGadgetParameters(std::shared_ptr<GadgetType>& gadget, Parameter<M,Arg> arg, Rest...rest) {
+        setEnumParameter(gadget, arg);
+        SetGadgetParameters(gadget, rest...);
+    }
+
+    template<class GadgetType, class Arg, class...Rest>
+    void SetGadgetParameters(std::shared_ptr<GadgetType>& gadget, Arg arg, Rest...rest) {
+        setParameter(gadget, arg);
+        SetGadgetParameters(gadget, rest...);
+    }
+
+    template<class GadgetType, class...Args>
+    std::shared_ptr<GadgetType> Build(std::shared_ptr<rose::Theme>& theme, Args...args) {
+        auto gadget = std::make_shared<GadgetType>(theme);
+        SetGadgetParameters(gadget, args...);
+        return gadget;
+    }
+
     /**
      * @class Gadget
      * @brief A Gadget is a visual UI element that does not manage any other elements.
@@ -420,6 +443,27 @@ namespace rose {
         }
     };
 
+    template<class GadgetType, class Parm>
+    requires std::is_same_v<Parm,Parameter<MetaType::GadgetName,std::string>>
+            && std::derived_from<GadgetType, Gadget>
+    void setEnumParameter(std::shared_ptr<GadgetType>& gadget, Parm parameter) {
+        gadget->setName(parameter.data);
+    }
+
+    template<class GadgetType, class Parm>
+    requires std::is_same_v<Parm,Parameter<MetaType::Background,Color>>
+            && std::derived_from<GadgetType, Gadget>
+    void setEnumParameter(std::shared_ptr<GadgetType>& gadget, Parm parameter) {
+        gadget->setName(parameter.data);
+    }
+
+    template<class GadgetType, class Parm>
+    requires std::is_same_v<Parm, Parameter<MetaType::DecoratorFunc,DecoratorFunction>>
+            && std::derived_from<GadgetType, Gadget>
+    void setEnumParameter(std::shared_ptr<GadgetType>& gadget, Parm parameter) {
+        gadget->setDecorator(parameter.data);
+    }
+
     /**
      * @brief A DecoratorFunction to draw the Gadget background in the Theme background color.
      * @param context The graphics context to draw with.
@@ -600,6 +644,14 @@ template<typename B>
 requires rose::IsBuilder<B>
 inline void operator << (std::shared_ptr<rose::Widget> &widget, B builder) {
     builder >> widget;
+}
+
+template<class Element, class Manager>
+requires std::derived_from<Element,rose::Gadget> &&
+         (std::derived_from<Manager,rose::Singlet> || std::derived_from<Manager,rose::Widget>)
+std::shared_ptr<Manager> operator>>(std::shared_ptr<Element> gadget, std::shared_ptr<Manager> manager) {
+    manager->manage(gadget);
+    return manager;
 }
 
 #endif //ROSE2_GADGET_H
