@@ -23,11 +23,4 @@ namespace rose {
         else
             throw SceneTreeError(fmt::format("ButtonBox can only manage objects derived from Button."));
     }
-
-    void ButtonBox::manage(Builder &builder) {
-        if (auto button = builder.get<Button>(); button)
-            Widget::manage(builder);
-        else
-            throw SceneTreeError(fmt::format("ButtonBox can only manage objects derived from Button."));
-    }
 } // rose

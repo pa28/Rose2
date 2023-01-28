@@ -25,11 +25,6 @@ namespace rose {
             mGadgetList.back()->initialize();
     }
 
-    void Widget::manage(Builder &builder) {
-        builder.gadget->managedBy(std::dynamic_pointer_cast<Widget>(shared_from_this()));
-        mGadgetList.push_back(std::move(builder.gadget));
-    }
-
     [[maybe_unused]] void Widget::unManage(const std::shared_ptr<Gadget> &gadget) {
         mGadgetList.erase(std::remove(mGadgetList.begin(), mGadgetList.end(), gadget), mGadgetList.end());
     }

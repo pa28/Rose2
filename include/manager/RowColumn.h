@@ -107,32 +107,6 @@ namespace rose {
     }
 
     /**
-     * @class RowColumnBuilder
-     */
-    class RowColumnBuilder : public WidgetBuilder {
-    public:
-        [[maybe_unused]] explicit RowColumnBuilder(std::shared_ptr<Widget> w) : WidgetBuilder(std::move(w)) {}
-
-        RowColumnBuilder() : WidgetBuilder(std::make_shared<RowColumn>()) {}
-
-        ~RowColumnBuilder() override = default;
-
-        auto setMajorAxis(LinearLayout::MajorAxis majorAxis) {
-            if (auto gPtr = std::dynamic_pointer_cast<RowColumn>(gadget); gPtr) {
-                gPtr->getLayoutManager()->setMajorAxis(majorAxis);
-            }
-            return *this;
-        }
-
-        auto setLayoutAlignment(LinearLayout::Alignment alignment) {
-            if (auto gPtr = std::dynamic_pointer_cast<RowColumn>(gadget); gPtr) {
-                gPtr->getLayoutManager()->setAlignment(alignment);
-            }
-            return *this;
-        }
-    };
-
-    /**
      * @class Row
      */
     class Row : public RowColumn {
@@ -154,18 +128,6 @@ namespace rose {
     };
 
     /**
-     * @class RowBuilder
-     */
-    class RowBuilder : public RowColumnBuilder {
-    public:
-        [[maybe_unused]] explicit RowBuilder(std::shared_ptr<Widget> w) : RowColumnBuilder(std::move(w)) {}
-
-        RowBuilder() : RowColumnBuilder(std::make_shared<Row>()) {}
-
-        ~RowBuilder() override = default;
-    };
-
-    /**
      * @class Column
      */
     class Column : public RowColumn {
@@ -184,18 +146,6 @@ namespace rose {
         ~Column() override = default;
 
         const std::string_view& className() const override { return Column::ClassName; }
-    };
-
-    /**
-     * @class ColumnBuilder
-     */
-    class ColumnBuilder : public RowColumnBuilder {
-    public:
-        [[maybe_unused]] explicit ColumnBuilder(std::shared_ptr<Widget> w) : RowColumnBuilder(std::move(w)) {}
-
-        ColumnBuilder() : RowColumnBuilder(std::make_shared<Column>()) {}
-
-        ~ColumnBuilder() override = default;
     };
 
 } // rose

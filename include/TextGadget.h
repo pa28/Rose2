@@ -210,58 +210,14 @@ namespace rose {
     template<class GadgetType, class Parm>
     requires std::is_same_v<Parm,Parameter<MetaType::Text,std::string>>
              && std::derived_from<GadgetType, TextGadget>
-    void setEnumParameter(std::shared_ptr<GadgetType>& gadget, Parm parameter) {
+    [[maybe_unused]] void setEnumParameter(std::shared_ptr<GadgetType>& gadget, Parm parameter) {
         gadget->setText(parameter.data);
     }
 
-    /**
-     * @class TextGadgetBuilder
-     * @details A factory class for TextGadget.
-     */
-    class [[maybe_unused]] TextGadgetBuilder : public GadgetBuilder {
-    public:
-
-        TextGadgetBuilder() : GadgetBuilder(std::make_shared<TextGadget>()) {}
-        explicit TextGadgetBuilder(std::shared_ptr<Theme>& theme) : GadgetBuilder(std::make_shared<TextGadget>(theme)) {}
-        explicit TextGadgetBuilder(std::shared_ptr<Gadget> g) : GadgetBuilder(std::move(g)) {}
-
-        template<class S>
-        requires StringLike<S>
-        auto text(S content) {
-            if (auto gPtr = std::dynamic_pointer_cast<TextGadget>(gadget); gPtr) {
-                gPtr->setText(content);
-            }
-            return *this;
-        }
-
-        [[maybe_unused]] auto foreground(const Color &color) {
-            if (auto gPtr = std::dynamic_pointer_cast<TextGadget>(gadget); gPtr) {
-                gPtr->setForeground(color);
-            }
-            return *this;
-        }
-
-        [[maybe_unused]] auto pointSize(int size) {
-            if (auto gPtr = std::dynamic_pointer_cast<TextGadget>(gadget); gPtr) {
-                gPtr->setPointSize(size);
-            }
-            return *this;
-        }
-
-        template<class S>
-        requires StringLike<S>
-        [[maybe_unused]] auto setFontName(S fontName) {
-            if (auto gPtr = std::dynamic_pointer_cast<TextGadget>(gadget); gPtr) {
-                gPtr->setFontName(fontName);
-            }
-            return *this;
-        }
-    };
-
     class CodePointError : public std::runtime_error {
     public:
-        CodePointError(const std::string& whatArg) : std::runtime_error(whatArg) {}
-        CodePointError(const char *whatArg) : std::runtime_error(whatArg) {}
+        explicit CodePointError(const std::string& whatArg) : std::runtime_error(whatArg) {}
+        explicit CodePointError(const char *whatArg) : std::runtime_error(whatArg) {}
     };
 
     /**
@@ -363,36 +319,6 @@ namespace rose {
         }
 
         uint32_t getIconCode() const { return mIconCode; }
-    };
-
-    /**
-     * @class IconGadgetBuilder
-     * @brief A factory class for IconGadget
-     */
-    class [[maybe_unused]] IconGadgetBuilder : public TextGadgetBuilder {
-    public:
-
-        IconGadgetBuilder() : TextGadgetBuilder(std::make_shared<IconGadget>()) {}
-
-        explicit IconGadgetBuilder(std::shared_ptr<Theme>& theme): TextGadgetBuilder(std::make_shared<IconGadget>(theme)) {}
-
-        [[maybe_unused]] explicit IconGadgetBuilder(std::shared_ptr<Gadget> g) : TextGadgetBuilder(std::move(g)) {}
-
-        [[maybe_unused]] auto icon(uint32_t iconCode) {
-            if (auto iconGadget = std::dynamic_pointer_cast<IconGadget>(gadget); iconGadget) {
-                iconGadget->setIcon(iconCode);
-            }
-            return *this;
-        }
-
-        template<class String>
-        requires StringLike<String>
-        auto icon(String codePointName) {
-            if (auto iconGadget = std::dynamic_pointer_cast<IconGadget>(gadget); iconGadget) {
-                iconGadget->setIcon(codePointName);
-            }
-            return *this;
-        }
     };
 
 } // rose

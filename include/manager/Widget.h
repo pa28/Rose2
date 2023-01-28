@@ -71,13 +71,6 @@ namespace rose {
         [[maybe_unused]] virtual void manage(std::shared_ptr<Gadget> gadget);
 
         /**
-         * @brief Add a Gadget from a builder to the management list of this Widget
-         * @param builder The Builder holding the new Gadget.
-         * @throws SceneTreeError
-         */
-        [[maybe_unused]] virtual void manage(Builder &builder);
-
-        /**
          * @brief Get a pointer to the first Gadget on the list of managed Gadgets.
          * @details This does not un-manage the Gadget.
          * @return std::shared_ptr<Gadget>
@@ -142,15 +135,6 @@ namespace rose {
         ~Widget() override = default;
     };
 
-    class WidgetBuilder : public GadgetBuilder {
-    public:
-        [[maybe_unused]] explicit WidgetBuilder(std::shared_ptr<Widget> w) : GadgetBuilder(std::move(w)) {}
-
-        WidgetBuilder() : GadgetBuilder(std::make_shared<Widget>()) {}
-
-        ~WidgetBuilder() override = default;
-    };
-
     class LayoutManager {
     protected:
         static auto getGadgetList(std::shared_ptr<Widget> &widget) {
@@ -179,10 +163,5 @@ namespace rose {
     };
 
 } // rose
-
-inline void operator >> (rose::Builder builder, std::shared_ptr<rose::Widget> &widget) {
-    widget->manage(builder.get<rose::Gadget>());
-}
-
 
 #endif //ROSE2_WIDGET_H

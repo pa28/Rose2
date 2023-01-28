@@ -63,31 +63,6 @@ namespace rose {
         }
     };
 
-    /**
-     * @class BorderBuilder.
-     */
-    class BorderBuilder : public SingletBuilder {
-    public:
-        explicit BorderBuilder(std::shared_ptr<Gadget> g) : SingletBuilder(std::move(g)) {}
-
-        BorderBuilder() : SingletBuilder(std::make_shared<Border>()) {}
-
-        explicit BorderBuilder(std::shared_ptr<Theme>& theme) : SingletBuilder(std::make_shared<Border>(theme)) {}
-
-        ~BorderBuilder() override = default;
-
-        auto border(ScreenCoordType borderSize) {
-            gadget->getVisualMetrics().gadgetPadding = borderSize;
-            return *this;
-        }
-
-        auto visual(Visual visual) {
-            if (auto border = std::dynamic_pointer_cast<Border>(gadget); border)
-                border->setVisual(visual);
-            return *this;
-        }
-    };
-
 } // rose
 
 

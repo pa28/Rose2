@@ -42,11 +42,6 @@ namespace rose {
         mGadget = std::move(gadget);
     }
 
-    void Singlet::manage(Builder &builder) {
-        builder.gadget->managedBy(std::dynamic_pointer_cast<Singlet>(shared_from_this()));
-        mGadget = std::move(builder.gadget);
-    }
-
     void Singlet::draw(Context &context, Point drawLocation) {
         Gadget::draw(context, drawLocation);
         if (mGadget) {

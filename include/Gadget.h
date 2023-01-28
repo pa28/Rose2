@@ -179,12 +179,12 @@ namespace rose {
             [[maybe_unused]] bool mHasFocus{};
         } mVisualMetrics;
 
-        virtual std::shared_ptr<Theme> getThemeValues();
+        [[maybe_unused]] virtual std::shared_ptr<Theme> getThemeValues();
 
     public:
         std::unique_ptr<Animation> mAnimationPtr{};
 
-        Gadget();
+        Gadget() = default;
         explicit Gadget(const std::shared_ptr<Theme>& ) : Gadget() {}
         Gadget(const Gadget &) = delete;
         Gadget(Gadget &&) = default;
@@ -451,21 +451,21 @@ namespace rose {
     template<class GadgetType, class Parm>
     requires std::is_same_v<Parm,Parameter<MetaType::GadgetName,std::string>>
             && std::derived_from<GadgetType, Gadget>
-    void setEnumParameter(std::shared_ptr<GadgetType>& gadget, Parm parameter) {
+    [[maybe_unused]] void setEnumParameter(std::shared_ptr<GadgetType>& gadget, Parm parameter) {
         gadget->setName(parameter.data);
     }
 
     template<class GadgetType, class Parm>
     requires std::is_same_v<Parm,Parameter<MetaType::Background,Color>>
             && std::derived_from<GadgetType, Gadget>
-    void setEnumParameter(std::shared_ptr<GadgetType>& gadget, Parm parameter) {
+    [[maybe_unused]] void setEnumParameter(std::shared_ptr<GadgetType>& gadget, Parm parameter) {
         gadget->setName(parameter.data);
     }
 
     template<class GadgetType, class Parm>
     requires std::is_same_v<Parm, Parameter<MetaType::DecoratorFunc,DecoratorFunction>>
             && std::derived_from<GadgetType, Gadget>
-    void setEnumParameter(std::shared_ptr<GadgetType>& gadget, Parm parameter) {
+    [[maybe_unused]] void setEnumParameter(std::shared_ptr<GadgetType>& gadget, Parm parameter) {
         gadget->setDecorator(parameter.data);
     }
 
@@ -476,6 +476,7 @@ namespace rose {
      */
     [[maybe_unused]] [[maybe_unused]] void ThemeBackgroundDecorator(Context& context, Gadget& gadget);
 
+#if 0
     class Singlet;
     /**
      * @class Builder
@@ -636,7 +637,8 @@ namespace rose {
             return *this;
         }
     };
-
+#endif
 } // rose
+
 
 #endif //ROSE2_GADGET_H

@@ -48,27 +48,6 @@ namespace rose {
          * @param gadget the Gadget to manage.
          */
         [[maybe_unused]] void manage(std::shared_ptr<Gadget> gadget) override;
-
-        /**
-         * @brief Overridden to restrict managed Gadgets to Buttons.
-         * @param gadget the Gadget to manage.
-         */
-        [[maybe_unused]] void manage(Builder &builder) override;
-    };
-
-    /**
-     * @class ButtonBoxBuilder
-     */
-    class ButtonBoxBuilder : public RowColumnBuilder {
-    public:
-        [[maybe_unused]] explicit ButtonBoxBuilder(std::shared_ptr<Widget> w) : RowColumnBuilder(std::move(w)) {}
-
-        ButtonBoxBuilder() : RowColumnBuilder(std::make_shared<ButtonBox>()) {
-            setMajorAxis(LinearLayout::MajorAxis::VERTICAL);
-        }
-
-        ~ButtonBoxBuilder() override = default;
-
     };
 
 } // rose

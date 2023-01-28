@@ -63,22 +63,6 @@ namespace rose {
         const std::string_view& className() const override { return TextSet::ClassName; }
 
         [[maybe_unused]] void manage(std::shared_ptr<Gadget> gadget) override;
-
-        [[maybe_unused]] void manage(Builder &builder) override;
-    };
-
-    /**
-     * @class TextSetBuilder
-     */
-    class TextSetBuilder : public RowBuilder {
-    public:
-        [[maybe_unused]] explicit TextSetBuilder(std::shared_ptr<Widget> w) : RowBuilder(std::move(w)) {}
-
-        TextSetBuilder() : RowBuilder(std::make_shared<TextSet>()) {}
-
-        explicit TextSetBuilder(std::shared_ptr<Theme>& theme) : RowBuilder(std::make_shared<TextSet>(theme)) {}
-
-        ~TextSetBuilder() override = default;
     };
 
 } // rose

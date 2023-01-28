@@ -15,7 +15,6 @@
 #include "manager/Singlet.h"
 #include "manager/Window.h"
 #include <Application.h>
-#include <Animation.h>
 
 namespace rose {
 
@@ -48,7 +47,7 @@ namespace rose {
     }
 
     void Gadget::expose(Context &context, Rectangle exposed) {
-        auto lastDrawn = mVisualMetrics.lastDrawLocation;
+//        auto lastDrawn = mVisualMetrics.lastDrawLocation;
         if (auto exposedGadget = (mVisualMetrics.clipRectangle + mVisualMetrics.lastDrawLocation).intersection(exposed); exposedGadget) {
             ClipRectangleGuard clipRectangleGuard{context, exposedGadget};
             draw(context, mVisualMetrics.lastDrawLocation);
@@ -77,21 +76,6 @@ namespace rose {
          * The renderRect point is the borderRect point + the border size.
          */
         mVisualMetrics.renderRect.point = mVisualMetrics.gadgetPadding.topLeft + mVisualMetrics.innerAlignmentPadding.topLeft;
-
-#if 0
-        fmt::print("initialGadgetLayout: {}"
-                   "\n\tbackgroundColor: {}"
-                   "\n\tdrawLocation:    {}"
-                   "\n\tinnerPadding:    {}"
-                   "\n\tgadgetPadding:   {}"
-                   "\n\tdesiredSize:     {}"
-                   "\n\trenderRectangle: {}"
-                   "\n\tclipRectangle:   {}\n\n",
-                   mName, mVisualMetrics.background, mVisualMetrics.drawLocation, mVisualMetrics.innerAlignmentPadding,
-                   mVisualMetrics.gadgetPadding, mVisualMetrics.desiredSize, mVisualMetrics.renderRect,
-                   mVisualMetrics.clipRectangle
-        );
-#endif
 
         return false;
     }
@@ -157,13 +141,9 @@ namespace rose {
         return mApplicationPtr.lock()->getTheme();
     }
 
-    std::shared_ptr<Theme> Gadget::getThemeValues() {
+    [[maybe_unused]] std::shared_ptr<Theme> Gadget::getThemeValues() {
         auto theme = getTheme();
         return theme;
-    }
-
-    Gadget::Gadget() {
-
     }
 
     std::shared_ptr<Window> Gadget::getWindow() {
@@ -173,30 +153,6 @@ namespace rose {
             }
         }
         return nullptr;
-    }
-
-    void Builder::operator>>(Widget &widget) {
-        widget.manage(*this);
-    }
-
-    void Builder::operator>>(Singlet &singlet) {
-        singlet.manage(*this);
-    }
-
-    void Builder::operator>>(const std::shared_ptr<Widget>& widget) {
-        widget->manage(*this);
-    }
-
-    void Builder::operator>>(const std::shared_ptr<Singlet> &singlet) {
-        singlet->manage(*this);
-    }
-
-    void Builder::operator>>(Builder &builder) {
-        if (auto widget = std::dynamic_pointer_cast<Widget>(builder.gadget); widget) {
-            widget->manage(*this);
-        } else if (auto singlet = std::dynamic_pointer_cast<Singlet>(builder.gadget); singlet) {
-            singlet->manage(*this);
-        }
     }
 
     bool LayoutManager::initialWidgetLayout(Context &context, std::shared_ptr<Gadget> &gadget) {

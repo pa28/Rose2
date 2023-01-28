@@ -23,13 +23,6 @@ namespace rose {
             throw SceneTreeError(fmt::format("TextSet can not manage a {}", gadget->className()));
     }
 
-    void TextSet::manage(Builder &builder) {
-        if (auto text = builder.get<TextGadget>(); text)
-            Row::manage(builder);
-        else
-            throw SceneTreeError(fmt::format("TextSet can not manage a {}", text->className()));
-    }
-
     bool TextSetLayout::initialWidgetLayout(Context &context, std::shared_ptr<Gadget> &managingGadget) {
         auto result = LinearLayout::initialWidgetLayout(context, managingGadget);
         std::shared_ptr<Gadget> mainGadget;

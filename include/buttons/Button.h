@@ -104,21 +104,6 @@ namespace rose {
     };
 
     /**
-     * @class ButtonBuilder.
-     */
-    class ButtonBuilder : public BorderBuilder {
-    public:
-        explicit ButtonBuilder(std::shared_ptr<Gadget> g) : BorderBuilder(std::move(g)) {}
-
-        ButtonBuilder() : BorderBuilder(std::make_shared<Button>()) {}
-
-        explicit ButtonBuilder(std::shared_ptr<Theme> &theme) : BorderBuilder(std::make_shared<Button>(theme)) {}
-
-        ~ButtonBuilder() override = default;
-
-    };
-
-    /**
      * @class StateButton
      * @brief A button which has a boolean state indicated by one of two icons.
      * @details This class is the base for Toggle, Check, and Radio buttons. The state of the button is indicated
@@ -209,48 +194,6 @@ namespace rose {
 
         void toggleButton() {
             setIcons("toggle_off", "toggle_on");
-        }
-    };
-
-    /**
-     * @class StateButtonBuilder.
-     */
-    class StateButtonBuilder : public ButtonBuilder {
-    public:
-        explicit StateButtonBuilder(std::shared_ptr<Gadget> g) : ButtonBuilder(std::move(g)) {}
-
-        StateButtonBuilder() : ButtonBuilder(std::make_shared<StateButton>()) {}
-
-        explicit StateButtonBuilder(std::shared_ptr<Theme> &theme) : ButtonBuilder(
-                std::make_shared<StateButton>(theme)) {}
-
-        ~StateButtonBuilder() override = default;
-
-        auto setIcons(uint32_t off, uint32_t on) {
-            std::dynamic_pointer_cast<StateButton>(gadget)->setIcons(off, on);
-            return *this;
-        }
-
-        template<class S1, class S2>
-        requires StringLike<S1> && StringLike<S2>
-        auto setIcons(S1 off, S2 on) {
-            std::dynamic_pointer_cast<StateButton>(gadget)->setIcons(off, on);
-            return *this;
-        }
-
-        auto toggleButton() {
-            std::dynamic_pointer_cast<StateButton>(gadget)->setIcons("toggle_off", "toggle_on");
-            return *this;
-        }
-
-        auto checkBox() {
-            std::dynamic_pointer_cast<StateButton>(gadget)->setIcons("check_box_outline_blank", "check_box");
-            return *this;
-        }
-
-        auto radioButton() {
-            std::dynamic_pointer_cast<StateButton>(gadget)->setIcons("radio_button_unchecked", "radio_button_checked");
-            return *this;
         }
     };
 
@@ -390,31 +333,6 @@ namespace rose {
     void setParameter(std::shared_ptr<GadgetType>& gadget, Parm parameter) {
         gadget->setItems(parameter);
     }
-
-    class MultiButtonBuilder : public ButtonBuilder {
-    public:
-        explicit MultiButtonBuilder(std::shared_ptr<Gadget> g) : ButtonBuilder(std::move(g)) {}
-
-        MultiButtonBuilder() : ButtonBuilder(std::make_shared<MultiButton>()) {
-            if (auto icon = IconGadgetBuilder{}; icon)
-                icon >> *this;
-        }
-
-        explicit MultiButtonBuilder(std::shared_ptr<Theme> &theme) : ButtonBuilder(
-                std::make_shared<MultiButton>(theme)) {
-            if (auto icon = IconGadgetBuilder{theme}; icon)
-                icon >> *this;
-        }
-
-        ~MultiButtonBuilder() override = default;
-
-        template<class Range>
-        requires MultiButtonItemRange<Range>
-        auto items(const Range &buttonItems) {
-            std::dynamic_pointer_cast<MultiButton>(gadget)->addItems(buttonItems);
-            return *this;
-        }
-    };
 
 } // rose
 
