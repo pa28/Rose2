@@ -4,7 +4,7 @@ Simple UI framework for small systems.
 
 ## Documentation
 
-Basic [documentation](https://codedocs.xyz/pa28/Rose/) is a work in progress hosted by [codedocs.xyz](https://codedocs.xyz/)
+Basic [documentation](https://codedocs.xyz/pa28/Rose2/) is a work in progress hosted by [codedocs.xyz](https://codedocs.xyz/)
 
 ## Features (design goals)
 
