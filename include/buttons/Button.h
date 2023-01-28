@@ -198,6 +198,18 @@ namespace rose {
         void setManagedIconCodePoint();
 
         void initialize() override;
+
+        void radioButton() {
+            setIcons("radio_button_unchecked", "radio_button_checked");
+        }
+
+        void checkBox() {
+            setIcons("check_box_outline_blank", "check_box");
+        }
+
+        void toggleButton() {
+            setIcons("toggle_off", "toggle_on");
+        }
     };
 
     /**
@@ -268,6 +280,11 @@ namespace rose {
             uint32_t itemId{}, codePoint{};
         };
 
+        using TextItem = std::tuple<uint32_t, std::string_view>;
+
+        template<size_t size>
+        using ItemArray = std::array<TextItem,size>;
+
         using ItemListType = std::vector<Item>;
 
         using IteratorType = ItemListType::iterator;
@@ -304,6 +321,14 @@ namespace rose {
 
         ~MultiButton() override = default;
 
+        void completeCompositeConstruction(std::shared_ptr<Theme>& theme) override {
+            if (auto icon = Build<IconGadget>(theme); icon) {
+                manage(icon);
+                return;
+            }
+            throw SceneTreeError("Can not complete build of MultiButton by adding IconGadget, IconGadget not built.");
+        }
+
         /**
          * @brief Get an iterator pointing to the first state item.
          * @return IteratorType
@@ -315,6 +340,13 @@ namespace rose {
          * @return IteratorType
          */
         auto end() { return mItems.end(); }
+
+        template<class Range>
+        requires MultiButtonItemRange<Range>
+        void setItems(const Range &buttonItems) {
+            mItems.clear();
+            addItems(buttonItems);
+        }
 
         /**
          * @brief Add the provided range of items to the button item list.
@@ -352,6 +384,12 @@ namespace rose {
             }
         }};
     };
+
+    template<class GadgetType, class Parm>
+    requires MultiButtonItemRange<Parm> && std::derived_from<GadgetType, MultiButton>
+    void setParameter(std::shared_ptr<GadgetType>& gadget, Parm parameter) {
+        gadget->setItems(parameter);
+    }
 
     class MultiButtonBuilder : public ButtonBuilder {
     public:

@@ -245,13 +245,14 @@ namespace rose {
         std::weak_ptr<Application> getApplicationPtr() {
             return shared_from_this();
         }
+
+        template<class GadgetType>
+        requires std::derived_from<GadgetType,Gadget>
+        void manage(std::shared_ptr<GadgetType>& gadget) {
+            window()->gadget<rose::Widget>().value()->manage(gadget);
+        }
     };
 
 } // rose
-
-inline void operator >> (rose::Builder builder, std::shared_ptr<rose::Application> &application) {
-    application->window()->gadget<rose::Widget>().value()->manage(builder.get<rose::Gadget>());
-}
-
 
 #endif //ROSE2_APPLICATION_H

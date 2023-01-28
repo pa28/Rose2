@@ -3,7 +3,6 @@
 //
 
 #include <iostream>
-#include <array>
 #include <Rose.h>
 #include "manager/RowColumn.h"
 #include "manager/Border.h"
@@ -17,16 +16,10 @@
 
 using namespace rose;
 
-struct binomial_compare_test {
-    ScreenCoordType x, y, w, h;
-    std::array<bool,6> result;
-};
-
-
 int main(int argc, char **argv) {
 
-    static constexpr std::array<std::tuple<uint32_t,std::string_view>,4> SpaceButtonItems = {{
-            { 0u, "rocket" }, { 1u, "rocket_launch" }, { 2u, "satellite_alt" }, { 3u, "satellite"}
+    static constexpr MultiButton::ItemArray<4> SpaceButtonItems = {{
+           {0u, "rocket"}, {1u, "rocket_launch"}, {2u, "satellite_alt"}, {3u, "satellite"}
     }};
 
     if (auto application = std::make_shared<Application>(argc, argv); application) {
@@ -60,40 +53,40 @@ int main(int argc, char **argv) {
         application->createWindow(application->applicationName(), Size(800, 480), Point::CenterScreen(1),
                                   SDL_WINDOW_RESIZABLE);
 
-        if (BorderBuilder containerBorder{theme}; containerBorder) {
-            containerBorder.visual(Visual::SHADOW).name("containerBorder");
+        if (auto containerBorder = Build<Border>(theme); containerBorder) {
+            containerBorder->setVisual(Visual::SHADOW);
+            containerBorder->setName("containerBorder");
             if (auto container = Build<ButtonBox>(theme, param::GadgetName{"container"},
                               LinearLayout::MajorAxis::VERTICAL, LinearLayout::Alignment::TOP_LEFT); container) {
                 if (auto button = Build<Button>(theme); button) {
                     button->activateSignal.connect(buttonSignal);
                     if (auto hello = Build<TextGadget>(theme, param::Text{"Hello"}); hello) {
-                        hello >> button;
+                        button->manage(hello);
                     }
-                    button >> container;
+                    container->manage(button);
                 }
 
-                if (auto multi = MultiButtonBuilder{theme}; multi) {
-                    multi.items(SpaceButtonItems).name("worldBorder");
-                    multi.get<MultiButton>()->updateSignal.connect(multiButtonSignal);
-                    multi >> container;
+                if (auto multi = Build<MultiButton>(theme, param::GadgetName{"worldButton"}, SpaceButtonItems); multi) {
+                    multi->updateSignal.connect(multiButtonSignal);
+                    container->manage(multi);
                 }
 
-                if (auto stateButton =  StateButtonBuilder{theme}; stateButton) {
-                    stateButton.radioButton().name("stateButton");
-                    if (TextSetBuilder textSet{theme}; textSet) {
-                        if (IconGadgetBuilder check{theme}; check) {
-                            check >> textSet;
+                if (auto stateButton =  Build<StateButton>(theme); stateButton) {
+                    stateButton->toggleButton();
+                    if (auto textSet = Build<TextSet>(theme); textSet) {
+                        if (auto check = Build<IconGadget>(theme); check) {
+                            textSet->manage(check);
                         }
-                        if (TextGadgetBuilder text{theme}; text) {
-                            text.text("Check").name("check") >> textSet;
+                        if (auto text = Build<TextGadget>(theme, param::Text{"Check"}); text) {
+                            textSet->manage(text);
                         }
-                        textSet >> stateButton;
+                        stateButton->manage(textSet);
                     }
-                    stateButton >> container;
+                    container->manage(stateButton);
                 }
-                container >> containerBorder.get<Border>();
+                containerBorder->manage(container);
             }
-            containerBorder >> application;
+            application->manage(containerBorder);
         }
 
         application->run();

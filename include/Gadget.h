@@ -66,9 +66,12 @@ namespace rose {
 
     template<class GadgetType, class...Args>
     std::shared_ptr<GadgetType> Build(std::shared_ptr<rose::Theme>& theme, Args...args) {
-        auto gadget = std::make_shared<GadgetType>(theme);
-        SetGadgetParameters(gadget, args...);
-        return gadget;
+        if (auto gadget = std::make_shared<GadgetType>(theme); gadget) {
+            gadget->completeCompositeConstruction(theme);
+            SetGadgetParameters(gadget, args...);
+            return gadget;
+        }
+        return nullptr;
     }
 
     /**
@@ -188,6 +191,8 @@ namespace rose {
         Gadget &operator=(const Gadget &) = delete;
         Gadget &operator=(Gadget &&) = default;
         virtual ~Gadget() = default;
+
+        virtual void completeCompositeConstruction(std::shared_ptr<Theme>& ) {}
 
         /**
          * @brief Get initialization state of the Gadget.
@@ -633,25 +638,5 @@ namespace rose {
     };
 
 } // rose
-
-/**
- * @brief Manage the built Gadget by the specified Widget
- * @tparam B Concept rose::IsBuilder<B> requires B is derived from Builder.
- * @param widget The managing Widget
- * @param builder The builder of the Gadget
- */
-template<typename B>
-requires rose::IsBuilder<B>
-inline void operator << (std::shared_ptr<rose::Widget> &widget, B builder) {
-    builder >> widget;
-}
-
-template<class Element, class Manager>
-requires std::derived_from<Element,rose::Gadget> &&
-         (std::derived_from<Manager,rose::Singlet> || std::derived_from<Manager,rose::Widget>)
-std::shared_ptr<Manager> operator>>(std::shared_ptr<Element> gadget, std::shared_ptr<Manager> manager) {
-    manager->manage(gadget);
-    return manager;
-}
 
 #endif //ROSE2_GADGET_H
