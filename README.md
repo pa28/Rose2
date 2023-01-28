@@ -9,8 +9,8 @@ Basic [documentation](https://codedocs.xyz/pa28/Rose/) is a work in progress hos
 ## Features (design goals)
 
 * Implemented on top of the [Simple DirectMedial Layer](https://www.libsdl.org/) library.
-  * This provides compatability with [X11](https://en.wikipedia.org/wiki/X_Window_System)
-    /[Wayland](https://en.wikipedia.org/wiki/Wayland_(protocol)) desktop environments as
+  * This provides compatability with [X11](https://en.wikipedia.org/wiki/X_Window_System)/[Wayland](https://en.wikipedia.org/wiki/Wayland_(protocol))
+    desktop environments as
     well as direct graphics on the [Linux Framebuffer](https://en.wikipedia.org/wiki/Linux_framebuffer)
   * C++20 wrapper on the SDL library:
     * Scoped RAII SDL structures are released when they pass out of scope.
