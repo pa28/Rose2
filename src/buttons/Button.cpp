@@ -20,9 +20,6 @@
 
 namespace rose {
 
-    Button::Button(std::shared_ptr<Theme> &theme) : Border(theme) {
-    }
-
     bool Button::setActiveState(Uint8 state, Uint8 button, uint64_t ticks) {
         if (button == SDL_BUTTON_LMASK) {
             if (state == SDL_PRESSED && !mActive) {

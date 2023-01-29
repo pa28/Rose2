@@ -46,7 +46,7 @@ namespace rose {
     public:
         Button() = default;
 
-        explicit Button(std::shared_ptr<Theme> &theme);
+        explicit Button(std::shared_ptr<Theme> &theme) : Border(theme) {}
 
         Button(const Button &) = delete;
 
