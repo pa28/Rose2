@@ -40,39 +40,11 @@ namespace rose {
         return (timestamp64 & 0xFFFFFFFF00000000u) | timestamp32;
     }
 
-    struct GadgetName {
-        std::string name{};
-    };
-
-    struct Text {
-        std::string text{};
-    };
-
-    struct Background {
-        Color color;
-    };
-
-    enum class MetaType {
-        GadgetName,
-        Text,
-        Icon,
-        Background,
-        DecoratorFunc,
-    };
-
-    template<class Enum, Enum has, Enum needs>
-            concept IsMetaParameter = requires{
-        std::is_same_v<Enum,MetaType>;
-        (has == needs);
-    };
-
-    template<MetaType M, class DataType> struct Parameter { DataType data{}; };
-
     namespace param {
-        using GadgetName = Parameter<MetaType::GadgetName, std::string>;
-        using Text = Parameter<MetaType::Text, std::string>;
-        using Icon = Parameter<MetaType::Icon, std::string>;
-        using Background = Parameter<MetaType::Background, Color>;
+        struct GadgetName { std::string data; };
+        struct Text { std::string data; };
+        struct Icon { std::string data; };
+        struct Background { Color data; };
     }
 
     /**
@@ -81,12 +53,6 @@ namespace rose {
      */
     template<class T>
     concept StringLike = std::is_convertible_v<T, std::string_view>;
-
-    enum class GadgetType {
-        Gadget,
-        Widget,
-    };
-
 
     struct Size {
         ScreenCoordType w{0}, h{0};

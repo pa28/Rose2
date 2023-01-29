@@ -252,7 +252,7 @@ namespace rose {
 
         template<class GadgetType>
         requires std::derived_from<GadgetType,Gadget>
-        void manage(std::shared_ptr<GadgetType>& gadget) {
+        void manage(std::shared_ptr<GadgetType> gadget) {
             window()->gadget<rose::Widget>().value()->manage(gadget);
         }
     };

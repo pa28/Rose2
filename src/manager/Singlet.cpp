@@ -37,9 +37,10 @@ namespace rose {
         }
     }
 
-    [[maybe_unused]] void Singlet::manage(std::shared_ptr<Gadget> gadget) {
+    [[maybe_unused]] std::shared_ptr<Gadget> Singlet::manage(std::shared_ptr<Gadget> gadget) {
         gadget->managedBy(shared_from_this());
         mGadget = std::move(gadget);
+        return shared_from_this();
     }
 
     void Singlet::draw(Context &context, Point drawLocation) {

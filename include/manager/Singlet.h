@@ -75,7 +75,7 @@ namespace rose {
          * of its current manager, if any.
          * @param gadget The Gadget to manage.
          */
-        [[maybe_unused]] virtual void manage(std::shared_ptr<Gadget> gadget);
+        [[maybe_unused]] virtual std::shared_ptr<Gadget> manage(std::shared_ptr<Gadget> gadget);
 
         /**
          * @brief Draw this Widget and all managed Gadgets.

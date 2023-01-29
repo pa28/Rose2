@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <Rose.h>
+#include <Build.h>
 #include "manager/RowColumn.h"
 #include "manager/Border.h"
 #include <TextGadget.h>
@@ -18,7 +19,7 @@ using namespace rose;
 
 int main(int argc, char **argv) {
 
-    static constexpr MultiButton::ItemArray<4> SpaceButtonItems = {{
+    [[maybe_unused]] static constexpr MultiButton::ItemArray<4> SpaceButtonItems = {{
            {0u, "rocket"}, {1u, "rocket_launch"}, {2u, "satellite_alt"}, {3u, "satellite"}
     }};
 
@@ -53,6 +54,19 @@ int main(int argc, char **argv) {
         application->createWindow(application->applicationName(), Size(800, 480), Point::CenterScreen(1),
                                   SDL_WINDOW_RESIZABLE);
 
+#if 1
+        application->manage(Build<Border>(theme, param::GadgetName{"containerBorder"}, Visual::SHADOW) -> manage(
+                Build<ButtonBox>(theme, param::GadgetName{"buttonBox"},
+                                 LinearLayout::MajorAxis::VERTICAL,
+                                 LinearLayout::Alignment::TOP_LEFT) -> manageAll(
+                                         Build<LabelButton>(theme, param::Text{"Hello"}, param::GadgetName{"hello"},
+                                                            param::ActivateSignal{buttonSignal}),
+                                         Build<BadgedButton>(theme, param::Icon{"wifi"}, param::Text{"Wifi"}, param::GadgetName{"WiFi"}),
+                                         Build<MultiButton>(theme, param::GadgetName{"space"}, SpaceButtonItems),
+                                         RadioButton(theme, param::Text{"Radio"})
+                )
+                ));
+#else
         if (auto containerBorder = Build<Border>(theme, param::GadgetName{"containerBorder"}, Visual::SHADOW); containerBorder) {
             if (auto container = Build<ButtonBox>(theme, param::GadgetName{"container"},
                               LinearLayout::MajorAxis::VERTICAL,
@@ -81,7 +95,7 @@ int main(int argc, char **argv) {
             }
             application->manage(containerBorder);
         }
-
+#endif
         application->run();
     }
 

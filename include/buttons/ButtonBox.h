@@ -18,6 +18,8 @@
 #ifndef ROSE2_BUTTONBOX_H
 #define ROSE2_BUTTONBOX_H
 
+#include <utility>
+
 #include "manager/RowColumn.h"
 
 namespace rose {
@@ -52,25 +54,19 @@ namespace rose {
 
     /**
      * Set the LayoutManager major axis on a RowColumn.
-     * @tparam Arg The type of the major axis value.
      * @param gadget The pointer to the ButtonBox.
      * @param arg The major axis value.
      */
-    template<class Arg>
-    requires std::is_same_v<Arg,LinearLayout::MajorAxis>
-    void setParameter(std::shared_ptr<ButtonBox>& gadget, Arg arg) {
+    inline void setParameter(std::shared_ptr<ButtonBox>& gadget, LinearLayout::MajorAxis arg) {
         gadget->getLayoutManager()->setMajorAxis(arg);
     }
 
     /**
      * @brief Set the LayoutManager alignment on a RowColumn.
-     * @tparam Arg The type of alignment value.
      * @param gadget The pointer to the ButtonBox.
      * @param arg The alignment value.
      */
-    template<class Arg>
-    requires std::is_same_v<Arg,LinearLayout::Alignment>
-    void setParameter(std::shared_ptr<ButtonBox>& gadget, Arg arg) {
+    inline void setParameter(std::shared_ptr<ButtonBox>& gadget, LinearLayout::Alignment arg) {
         gadget->getLayoutManager()->setAlignment(arg);
     }
 

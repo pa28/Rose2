@@ -70,6 +70,14 @@ namespace rose {
          */
         [[maybe_unused]] virtual void manage(std::shared_ptr<Gadget> gadget);
 
+        [[maybe_unused]] std::shared_ptr<Gadget> manageAll() { return shared_from_this(); }
+
+        template<class...Gadgets>
+        [[maybe_unused]] std::shared_ptr<Gadget> manageAll(std::shared_ptr<Gadget> gadget,Gadgets...gadgets) {
+            manage(std::move(gadget));
+            return manageAll(gadgets...);
+        }
+
         /**
          * @brief Get a pointer to the first Gadget on the list of managed Gadgets.
          * @details This does not un-manage the Gadget.

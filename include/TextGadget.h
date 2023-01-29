@@ -213,9 +213,7 @@ namespace rose {
      * @param gadget Pointer to rose::TextGadget.
      * @param parameter The param::Text value.
      */
-    template<class Parm>
-    requires std::is_same_v<Parm,Parameter<MetaType::Text,std::string>>
-    [[maybe_unused]] void setEnumParameter(std::shared_ptr<TextGadget>& gadget, Parm parameter) {
+    inline void setParameter(std::shared_ptr<TextGadget>& gadget, const param::Text& parameter) {
         gadget->setText(parameter.data);
     }
 

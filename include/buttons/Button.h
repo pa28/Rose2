@@ -30,11 +30,18 @@
 #ifndef ROSE2_BUTTON_H
 #define ROSE2_BUTTON_H
 
-#include "manager/Border.h"
-#include "TextGadget.h"
+#include <manager/Border.h>
+#include <TextGadget.h>
 #include <ranges>
+#include <Build.h>
 
 namespace rose {
+
+    namespace param {
+        struct ActivateSignal {
+            ButtonStateProtocol::slot_type slot;
+        };
+    }
 
     /**
      * @class Button
@@ -102,6 +109,18 @@ namespace rose {
             }
         }
     };
+
+    /**
+     * @brief Make a connection from the activateSignal to the specified slot.
+     * @tparam GadgetType The type of the Gadget.
+     * @param gadget The Gadget pointer
+     * @param parameter The slot.
+     */
+    template<class GadgetType>
+    requires std::derived_from<GadgetType,Button>
+    [[maybe_unused]] void setParameter(std::shared_ptr<GadgetType>& gadget, param::ActivateSignal parameter) {
+        gadget->activateSignal.connect(parameter.slot);
+    }
 
     /**
      * @class StateButton
@@ -227,9 +246,7 @@ namespace rose {
      * @param gadget Pointer to the StateButton.
      * @param parameter The new face text.
      */
-    template<class Parm>
-    requires std::is_same_v<Parm,Parameter<MetaType::Text,std::string>>
-    [[maybe_unused]] void setEnumParameter(std::shared_ptr<StateButton>& gadget, Parm parameter) {
+    inline void setParameter(std::shared_ptr<StateButton>& gadget, const param::Text& parameter) {
         gadget->setText(parameter.data);
     }
 
@@ -239,9 +256,7 @@ namespace rose {
      * @param gadget The StateButton pointer.
      * @param parameter The rose::StateButton::Icons value.
      */
-    template<class Parm>
-    requires std::is_same_v<Parm, StateButton::Icons>
-    [[maybe_unused]] void setParameter(std::shared_ptr<StateButton>& gadget, Parm parameter) {
+    inline void setParameter(std::shared_ptr<StateButton>& gadget, const StateButton::Icons& parameter) {
         gadget->setIcons(parameter.off, parameter.on);
     }
 
@@ -251,9 +266,7 @@ namespace rose {
      * @param gadget The StateButton pointer.
      * @param parameter The rose::StateButton::Type value.
      */
-    template<class Parm>
-    requires std::is_same_v<Parm, StateButton::Type>
-    [[maybe_unused]] void setParameter(std::shared_ptr<StateButton>& gadget, Parm parameter) {
+    inline void setParameter(std::shared_ptr<StateButton>& gadget, StateButton::Type parameter) {
         switch (parameter) {
             case StateButton::Radio:
                 gadget->radioButton();
@@ -450,9 +463,9 @@ namespace rose {
         }};
     };
 
-    template<class GadgetType, class Parm>
-    requires MultiButtonItemRange<Parm> && std::derived_from<GadgetType, MultiButton>
-    void setParameter(std::shared_ptr<GadgetType>& gadget, Parm parameter) {
+    template<class Parm>
+    requires MultiButtonItemRange<Parm>
+    void setParameter(std::shared_ptr<MultiButton>& gadget, Parm parameter) {
         gadget->setItems(parameter);
     }
 

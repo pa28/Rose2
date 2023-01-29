@@ -61,13 +61,10 @@ namespace rose {
 
     /**
      * @brief Set the text used on the face of the button.
-     * @tparam Parm The parameter type - param::Text.
      * @param gadget Pointer to the StateButton.
      * @param parameter The new face text.
      */
-    template<class Parm>
-    requires std::is_same_v<Parm,Parameter<MetaType::Text,std::string>>
-    [[maybe_unused]] void setEnumParameter(std::shared_ptr<LabelButton>& gadget, Parm parameter) {
+    inline void setParameter(std::shared_ptr<LabelButton>& gadget, const param::Text& parameter) {
         gadget->setText(parameter.data);
     }
 
@@ -110,13 +107,10 @@ namespace rose {
 
     /**
      * @brief Set the icon used on the face of the button.
-     * @tparam Parm The parameter type - param::Icon.
      * @param gadget Pointer to the IconButton.
      * @param parameter The new face icon.
      */
-    template<class Parm>
-    requires std::is_same_v<Parm,Parameter<MetaType::Icon,std::string>>
-    [[maybe_unused]] void setEnumParameter(std::shared_ptr<IconButton>& gadget, Parm parameter) {
+    inline void setParameter(std::shared_ptr<IconButton>& gadget, const param::Icon& parameter) {
         gadget->setIcon(parameter.data);
     }
 
@@ -168,25 +162,19 @@ namespace rose {
 
     /**
      * @brief Set the text used on the face of the button.
-     * @tparam Parm The parameter type - param::Text.
      * @param gadget Pointer to the BadgedButton.
      * @param parameter The new face text.
      */
-    template<class Parm>
-    requires std::is_same_v<Parm,Parameter<MetaType::Text,std::string>>
-    [[maybe_unused]] void setEnumParameter(std::shared_ptr<BadgedButton>& gadget, Parm parameter) {
+    inline void setParameter(std::shared_ptr<BadgedButton>& gadget, const param::Text& parameter) {
         gadget->setText(parameter.data);
     }
 
     /**
      * @brief Set the icon used on the face of the button.
-     * @tparam Parm The parameter type - param::Icon.
      * @param gadget Pointer to the BadgedButton.
      * @param parameter The new face icon.
      */
-    template<class Parm>
-    requires std::is_same_v<Parm,Parameter<MetaType::Icon,std::string>>
-    [[maybe_unused]] void setEnumParameter(std::shared_ptr<BadgedButton>& gadget, Parm parameter) {
+    inline void setParameter(std::shared_ptr<BadgedButton>& gadget, param::Icon parameter) {
         gadget->setIcon(parameter.data);
     }
 
