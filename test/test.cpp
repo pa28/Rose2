@@ -54,7 +54,6 @@ int main(int argc, char **argv) {
         application->createWindow(application->applicationName(), Size(800, 480), Point::CenterScreen(1),
                                   SDL_WINDOW_RESIZABLE);
 
-#if 1
         application->manage(Build<Border>(theme, param::GadgetName{"containerBorder"}, Visual::SHADOW) -> manage(
                 Build<ButtonBox>(theme, param::GadgetName{"buttonBox"},
                                  LinearLayout::MajorAxis::VERTICAL,
@@ -62,40 +61,12 @@ int main(int argc, char **argv) {
                                          Build<LabelButton>(theme, param::Text{"Hello"}, param::GadgetName{"hello"},
                                                             param::ActivateSignal{buttonSignal}),
                                          Build<BadgedButton>(theme, param::Icon{"wifi"}, param::Text{"Wifi"}, param::GadgetName{"WiFi"}),
-                                         Build<MultiButton>(theme, param::GadgetName{"space"}, SpaceButtonItems),
+                                         Build<MultiButton>(theme, param::GadgetName{"space"}, SpaceButtonItems,
+                                                            MultiButton::UpdateSignal{multiButtonSignal}),
                                          RadioButton(theme, param::Text{"Radio"})
                 )
                 ));
-#else
-        if (auto containerBorder = Build<Border>(theme, param::GadgetName{"containerBorder"}, Visual::SHADOW); containerBorder) {
-            if (auto container = Build<ButtonBox>(theme, param::GadgetName{"container"},
-                              LinearLayout::MajorAxis::VERTICAL,
-                              LinearLayout::Alignment::TOP_LEFT); container) {
-                if (auto button = Build<LabelButton>(theme, param::Text{"Hello"}, param::GadgetName{"hello"}); button) {
-                    button->activateSignal.connect(buttonSignal);
-                    container->manage(button);
-                }
 
-                if (auto button = Build<BadgedButton>(theme, param::Icon{"wifi"},
-                                                      param::Text{"WiFi"},
-                                                      param::GadgetName{"wifi"}); button) {
-                    container->manage(button);
-                }
-
-                if (auto multi = Build<MultiButton>(theme, param::GadgetName{"worldButton"}); multi) {
-                    multi->setItems(SpaceButtonItems);
-                    multi->updateSignal.connect(multiButtonSignal);
-                    container->manage(multi);
-                }
-
-                if (auto stateButton = RadioButton(theme, param::Text{"Radio"}); stateButton) {
-                    container->manage(stateButton);
-                }
-                containerBorder->manage(container);
-            }
-            application->manage(containerBorder);
-        }
-#endif
         application->run();
     }
 
