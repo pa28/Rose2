@@ -341,6 +341,7 @@ namespace rose {
     class MultiButton : public Button {
     public:
         struct Item {
+            Item(const uint32_t& id, const uint32_t& code) : itemId(id), codePoint(code) {}
             uint32_t itemId{}, codePoint{};
         };
 
