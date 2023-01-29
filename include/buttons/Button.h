@@ -268,6 +268,57 @@ namespace rose {
     }
 
     /**
+     * @brief A convenience function for creating a ToggleButton (StateButton in Toggle mode).
+     * @tparam Args A parameter pack.
+     * @param theme std::shared_ptr<Theme>
+     * @param args The configuration parameters.
+     * @return std::shared_ptr<StateButton>.
+     */
+    template<class...Args>
+    std::shared_ptr<StateButton> ToggleButton(std::shared_ptr<rose::Theme>& theme, Args...args) {
+        if (auto gadget = std::make_shared<StateButton>(theme); gadget) {
+            gadget->completeCompositeConstruction(theme);
+            SetGadgetParameters(gadget, args..., StateButton::Type::Toggle);
+            return gadget;
+        }
+        return nullptr;
+    }
+
+    /**
+     * @brief A convenience function for creating a CheckButton (StateButton in Check mode).
+     * @tparam Args A parameter pack.
+     * @param theme std::shared_ptr<Theme>
+     * @param args The configuration parameters.
+     * @return std::shared_ptr<StateButton>.
+     */
+    template<class...Args>
+    std::shared_ptr<StateButton> CheckButton(std::shared_ptr<rose::Theme>& theme, Args...args) {
+        if (auto gadget = std::make_shared<StateButton>(theme); gadget) {
+            gadget->completeCompositeConstruction(theme);
+            SetGadgetParameters(gadget, args..., StateButton::Type::Check);
+            return gadget;
+        }
+        return nullptr;
+    }
+
+    /**
+     * @brief A convenience function for creating a RadioButton (StateButton in Radio mode).
+     * @tparam Args A parameter pack.
+     * @param theme std::shared_ptr<Theme>
+     * @param args The configuration parameters.
+     * @return std::shared_ptr<StateButton>.
+     */
+    template<class...Args>
+    std::shared_ptr<StateButton> RadioButton(std::shared_ptr<rose::Theme>& theme, Args...args) {
+        if (auto gadget = std::make_shared<StateButton>(theme); gadget) {
+            gadget->completeCompositeConstruction(theme);
+            SetGadgetParameters(gadget, args..., StateButton::Type::Radio);
+            return gadget;
+        }
+        return nullptr;
+    }
+
+    /**
      * @class MultiButton
      * @brief A compact Icon only multiple state button.
      * @details The MultiButton provides control similar to the familiar Radio button paradigm but in a much more

@@ -71,7 +71,7 @@ int main(int argc, char **argv) {
                     container->manage(multi);
                 }
 
-                if (auto stateButton = Build<StateButton>(theme, StateButton::Radio, param::Text{"Radio"}); stateButton) {
+                if (auto stateButton = RadioButton(theme, param::Text{"Radio"}); stateButton) {
                     container->manage(stateButton);
                 }
                 containerBorder->manage(container);
