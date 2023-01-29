@@ -353,6 +353,10 @@ namespace rose {
 
     class MultiButton : public Button {
     public:
+        struct UpdateSignal {
+            MultiButtonProtocol::slot_type slot;
+        };
+
         struct Item {
             Item(const uint32_t& id, const uint32_t& code) : itemId(id), codePoint(code) {}
             uint32_t itemId{}, codePoint{};
@@ -463,6 +467,21 @@ namespace rose {
         }};
     };
 
+    /**
+     * @brief Connect the updateSignal to the provided slot.
+     * @param gadget Pointer to the MultiButton
+     * @param update the slot to connect to.
+     */
+    inline void setParameter(std::shared_ptr<MultiButton>& gadget, MultiButton::UpdateSignal update) {
+        gadget->updateSignal.connect(update.slot);
+    }
+
+    /**
+     * Add a MultiButtonItem set to the button.
+     * @tparam Parm The type of the Item range
+     * @param gadget Pointer to the MultiButton.
+     * @param parameter The Item range.
+     */
     template<class Parm>
     requires MultiButtonItemRange<Parm>
     void setParameter(std::shared_ptr<MultiButton>& gadget, Parm parameter) {
