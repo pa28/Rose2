@@ -112,10 +112,20 @@ namespace rose {
      * subordinate to the StateButton within reach, the first encountered is used.
      */
     class StateButton : public Button {
+    public:
+        struct Icons {
+            std::string off, on;
+        };
+
+        enum Type {
+            Radio, Check, Toggle
+        };
+
     protected:
         bool mButtonState{false};
         uint32_t mOffCode{}, mOnCode{};         // Icon code points for off and on state.
         std::weak_ptr<IconGadget> mIcon{};      // Local pointer to the managed IconGadget.
+        std::weak_ptr<TextGadget> mText{};      // Local pointer to the managed TextGadget.
 
     public:
         StateButton() = default;
@@ -131,6 +141,8 @@ namespace rose {
         StateButton &operator=(StateButton &&) = default;
 
         ~StateButton() override = default;
+
+        void completeCompositeConstruction(std::shared_ptr<Theme>& ) override;
 
         bool initialLayout(Context &context) override;
 
@@ -177,10 +189,22 @@ namespace rose {
             setIcons(cpOff, cpOn);
         }
 
+        template<class S>
+        requires StringLike<S>
+        void setText(S text) {
+            setManagedTextString(std::string(text));
+        }
+
         /**
          * @brief Find the managed IconGadget and change its code point to match the state of the button.
          */
         void setManagedIconCodePoint();
+
+        /**
+         * @brief Find the managed TextGadget and change its text value to the provided std::string value.
+         * @param text
+         */
+        void setManagedTextString(const std::string& text);
 
         void initialize() override;
 

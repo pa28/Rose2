@@ -16,6 +16,7 @@
 #include "buttons/Button.h"
 #include "TextGadget.h"
 #include "manager/SceneTree.h"
+#include "manager/TextSet.h"
 
 namespace rose {
 
@@ -75,9 +76,32 @@ namespace rose {
         }
     }
 
+    void StateButton::setManagedTextString(const std::string& textValue) {
+        if (mText.expired()) {
+            if (auto text = findDesiredGadget<TextGadget>(shared_from_this()); text) {
+                mText = text;
+                text->setText(textValue);
+            }
+        } else {
+            mText.lock()->setText(textValue);
+        }
+    }
+
     bool StateButton::initialLayout(Context &context) {
         setManagedIconCodePoint();
         return Button::initialLayout(context);
+    }
+
+    void StateButton::completeCompositeConstruction(std::shared_ptr<Theme> &theme) {
+        if (auto textSet = Build<TextSet>(theme); textSet) {
+            if (auto icon = Build<IconGadget>(theme); icon) {
+                textSet->manage(icon);
+            }
+            if (auto text = Build<TextGadget>(theme); text) {
+                textSet->manage(text);
+            }
+            manage(textSet);
+        }
     }
 
     bool Button::enterLeaveEvent(bool enter, Uint32) {
