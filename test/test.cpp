@@ -10,9 +10,9 @@
 #include <Application.h>
 #include <Color.h>
 #include <Theme.h>
-#include "manager/TextSet.h"
 #include "buttons/Button.h"
 #include "buttons/ButtonBox.h"
+#include <buttons/PushButton.h>
 
 using namespace rose;
 
@@ -57,11 +57,14 @@ int main(int argc, char **argv) {
             if (auto container = Build<ButtonBox>(theme, param::GadgetName{"container"},
                               LinearLayout::MajorAxis::VERTICAL,
                               LinearLayout::Alignment::TOP_LEFT); container) {
-                if (auto button = Build<Button>(theme); button) {
+                if (auto button = Build<LabelButton>(theme, param::Text{"Hello"}, param::GadgetName{"hello"}); button) {
                     button->activateSignal.connect(buttonSignal);
-                    if (auto hello = Build<TextGadget>(theme, param::Text{"Hello"}); hello) {
-                        button->manage(hello);
-                    }
+                    container->manage(button);
+                }
+
+                if (auto button = Build<BadgedButton>(theme, param::Icon{"wifi"},
+                                                      param::Text{"WiFi"},
+                                                      param::GadgetName{"wifi"}); button) {
                     container->manage(button);
                 }
 
