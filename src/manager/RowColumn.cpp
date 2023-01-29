@@ -44,8 +44,8 @@ namespace rose {
 
                 switch (mMajorAxis) {
                     case MajorAxis::HORIZONTAL:
-                        if (auto residue = mMinorAxisMax - gadget->getVisualMetrics().clipRectangle.size.h; residue >
-                                                                                                            0) {
+                        if (auto residue = mMinorAxisMax - gadget->getVisualMetrics().clipRectangle.size.h;
+                                        residue > 0) {
                             Padding padding{0, 0, 0, 0};
 
                             switch (mAlignment) {

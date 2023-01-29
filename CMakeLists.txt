@@ -40,7 +40,7 @@ list(APPEND ROSE_SRC src/manager/SceneTree.cpp src/Application.cpp src/GraphicsM
         src/Gadget.cpp src/Color.cpp src/manager/Window.cpp src/Font.cpp src/TextGadget.cpp src/manager/RowColumn.cpp
         src/Event.cpp src/Theme.cpp src/manager/Border.cpp src/manager/Singlet.cpp src/manager/Widget.cpp
         src/TimerTick.cpp src/manager/TextSet.cpp src/Material.cpp src/Animation.cpp src/buttons/Button.cpp
-        src/buttons/ButtonBox.cpp src/buttons/PushButton.cpp)
+        src/buttons/ButtonBox.cpp src/buttons/PushButton.cpp src/Image.cpp)
 
 add_library(Rose2 SHARED ${ROSE_SRC} ${LIB_FMT})
 
