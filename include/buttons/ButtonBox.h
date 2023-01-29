@@ -50,6 +50,31 @@ namespace rose {
         [[maybe_unused]] void manage(std::shared_ptr<Gadget> gadget) override;
     };
 
+    /**
+     * Set the LayoutManager major axis on a RowColumn.
+     * @tparam Arg The type of the major axis value.
+     * @param gadget The pointer to the ButtonBox.
+     * @param arg The major axis value.
+     */
+    template<class Arg>
+    requires std::is_same_v<Arg,LinearLayout::MajorAxis>
+    void setParameter(std::shared_ptr<ButtonBox>& gadget, Arg arg) {
+        gadget->getLayoutManager()->setMajorAxis(arg);
+    }
+
+    /**
+     * @brief Set the LayoutManager alignment on a RowColumn.
+     * @tparam Arg The type of alignment value.
+     * @param gadget The pointer to the ButtonBox.
+     * @param arg The alignment value.
+     */
+    template<class Arg>
+    requires std::is_same_v<Arg,LinearLayout::Alignment>
+    void setParameter(std::shared_ptr<ButtonBox>& gadget, Arg arg) {
+        gadget->getLayoutManager()->setAlignment(arg);
+    }
+
+
 } // rose
 
 #endif //ROSE2_BUTTONBOX_H

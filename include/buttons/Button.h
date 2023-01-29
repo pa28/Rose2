@@ -222,6 +222,52 @@ namespace rose {
     };
 
     /**
+     * @brief Set the text used on the face of the button.
+     * @tparam Parm The parameter type - param::Text.
+     * @param gadget Pointer to the StateButton.
+     * @param parameter The new face text.
+     */
+    template<class Parm>
+    requires std::is_same_v<Parm,Parameter<MetaType::Text,std::string>>
+    [[maybe_unused]] void setEnumParameter(std::shared_ptr<StateButton>& gadget, Parm parameter) {
+        gadget->setText(parameter.data);
+    }
+
+    /**
+     * @brief Set the Icons used to indicate button state.
+     * @tparam Parm The parameter - a rose::StateButton::Icons type.
+     * @param gadget The StateButton pointer.
+     * @param parameter The rose::StateButton::Icons value.
+     */
+    template<class Parm>
+    requires std::is_same_v<Parm, StateButton::Icons>
+    [[maybe_unused]] void setParameter(std::shared_ptr<StateButton>& gadget, Parm parameter) {
+        gadget->setIcons(parameter.off, parameter.on);
+    }
+
+    /**
+     * @brief Set the Icons used to indicate button state.
+     * @tparam Parm The parameter - a Rose::StateButton::Type type.
+     * @param gadget The StateButton pointer.
+     * @param parameter The rose::StateButton::Type value.
+     */
+    template<class Parm>
+    requires std::is_same_v<Parm, StateButton::Type>
+    [[maybe_unused]] void setParameter(std::shared_ptr<StateButton>& gadget, Parm parameter) {
+        switch (parameter) {
+            case StateButton::Radio:
+                gadget->radioButton();
+                break;
+            case StateButton::Check:
+                gadget->checkBox();
+                break;
+            case StateButton::Toggle:
+                gadget->toggleButton();
+                break;
+        }
+    }
+
+    /**
      * @class MultiButton
      * @brief A compact Icon only multiple state button.
      * @details The MultiButton provides control similar to the familiar Radio button paradigm but in a much more

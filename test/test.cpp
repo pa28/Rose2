@@ -71,17 +71,7 @@ int main(int argc, char **argv) {
                     container->manage(multi);
                 }
 
-                if (auto stateButton =  Build<StateButton>(theme); stateButton) {
-                    stateButton->toggleButton();
-                    if (auto textSet = Build<TextSet>(theme); textSet) {
-                        if (auto check = Build<IconGadget>(theme); check) {
-                            textSet->manage(check);
-                        }
-                        if (auto text = Build<TextGadget>(theme, param::Text{"Check"}); text) {
-                            textSet->manage(text);
-                        }
-                        stateButton->manage(textSet);
-                    }
+                if (auto stateButton = Build<StateButton>(theme, StateButton::Radio, param::Text{"Radio"}); stateButton) {
                     container->manage(stateButton);
                 }
                 containerBorder->manage(container);

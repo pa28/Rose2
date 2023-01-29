@@ -112,8 +112,8 @@ namespace rose {
             if (mFontCache){
                 if (auto fontPointer = mFontCache->getFont(fontName, pointSize); fontPointer) {
                     return fontPointer;
-                } else if (fontPointer = mFontCache->getFont("FreeSans", pointSize); fontPointer) {
-                    return fontPointer;
+                } else if (auto defaultFontPointer = mFontCache->getFont("FreeSans", pointSize); defaultFontPointer) {
+                    return defaultFontPointer;
                 }
                 throw FontCacheException(fmt::format("Could not find requested font '{}' nor 'FreeSans'", fontName));
             }
@@ -207,13 +207,21 @@ namespace rose {
         const FontPointer& getFont() const { return mFont; }
     };
 
-    template<class GadgetType, class Parm>
+    /**
+     * @brief Set the text value on a rose::TextGadget
+     * @tparam Parm The param::Text type.
+     * @param gadget Pointer to rose::TextGadget.
+     * @param parameter The param::Text value.
+     */
+    template<class Parm>
     requires std::is_same_v<Parm,Parameter<MetaType::Text,std::string>>
-             && std::derived_from<GadgetType, TextGadget>
-    [[maybe_unused]] void setEnumParameter(std::shared_ptr<GadgetType>& gadget, Parm parameter) {
+    [[maybe_unused]] void setEnumParameter(std::shared_ptr<TextGadget>& gadget, Parm parameter) {
         gadget->setText(parameter.data);
     }
 
+    /**
+     * @brief Report errors in Icon code point usage.
+     */
     class CodePointError : public std::runtime_error {
     public:
         explicit CodePointError(const std::string& whatArg) : std::runtime_error(whatArg) {}

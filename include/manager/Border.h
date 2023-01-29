@@ -63,6 +63,19 @@ namespace rose {
         }
     };
 
+    /**
+     * @brief Set the Visual parameter on a Boarder.
+     * @tparam Arg The Visual parameter type.
+     * @param gadget The Boarder gadget pointer.
+     * @param arg The Visual value.
+     */
+    template<class Arg>
+    requires std::is_same_v<Arg,Visual>
+    void setParameter(std::shared_ptr<Border>& gadget, Arg arg) {
+        gadget->setVisual(arg);
+    }
+
+
 } // rose
 
 

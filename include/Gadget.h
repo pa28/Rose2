@@ -493,14 +493,12 @@ namespace rose {
     /**
      * @brief Set an Enum resolution assisted value on a rose::Gadget.
      * @details This version sets the Gadget name to a std::string value.
-     * @tparam GadgetType Gadget type - rose::Gadget.
      * @tparam Parm Parameter<MetaType::GadgetName,std::string>
      * @param gadget the Gadget pointer.
      * @param parameter the parameter value.
      */
     template<class GadgetType, class Parm>
-    requires std::is_same_v<Parm,Parameter<MetaType::GadgetName,std::string>>
-            && std::derived_from<GadgetType, Gadget>
+    requires std::is_same_v<Parm,Parameter<MetaType::GadgetName,std::string>> && std::derived_from<GadgetType,Gadget>
     [[maybe_unused]] void setEnumParameter(std::shared_ptr<GadgetType>& gadget, Parm parameter) {
         gadget->setName(parameter.data);
     }
@@ -508,29 +506,14 @@ namespace rose {
     /**
      * @brief Set an Enum resolution assisted value on a rose::Gadget.
      * @details This version sets the Gadget background color to a rose::Color value.
-     * @tparam GadgetType Gadget type - rose::Gadget.
      * @tparam Parm Parameter<MetaType::Background,Color>
      * @param gadget the Gadget pointer.
      * @param parameter the parameter value.
      */
-    template<class GadgetType, class Parm>
+    template<class Parm>
     requires std::is_same_v<Parm,Parameter<MetaType::Background,Color>>
-            && std::derived_from<GadgetType, Gadget>
-    [[maybe_unused]] void setEnumParameter(std::shared_ptr<GadgetType>& gadget, Parm parameter) {
+    [[maybe_unused]] void setEnumParameter(std::shared_ptr<Gadget>& gadget, Parm parameter) {
         gadget->setBackground(parameter.data);
-    }
-
-    /**
-     * @brief Set a unique typed value of a Visual on a rose::Gadget
-     * @tparam GadgetType Gadget type - rose::Gadget.
-     * @tparam Parm The parameter - a rose::Visual value.
-     * @param gadget The Gadget pointer.
-     * @param parameter The Visual value.
-     */
-    template<class GadgetType, class Parm>
-    requires std::is_same_v<Parm, Visual> && std::derived_from<GadgetType, Gadget>
-    [[maybe_unused]] void setParameter(std::shared_ptr<GadgetType>& gadget, Parm parameter) {
-        gadget->setVisual(parameter);
     }
 
     /**
