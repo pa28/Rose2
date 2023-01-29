@@ -55,6 +55,7 @@ namespace rose {
     enum class MetaType {
         GadgetName,
         Text,
+        Icon,
         Background,
         DecoratorFunc,
     };
@@ -70,6 +71,7 @@ namespace rose {
     namespace param {
         using GadgetName = Parameter<MetaType::GadgetName, std::string>;
         using Text = Parameter<MetaType::Text, std::string>;
+        using Icon = Parameter<MetaType::Icon, std::string>;
         using Background = Parameter<MetaType::Background, Color>;
     }
 
