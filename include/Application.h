@@ -223,6 +223,10 @@ namespace rose {
                 window->layout();
                 window->initializeSceneTree();
             }
+
+//            SDL_Cursor *cursor;
+//            cursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
+//            SDL_SetCursor(cursor);
             basicEventLoop();
         }
 
