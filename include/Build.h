@@ -1,6 +1,15 @@
-//
-// Created by richard on 29/01/23.
-//
+
+/*
+ * Build.h Created by Richard Buckley (C) 2023-01-29
+ */
+
+/**
+* @file Build.h
+* @author Richard Buckley <richard.buckley@ieee.org>
+* @version 1.0
+* @date 2023-01-29
+* @brief Free functions to help build Gadgets and configure their parameters.
+*/
 
 #ifndef ROSE2_BUILD_H
 #define ROSE2_BUILD_H
@@ -13,24 +22,6 @@ namespace rose {
     template<class GadgetType>
     void SetGadgetParameters(std::shared_ptr<GadgetType>&) {
     }
-
-    /**
-     * @brief Process the next parameter in the parameter pack.
-     * @details This version processes an Enum tagged parameter. The Enum tagging helps to determine which field
-     * is going to be set with the value of the parameter.
-     * @tparam GadgetType the type of the Gadget being configured.
-     * @tparam M The MetaType member which helps determine how to set this parameter on the Gadget.
-     * @tparam Arg The type of the argument in the parameter
-     * @tparam Rest The remainder of the parameter pack.
-     * @param gadget The Gadget being configured.
-     * @param arg The argument value to set on the Gadget.
-     * @param rest The remaining values in the parameter pack.
-     */
-//    template<class GadgetType, class Arg, class...Rest>
-//    void SetGadgetParameters(std::shared_ptr<GadgetType>& gadget, Arg arg, Rest...rest) {
-//        setEnumParameter(gadget, arg);
-//        SetGadgetParameters(gadget, rest...);
-//    }
 
     /**
      * @brief Process the next parameter in the parameter pack.
@@ -96,7 +87,6 @@ namespace rose {
     [[maybe_unused]] void setParameter(std::shared_ptr<GadgetType>& gadget, param::Background parameter) {
         gadget->setBackground(parameter.data);
     }
-
 
 } // rose
 
